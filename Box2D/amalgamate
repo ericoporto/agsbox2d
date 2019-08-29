@@ -1,0 +1,806 @@
+#!/bin/bash
+
+#
+# Constants
+
+RED_TEXT='\e[0;31m'
+NO_COLOR_TEXT='\e[0m'
+AMALGAMATE_ERROR='amalgamate error: '
+
+if [ -t 1 ] && [ $(tput colors) \> 0 ]
+then
+	AMALGAMATE_ERROR="$RED_TEXT$AMALGAMATE_ERROR$NO_COLOR_TEXT"
+fi
+
+
+OUTPUT_DIRECTORY_SUFFIX='amalgamated'
+DEFAULT_INPUT_HEADER_EXTENSIONS='h,hh,hpp,hxx,h++,tpp,txx,tpl,ii,ixx,ipp,inl'
+DEFAULT_INPUT_SOURCE_EXTENSIONS='c,cc,cpp,cxx,c++'
+DEFAULT_OUTPUT_HEADER_EXTENSION='h'
+DEFAULT_OUTPUT_SOURCE_EXTENSION='cpp'
+
+HELP_MESSAGE=\
+'Usage:
+  amalgamate [options]
+
+Options:
+  -I <header-path>      Path where header files can be found [default: current working directory'"'"'s parent]
+  -e <ext,ens,ions...>  Input header extensions [default: "'"$DEFAULT_INPUT_HEADER_EXTENSIONS"'"].
+  -s <ext,ens,ions...>  Input source extensions [default: "'"$DEFAULT_INPUT_SOURCE_EXTENSIONS"'"].
+  -o <output-dir-path>  Output directory [default: "../"].
+  -H                    Amalgamate all files to single header file.
+  -S                    Amalgamate all files to single source file.
+  -n <base-name>        Base name for output files [default: parent directory name].
+  -x <hpp,cpp>          Extensions for output header and source files [default: inferred from input files; if cannot, then "'"$DEFAULT_OUTPUT_HEADER_EXTENSION"','"$DEFAULT_OUTPUT_SOURCE_EXTENSION"'"].
+  -a                    Insert annotations.
+  -v                    Verbose mode.
+  -h                    Show this message.
+
+'
+
+HEADER_STRING_TEMPLATE='%s// ============================================================================\n%s// == %s ==%s'
+FOOTER_STRING_TEMPLATE='\n%s// == %s ==\n%s// ============================================================================%s'
+
+header_search_path=$(dirname $(pwd))
+header_extensions="$DEFAULT_INPUT_HEADER_EXTENSIONS"
+source_extensions="$DEFAULT_INPUT_SOURCE_EXTENSIONS"
+output_dir_path="$(pwd)/.."
+header_only=false
+source_only=false
+name=$(basename $(pwd))
+output_header_extension=''
+output_source_extension=''
+file_printf_annotation_function=do_nothing
+file_print_header_annotation_function=do_nothing
+file_print_footer_annotation_function=do_nothing
+indent_shift_function=do_nothing
+printf_verbose_function=do_nothing
+
+
+#
+# Functions
+
+printf_stderr()
+{
+	printf "$@" >&2
+}
+
+
+printf_error()
+{
+	printf_stderr "$AMALGAMATE_ERROR"
+	printf_stderr "$@"
+	printf_stderr '\n\n'
+}
+
+
+do_nothing()
+{
+	:
+}
+
+
+valid_option_string()
+{
+	local string=$1
+
+	local first_character="${string:0:1}"
+	if [ "$first_character" != '-' ]
+	then
+		return 1
+	fi
+}
+
+
+parse_options()
+{
+	local argument_index=$1
+	local options=$2
+	local arguments=(${@:3})
+
+	local char_index=( 0 )
+	local char_count="${#options}"
+	while [ $char_index -lt $char_count ]
+	do
+		local option="${options:$char_index:1}"
+		case "$option" in
+			I)
+				((++char_index))
+				if [ $char_index == $char_count ]
+				then
+					((++argument_index))
+					header_search_path="${arguments[$argument_index]}"
+				else
+					header_search_path="${options:$char_index}"
+				fi
+
+				if [ ! -d "$header_search_path" ]
+				then
+					printf_error 'bad header search path "%s"' "$header_search_path"
+					exit 1
+				fi
+
+				header_search_path=$(expand_dir_path "$header_search_path")
+
+				((++argument_index))
+				return $argument_index
+				;;
+
+			e)
+				((++char_index))
+				if [ $char_index == $char_count ]
+				then
+					((++argument_index))
+					header_extensions="${arguments[$argument_index]}"
+				else
+					header_extensions="${options:$char_index}"
+				fi
+
+				((++argument_index))
+				return $argument_index
+				;;
+
+			s)
+				((++char_index))
+				if [ $char_index == $char_count ]
+				then
+					((++argument_index))
+					source_extensions="${arguments[$argument_index]}"
+				else
+					source_extensions="${options:$char_index}"
+				fi
+
+				((++argument_index))
+				return $argument_index
+				;;
+
+			o)
+				((++char_index))
+				if [ $char_index == $char_count ]
+				then
+					((++argument_index))
+					output_dir_path="${arguments[$argument_index]}"
+				else
+					output_dir_path="${options:$char_index}"
+				fi
+
+				((++argument_index))
+				return $argument_index
+				;;
+
+			H)
+				header_only=true
+				((++char_index))
+				;;
+
+			S)
+				source_only=true
+				((++char_index))
+				;;
+
+			n)
+				((++char_index))
+				if [ $char_index == $char_count ]
+				then
+					((++argument_index))
+					name="${arguments[$argument_index]}"
+				else
+					name="${options:$char_index}"
+				fi
+
+				((++argument_index))
+				return $argument_index
+				;;
+
+			x)
+				((++char_index))
+				if [ $char_index == $char_count ]
+				then
+					((++argument_index))
+					output_extensions="${arguments[$argument_index]}"
+				else
+					output_extensions="${options:$char_index}"
+				fi
+
+				output_header_extension="${output_extensions%,*}"
+				output_source_extension="${output_extensions:${#output_header_extension}+1}"
+
+				if [ -z "$output_header_extension" ]
+				then
+					printf_error 'output header extension is empty'
+					exit 1
+				fi
+
+				if [ -z "$output_source_extension" ]
+				then
+					printf_error 'output source extension is empty'
+					exit 1
+				fi
+
+				if [ "$output_header_extension" == "$output_source_extension" ]
+				then
+					printf_error 'extensions for output files cannot be the same'
+					exit 1
+				fi
+
+				((++argument_index))
+				return $argument_index
+				;;
+
+			a)
+				file_printf_annotation_function=file_printf
+				file_print_header_annotation_function=do_file_print_header_annotation
+				file_print_footer_annotation_function=do_file_print_footer_annotation
+				indent_shift_function=do_indent_shift
+				((++char_index))
+				;;
+
+			v)
+				printf_verbose_function=printf
+				((++char_index))
+				;;
+
+			h)
+				printf '%s' "$HELP_MESSAGE"
+				((++char_index))
+				exit
+				;;
+
+			*)
+				printf_error 'unknown option "%s"' "$option"
+				printf '%s' "$HELP_MESSAGE"
+				((++char_index))
+				exit 1
+				;;
+		esac
+	done
+
+	((++argument_index))
+	return $argument_index
+}
+
+
+setup()
+{
+	local arguments=("$@")
+	local argument_index=( 0 )
+	local argument_count=( ${#@} )
+
+	while [ $argument_index -lt $argument_count ]
+	do
+		local argument="${arguments[$argument_index]}"
+		if ! valid_option_string "$argument"
+		then
+			printf_error 'wrong arguments'
+			printf '%s' "$HELP_MESSAGE"
+			exit 1
+		fi
+
+		local options="${argument:1}"
+		parse_options $argument_index "$options" "${arguments[@]}"
+		argument_index=$?
+	done
+}
+
+
+printf_verbose()
+{
+	"$printf_verbose_function" "$@"
+}
+
+
+file_printf_annotation()
+{
+	local output_path=$1
+	local format=$2
+
+	"$file_printf_annotation_function" "$output_path" "$format" "${@:3}"
+}
+
+
+file_print_header_annotation()
+{
+	local output_path=$1
+	local file_path=$2
+	local indent=$3
+
+	"$file_print_header_annotation_function" "$output_path" "$file_path" "$indent"
+}
+
+
+do_file_print_header_annotation()
+{
+	local output_path=$1
+	local file_path=$2
+	local indent=$3
+
+	local header_string=$(make_header_string "$file_path" "$indent")
+	file_printf "$output_path" "$header_string"
+}
+
+
+file_print_footer_annotation()
+{
+	local output_path=$1
+	local file_path=$2
+	local indent=$3
+
+	"$file_print_footer_annotation_function" "$output_path" "$file_path" "$indent"
+}
+
+
+do_file_print_footer_annotation()
+{
+	local output_path=$1
+	local file_path=$2
+	local indent=$3
+
+	local footer_string=$(make_footer_string "$file_path" "$indent")
+	file_printf "$output_path" "$footer_string"
+}
+
+
+indent_shift()
+{
+	local indent=$1
+
+	"$indent_shift_function" "$indent"
+}
+
+
+do_indent_shift()
+{
+	local indent=$1
+
+	printf '%s	' "$indent"
+}
+
+
+array_contains_item()
+{
+	local item=$1
+	local array=("${@:2}")
+
+	local current
+	for current in ${array[@]}
+	do
+		if [ "$current" == "$item" ]
+		then
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+
+find_by_extensions()
+{
+	local path=$1
+	local extensions=$2
+
+	local arguments=$(sed -e "s/^\([^,]*\)/ -name '*.\1'/g" -e "s/,\([^,]*\)/ -or -name '*.\1'/g" <<< "$extensions")
+	eval 'find '"$path"' -type f '"$arguments"
+}
+
+
+is_include_line()
+{
+	local line=$1
+
+	[[ $line =~ ^[\ \t]*\#[\ \t]*include[\ \t]*\".*\".* ]]
+}
+
+
+is_standard_include_line()
+{
+	local line=$1
+
+	[[ $line =~ ^[\ \t]*\#[\ \t]*include[\ \t]*\<.*\>.* ]]
+}
+
+
+is_pragma_once_line()
+{
+	local line=$1
+
+	[[ $line =~ ^[\ \t]*\#[\ \t]*pragma[\ \t]*once.* ]]
+}
+
+
+is_empty_line()
+{
+	local line=$1
+
+	[[ $line =~ ^[\ \t]*$ ]]
+}
+
+
+path_extension()
+{
+	local path=$1
+
+	printf '%s\n' "${path##*.}"
+}
+
+
+detect_extension()
+{
+	local default_extension=$1
+	local first_path=$2
+	shift
+	shift
+	local paths=("$@")
+
+	local first_extension=$(path_extension "$first_path")
+
+	local path
+	for path in "${paths[@]}"
+	do
+		local extension=$(path_extension "$path")
+		if [ "$first_extension" != "$extension" ]
+		then
+			printf '%s\n' "$default_extension"
+			return 0
+		fi
+	done
+
+	printf '%s\n' "$first_extension"
+	return 0
+}
+
+
+expand_dir_path()
+{
+	local path=$1
+
+	local absolute_dir_path=$(cd $path; pwd)
+
+	printf '%s\n' "$absolute_dir_path"
+}
+
+
+expand_path()
+{
+	local path=$1
+
+	local dir=$(dirname "$path")
+	local base_name=$(basename "$path")
+	local absolute_dir_path=$(expand_dir_path "$dir")
+
+	printf '%s\n' "$absolute_dir_path/$base_name"
+}
+
+
+relative_path()
+{
+	local path=$1
+	local base_path=$2
+
+	local relative_path="${path#$base_path}"
+	if [ "$relative_path" != "$path" ]
+	then
+		relative_path=".$relative_path"
+	fi
+
+	printf '%s\n' "$relative_path"
+}
+
+
+path_from_include_line()
+{
+	local line=$1
+
+	local file_path=${line#*\"}
+	local file_path=${file_path%\"*}
+
+	printf '%s\n' "$file_path"
+}
+
+
+path_from_standard_include_line()
+{
+	local line=$1
+
+	local file_path=${line#*\<}
+	local file_path=${file_path%\>*}
+
+	printf '%s\n' "$file_path"
+}
+
+
+absolute_path_from_include_line()
+{
+	local line=$1
+
+	local file_path=${line#*\"}
+	local file_path=${file_path%\"*}
+
+	expand_path "$file_path"
+}
+
+
+file_printf()
+{
+	local file_path=$1
+	local format=$2
+	local arguments=$3
+
+	printf "$format" "${@:3}" >> "$file_path"
+}
+
+
+make_header_string()
+{
+	local line=$1
+	local indent=$2
+
+	printf "$HEADER_STRING_TEMPLATE\n" "$indent" "$indent" "$line" '\n\n'
+}
+
+
+make_footer_string()
+{
+	local line=$1
+	local indent=$2
+
+	printf "$FOOTER_STRING_TEMPLATE\n" "$indent" "$line" "$indent" '\n\n'
+}
+
+
+resolve_include_path()
+{
+	local include_path=$1
+	local absolute_file_path=$2
+
+	local dir=$(dirname "$absolute_file_path")
+	local non_expanded_path="$dir/$include_path"
+
+	if [ -f "$non_expanded_path" ]
+	then
+		expand_path "$non_expanded_path"
+		return
+	fi
+
+	local absolute_include_path="$header_search_path/$include_path"
+	if [ ! -f "$absolute_include_path" ]
+	then
+		return 1
+	fi
+
+	printf '%s\n' "$absolute_include_path"
+}
+
+
+get_meta_tag()
+{
+	local line=$1
+
+	if ! [[ "$line" =~ ^.*\/\/[\ \	]*\[[\ \	]*amalgamate:[\ \	]*[-a-z][-a-z]*[\ \	]*\][\ \	]*$ ]]
+	then
+		return
+	fi
+
+	sed -e 's/^.*\/\/[\ \	]*\[[\ \	]*amalgamate:[\ \	]*//' -e 's/[\ \	]*\].*$//' <<< "$line"
+}
+
+
+get_clean_line()
+{
+	local line=$1
+
+	sed -e 's/[\ \t]*\/\/[\ \t]*\[amalgamate:[\ \t]*[-a-z][-a-z]*[\ \t]*\][\ \t]*$//' <<< "$line"
+}
+
+
+declare -a included_files
+declare -a included_standard_files
+
+expand_file()
+{
+	IFS=''
+	local absolute_file_path=$1
+	local output_path=$2
+	local indent=$3
+
+	local relative_file_path=$(relative_path "$absolute_file_path" $(pwd))
+	printf_verbose '%s\n' "$relative_file_path"
+
+	file_print_header_annotation "$output_path" "$relative_file_path" "$indent"
+
+	local line
+	while read -r line
+	do
+		local meta_tag=$(get_meta_tag "$line")
+		if [ "$meta_tag" == 'leave' ]
+		then
+			local clean_line=$(get_clean_line "$line")
+			file_printf "$output_path" '%s%s\n' "$indent" "$clean_line"
+			continue
+		elif [ "$meta_tag" == 'remove' ]
+		then
+			continue
+		elif [ "$meta_tag" == 'uncomment' ]
+		then
+			local clean_line=$(get_clean_line "$line")
+			line="${clean_line#*//}"
+		fi
+
+		if is_include_line "$line"
+		then
+			local include_path=$(path_from_include_line "$line")
+			local absolute_include_path=$(resolve_include_path "$include_path" "$absolute_file_path")
+			if [ -z "$absolute_include_path" ]
+			then
+				printf_error 'cannot find include file "%s" required in "%s"' "$include_path" "$absolute_file_path"
+				exit 1
+			fi
+
+			if array_contains_item "$absolute_include_path" "${included_files[@]}"
+			then
+				file_printf_annotation "$output_path" '%s// %s    // amalgamate: file already expanded\n' "$indent" "$line"
+				continue
+			fi
+
+			included_files+=("$absolute_include_path")
+			expand_file "$absolute_include_path" "$output_path" $(indent_shift "$indent") #"$indent	"
+
+			continue
+		fi
+
+		if is_pragma_once_line "$line"
+		then
+			file_printf_annotation "$output_path" '%s// %s' "$indent" "$line"
+
+			continue
+		fi
+
+		if ! is_empty_line "$line"
+		then
+			file_printf "$output_path" '%s' "$indent"
+		fi
+
+		if is_standard_include_line "$line"
+		then
+			local standard_include_path=$(path_from_standard_include_line "$line")
+			if array_contains_item "$standard_include_path" "${included_standard_files[@]}"
+			then
+				file_printf_annotation "$output_path" '%s// %s    // amalgamate: file already included\n' "$indent" "$line"
+				continue
+			fi
+
+			included_standard_files+=("$standard_include_path")
+		fi
+
+		file_printf "$output_path" '%s\n' "$line"
+	done < "$absolute_file_path"
+
+	file_print_footer_annotation "$output_path" "$relative_file_path" "$indent"
+}
+
+
+merge_headers()
+{
+	local output_header_path=$1
+	shift
+	local paths=("$@")
+
+	local path
+	for path in "${paths[@]}"
+	do
+		local file_absolute_path=$(expand_path "$path")
+
+		if array_contains_item "$file_absolute_path" "${included_files[@]}"
+		then
+			continue
+		fi
+
+		included_files+=("$file_absolute_path")
+		expand_file "$file_absolute_path" "$output_header_path" ""
+	done
+}
+
+
+merge_sources()
+{
+	local output_source_path=$1
+	shift
+	local paths=("$@")
+
+	local path
+	for path in "${paths[@]}"
+	do
+		local file_absolute_path=$(expand_path "$path")
+
+		expand_file "$file_absolute_path" "$output_source_path" ""
+	done
+}
+
+
+#
+# Main
+
+setup "$@"
+
+
+output_dir_path="$output_dir_path/$name-$OUTPUT_DIRECTORY_SUFFIX"
+rm -rf "$output_dir_path" &> /dev/null
+if [ $? != 0 ]
+then
+	printf_error 'cannot remove output directory "%s"' "$output_dir_path"
+	exit 1
+fi
+
+mkdir -p "$output_dir_path"
+if [ $? != 0 ]
+then
+	printf_error 'cannot write path "%s"' "$output_dir_path"
+	exit 1
+fi
+
+output_dir_path=$(expand_dir_path "$output_dir_path")
+
+
+IFS=$'\n'
+header_files=($(find_by_extensions . "$header_extensions"))
+source_files=($(find_by_extensions . "$source_extensions"))
+
+if [ "${#header_files[@]}" == 0 ] && [ "${#source_files[@]}" == 0 ]
+then
+	printf_error 'no C/C++ files found'
+	exit 1
+fi
+
+
+if [ -z "$output_header_extension" ]
+then
+	output_header_extension=$(detect_extension "$DEFAULT_OUTPUT_HEADER_EXTENSION" "${header_files[@]}")
+fi
+
+if [ -z "$output_source_extension" ]
+then
+	output_source_extension=$(detect_extension "$DEFAULT_OUTPUT_SOURCE_EXTENSION" "${source_files[@]}")
+fi
+
+header_file_name="$name.$output_header_extension"
+source_file_name="$name.$output_source_extension"
+
+output_header_path="$output_dir_path/$header_file_name"
+output_source_path="$output_dir_path/$source_file_name"
+
+printf_verbose 'Saving amalgamated files to:\n%s/\n' "$output_dir_path"
+if [ "$header_only" == true ]
+then
+	output_source_path="$output_header_path"
+	printf_verbose '└── %s\n\n' "$header_file_name"
+elif [ "$source_only" == true ]
+then
+	output_header_path="$output_source_path"
+	printf_verbose '└── %s\n\n' "$source_file_name"
+else
+	printf_verbose '├── %s\n└── %s\n\n' "$header_file_name" "$source_file_name"
+fi
+
+
+rm -f "$output_header_path" "$output_source_path"
+
+included_files+=("$output_header_path")
+
+printf_verbose 'Amalgamating headers...\n'
+if [ "$source_only" != true ]
+then
+	file_printf "$output_header_path" '#pragma once\n'
+fi
+
+merge_headers "$output_header_path" "${header_files[@]}"
+
+printf_verbose '\nAmalgamating sources...\n'
+if [ "$source_only" != true ]
+then
+	file_printf "$output_source_path" '#include "%s"\n' "$(basename $header_file_name)"
+fi
+
+merge_sources "$output_source_path" "${source_files[@]}"
+
+printf_verbose '\nDone.\n\n'
+
