@@ -36,6 +36,11 @@ IAGSEditor *editor; // Editor interface
 
 const char *ourScriptHeader =
         "  \r\n"
+        "enum BodyType {  \r\n"
+        "  eBodyDynamic=0,\r\n"
+        "  eBodyStatic=1,\r\n"
+        "};  \r\n"
+        "  \r\n"
         "managed struct b2dBody{ \r\n"
         "  int X; \r\n"
         "  int Y; \r\n"
@@ -82,9 +87,19 @@ const char *ourScriptHeader =
         "struct AgsBox2D { \r\n"
         "  \r\n"
         "  /// Creates a World  \r\n"
-        "  import static void newWorld(int gravityX, int gravityY, bool doSleep = 0); \r\n"
+        "  import static b2dWorld* newWorld(int gravityX, int gravityY, bool doSleep = 0); \r\n"
         "  \r\n"
-        "  import static bool Overlapping(int destination, int sprite, int seed, bool periodic_input, bool periodic_output, int N=3, int ground=0); \r\n"
+        "  /// Creates a Body  \r\n"
+        "  import static b2dBody* newBody(b2dWorld* world, int x, int y, BodyType type); \r\n"
+        "  \r\n"
+        "  /// Creates a Rectangular Shape  \r\n"
+        "  import static b2Shape* newShapeRect(int x, int y, int width, int height); \r\n"
+        "  \r\n"
+        "  /// Creates a Circle Shape  \r\n"
+        "  import static b2Shape* newShapeCircle(int radius); \r\n"
+        "  \r\n"
+        "  /// Creates a Fixture  \r\n"
+        "  import static b2Fixture* newFixture(b2Shape* Shape, b2dBody* Body, int density = 0); \r\n"
         "}; \r\n";
 
 
