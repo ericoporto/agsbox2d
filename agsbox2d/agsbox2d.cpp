@@ -2,6 +2,7 @@
 
 #pragma region Defines_and_Includes
 
+#include "Box2D.h"
 #include "core/platform.h"
 
 #define MIN_EDITOR_VERSION 1
@@ -22,9 +23,14 @@
 #endif
 
 #include "plugin/agsplugin.h"
-
 #include "agsbox2d.h"
 
+#include "AgsWorld.h"
+#include "AgsBody.h"
+#include "AgsShape.h"
+#include "AgsShapeCircle.h"
+#include "AgsShapeRect.h"
+	
 
 #if AGS_PLATFORM_OS_WINDOWS
 
