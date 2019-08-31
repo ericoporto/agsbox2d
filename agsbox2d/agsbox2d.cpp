@@ -263,7 +263,7 @@ AgsShape* agsbox2d_newCircleShape(uint32_t radius, uint32_t x, uint32_t y) {
 AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density) {
 	float32 fdensity;
 	if (density == 0) {
-		fdensity = 1.0f;
+		fdensity = 0.0f;
 	}
 	else {
 		fdensity = ToNormalFloat(density);
@@ -411,15 +411,15 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 		engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
 
-		engine->RegisterScriptFunction("Body::get_fX^0", (void*)AgsBody_GetPositionX);
-		engine->RegisterScriptFunction("Body::set_fX^1", (void*)AgsBody_SetPositionX);
-		engine->RegisterScriptFunction("Body::get_fY^0", (void*)AgsBody_GetPositionY);
-		engine->RegisterScriptFunction("Body::set_fY^1", (void*)AgsBody_SetPositionY);
+		engine->RegisterScriptFunction("Body::get_fX", (void*)AgsBody_GetPositionX);
+		engine->RegisterScriptFunction("Body::set_fX", (void*)AgsBody_SetPositionX);
+		engine->RegisterScriptFunction("Body::get_fY", (void*)AgsBody_GetPositionY);
+		engine->RegisterScriptFunction("Body::set_fY", (void*)AgsBody_SetPositionY);
 
-		engine->RegisterScriptFunction("Body::get_X^0", (void*)AgsBody_GetIntPositionX);
-		engine->RegisterScriptFunction("Body::set_X^1", (void*)AgsBody_SetIntPositionX);
-		engine->RegisterScriptFunction("Body::get_Y^0", (void*)AgsBody_GetIntPositionY);
-		engine->RegisterScriptFunction("Body::set_Y^1", (void*)AgsBody_SetIntPositionY);
+		engine->RegisterScriptFunction("Body::get_X", (void*)AgsBody_GetIntPositionX);
+		engine->RegisterScriptFunction("Body::set_X", (void*)AgsBody_SetIntPositionX);
+		engine->RegisterScriptFunction("Body::get_Y", (void*)AgsBody_GetIntPositionY);
+		engine->RegisterScriptFunction("Body::set_Y", (void*)AgsBody_SetIntPositionY);
 
 		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 

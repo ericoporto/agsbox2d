@@ -4,8 +4,8 @@
 AgsShapeRect::AgsShapeRect(float32 w, float32 h, float32 x, float32 y) {
 	B2AgsShapeRect = new b2PolygonShape();
 	B2AgsShapeRect->SetAsBox(
-		Scale::ScaleDown(h / 2.0f), Scale::ScaleDown(w / 2.0f), 
-		Scale::ScaleDown(b2Vec2(h, w)), 0.0);
+		Scale::ScaleDown(w / 2.0f), Scale::ScaleDown(h / 2.0f));
+	//	Scale::ScaleDown(b2Vec2(h, w)), 0);
 }
 
 AgsShapeRect::~AgsShapeRect(void)

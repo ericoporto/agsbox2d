@@ -11,7 +11,7 @@
 class AgsFixture
 {
 public:
-	AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density = 1.0f);
+	AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density);
 	~AgsFixture(void);
 	AgsBody* Body;
 	AgsShape* Shape;
