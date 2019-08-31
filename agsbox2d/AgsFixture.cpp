@@ -31,7 +31,7 @@ extern IAGSEngine* engine;
 AgsFixtureInterface AgsFixture_Interface;
 AgsFixtureReader AgsFixture_Reader;
 
-const char* AgsFixtureInterface::name = "AgsFixture";
+const char* AgsFixtureInterface::name = "Fixture";
 
 //------------------------------------------------------------------------------
 

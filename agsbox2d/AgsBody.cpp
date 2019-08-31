@@ -48,7 +48,7 @@ extern IAGSEngine* engine;
 AgsBodyInterface AgsBody_Interface;
 AgsBodyReader AgsBody_Reader;
 
-const char* AgsBodyInterface::name = "AgsBody";
+const char* AgsBodyInterface::name = "Body";
 
 //------------------------------------------------------------------------------
 

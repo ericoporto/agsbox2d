@@ -404,9 +404,35 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
                 engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
         //register functions
+		engine->AddManagedObjectReader(AgsWorldInterface::name, &AgsWorld_Reader);
+		engine->AddManagedObjectReader(AgsBodyInterface::name, &AgsBody_Reader);
+		engine->AddManagedObjectReader(AgsShapeInterface::name, &AgsShape_Reader);
+		engine->AddManagedObjectReader(AgsShapeRectInterface::name, &AgsShapeRect_Reader);
+		engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
+		engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
 
-      //  engine->RegisterScriptFunction("AgsBox2D::newWorld^7", (void*)AgsFastWFC_Overlapping);
+		engine->RegisterScriptFunction("Body::get_fX^0", (void*)AgsBody_GetPositionX);
+		engine->RegisterScriptFunction("Body::set_fX^1", (void*)AgsBody_SetPositionX);
+		engine->RegisterScriptFunction("Body::get_fY^0", (void*)AgsBody_GetPositionY);
+		engine->RegisterScriptFunction("Body::set_fY^1", (void*)AgsBody_SetPositionY);
 
+		engine->RegisterScriptFunction("Body::get_X^0", (void*)AgsBody_GetIntPositionX);
+		engine->RegisterScriptFunction("Body::set_X^1", (void*)AgsBody_SetIntPositionX);
+		engine->RegisterScriptFunction("Body::get_Y^0", (void*)AgsBody_GetIntPositionY);
+		engine->RegisterScriptFunction("Body::set_Y^1", (void*)AgsBody_SetIntPositionY);
+
+		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
+
+		engine->RegisterScriptFunction("Shape::get_AsCircle^0", (void*)AgsShape_AsCircle);
+		engine->RegisterScriptFunction("Shape::get_AsRectangle^0", (void*)AgsShape_AsRectangle);
+				
+		engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
+		engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
+		engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
+		engine->RegisterScriptFunction("AgsBox2D::CreateBody^4", (void*)agsbox2d_newBody);
+		engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
+		engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
+		engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
 }
 
 //------------------------------------------------------------------------------

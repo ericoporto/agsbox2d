@@ -25,7 +25,7 @@ extern IAGSEngine* engine;
 AgsShapeInterface AgsShape_Interface;
 AgsShapeReader AgsShape_Reader;
 
-const char* AgsShapeInterface::name = "AgsShape";
+const char* AgsShapeInterface::name = "Shape";
 
 //------------------------------------------------------------------------------
 

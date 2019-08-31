@@ -21,7 +21,7 @@ extern IAGSEngine* engine;
 AgsShapeRectInterface AgsShapeRect_Interface;
 AgsShapeRectReader AgsShapeRect_Reader;
 
-const char* AgsShapeRectInterface::name = "AgsShapeRect";
+const char* AgsShapeRectInterface::name = "ShapeRectangle";
 
 //------------------------------------------------------------------------------
 

@@ -29,7 +29,7 @@ extern IAGSEngine* engine;
 AgsWorldInterface AgsWorld_Interface;
 AgsWorldReader AgsWorld_Reader;
 
-const char* AgsWorldInterface::name = "AgsWorld";
+const char* AgsWorldInterface::name = "World";
 
 //------------------------------------------------------------------------------
 

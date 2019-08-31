@@ -19,7 +19,7 @@ extern IAGSEngine* engine;
 AgsShapeCircleInterface AgsShapeCircle_Interface;
 AgsShapeCircleReader AgsShapeCircle_Reader;
 
-const char* AgsShapeCircleInterface::name = "AgsShapeCircle";
+const char* AgsShapeCircleInterface::name = "ShapeCircle";
 
 //------------------------------------------------------------------------------
 
