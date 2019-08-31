@@ -4,8 +4,9 @@
 #define _AGS_WORLD_H
 
 #include "Box2D.h"
-#include "AgsBody.h"
 #include "plugin/agsplugin.h"
+
+class AgsBody; // forward declaration, we need AgsBody.h on the cpp
 
 class AgsWorld
 {

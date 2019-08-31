@@ -3,11 +3,11 @@
 #include "AgsShapeRect.h"
 
 AgsShape::AgsShape(AgsShapeCircle* shapeCircle) {
-	BAgsShapeCircle = shapeCircle;
+	ShapeCircle = shapeCircle;
 }
 
 AgsShape::AgsShape(AgsShapeRect* shapeRect) {
-	BAgsShapeRect = shapeRect;
+	ShapeRect = shapeRect;
 }
 
 AgsShape::~AgsShape(void)

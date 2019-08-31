@@ -1,6 +1,7 @@
 #include "AgsShapeCircle.h"
 
 AgsShapeCircle::AgsShapeCircle(float32 radius) {
+	B2AgsShapeCircle = new b2CircleShape();
 	B2AgsShapeCircle->m_radius = radius;
 }
 

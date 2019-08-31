@@ -1,24 +1,22 @@
 #pragma once
 
-#ifndef _AGS_BODY_H
-#define _AGS_BODY_H
+#ifndef _AGS_FIXTURE_H
+#define _AGS_FIXTURE_H
 
 #include "Box2D.h"
 #include "plugin/agsplugin.h"
+#include "AgsBody.h"
+#include "AgsShape.h"
 
-class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
-
-class AgsBody
+class AgsFixture
 {
 public:
-	AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
-	~AgsBody(void);
-	AgsWorld* World;
-	b2Body* B2AgsBody;
-	b2BodyDef B2AgsBodyDef;
-	float32 GetPosX();
-	float32 GetPosY();
-	void ApplyForce(float32 force_x, float32 force_y);
+	AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density = 1.0f);
+	~AgsFixture(void);
+	AgsBody* Body;
+	AgsShape* Shape;
+	b2Fixture* B2AgsFixture;
+	b2FixtureDef B2AgsFixtureDef;
 	int32 ID;
 };
 
@@ -27,12 +25,12 @@ public:
 //------------------------------------------------------------------------------
 // AGS interface instances
 
-class AgsBodyInterface : public IAGSScriptManagedObject
+class AgsFixtureInterface : public IAGSScriptManagedObject
 {
 public:
 	static const char* name;
 
-	AgsBodyInterface() {};
+	AgsFixtureInterface() {};
 
 	virtual int Dispose(const char* address, bool force);
 	virtual const char* GetType() { return (name); }
@@ -42,11 +40,11 @@ public:
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-class AgsBodyReader : public IAGSManagedObjectReader
+class AgsFixtureReader : public IAGSManagedObjectReader
 {
 public:
 
-	AgsBodyReader() {}
+	AgsFixtureReader() {}
 
 	virtual void Unserialize(int key, const char* serializedData, int dataSize);
 
@@ -54,11 +52,11 @@ public:
 
 //------------------------------------------------------------------------------
 
-extern AgsBodyInterface AgsBodyInterface_Interface;
-extern AgsBodyReader AgsBodyReader_Reader;
+extern AgsFixtureInterface AgsFixtureInterface_Interface;
+extern AgsFixtureReader AgsFixtureReader_Reader;
 
 //------------------------------------------------------------------------------
 
-#endif /* _AGS_BODY_H */
+#endif /* _AGS_FIXTURE_H */
 
 //..............................................................................

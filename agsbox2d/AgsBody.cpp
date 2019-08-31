@@ -1,11 +1,12 @@
 #include "AgsBody.h"
+#include "AgsWorld.h"
 
-AgsBody::AgsBody(b2World* world, float32 x, float32 y, b2BodyType bodytype) {
+AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	B2AgsBodyDef.position.Set(x, y);
 	B2AgsBodyDef.type = bodytype;
 	B2AgsBodyDef.fixedRotation = true;
-	B2AgsBody = world->CreateBody(&B2AgsBodyDef);
-	B2AgsWorld = world;
+	B2AgsBody = world->B2AgsWorld->CreateBody(&B2AgsBodyDef);
+	World = world;
 }
 
 void AgsBody::ApplyForce(float32 force_x, float32 force_y) {

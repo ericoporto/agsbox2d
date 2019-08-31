@@ -24,6 +24,7 @@
 
 #include "plugin/agsplugin.h"
 #include "agsbox2d.h"
+#include "AgsNumberInterface.h"
 
 #include "AgsWorld.h"
 #include "AgsBody.h"

@@ -15,8 +15,8 @@ public:
 	AgsShape(AgsShapeRect* shapeRect);
 	~AgsShape(void);
 	b2Shape* B2AgsShape;
-	AgsShapeCircle* BAgsShapeCircle;
-	AgsShapeRect* BAgsShapeRect;
+	AgsShapeCircle* ShapeCircle;
+	AgsShapeRect* ShapeRect;
 	int32 ID;
 };
 

@@ -1,4 +1,5 @@
 #include "AgsWorld.h"
+#include "AgsBody.h"
 
 AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 	B2AgsWorld = new b2World(b2Vec2(gravityX, gravityY));
@@ -6,7 +7,7 @@ AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 
 
 AgsBody* AgsWorld::NewBody(float32 x, float32 y) {
-	return new AgsBody(B2AgsWorld, x, y);
+	return new AgsBody(this, x, y);
 }
 
 AgsWorld::~AgsWorld(void)
