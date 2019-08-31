@@ -5,6 +5,7 @@
 
 #include "Box2D.h"
 #include "plugin/agsplugin.h"
+#include <vector>
 
 class AgsBody; // forward declaration, we need AgsBody.h on the cpp
 
@@ -15,8 +16,10 @@ public:
 	~AgsWorld(void);
 	b2World* B2AgsWorld;
 	AgsBody* NewBody(float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
+	void DestroyBody(AgsBody* body);
 	void Step(float32 dt, int velocityIterations, int positionIterations);
 	int32 ID;
+	//std::vector<AgsBody*> AgsBodyList;
 };
 
 

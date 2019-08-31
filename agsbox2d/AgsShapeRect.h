@@ -8,10 +8,21 @@
 
 class AgsShapeRect
 {
+private:
+	float32 Width;
+	float32 Height;
 public:
 	AgsShapeRect(float32 w, float32 h, float32 x, float32 y);
 	~AgsShapeRect(void);
 	b2PolygonShape  * B2AgsShapeRect;
+	float32 GetWidthF();
+	void SetWidthF(float32 wf);
+	int32 GetWidth();
+	void SetWidth(int32 w);
+	float32 GetHeightF();
+	void SetHeightF(float32 hf);
+	int32 GetHeight();
+	void SetHeight(int32 h);
 };
 
 

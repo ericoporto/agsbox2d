@@ -37,6 +37,13 @@ const char* AgsFixtureInterface::name = "Fixture";
 
 int AgsFixtureInterface::Dispose(const char* address, bool force)
 {
+	//if (((AgsFixture*)address)->Body != NULL && 
+	//	(((AgsFixture*)address)->Body->B2AgsBody != NULL) && 
+	//	(((AgsFixture*)address)->B2AgsFixture != NULL)){
+
+	//	((AgsFixture*)address)->Body->B2AgsBody->DestroyFixture(((AgsFixture*)address)->B2AgsFixture);
+	//}
+
 	delete ((AgsFixture*)address);
 	return (1);
 }

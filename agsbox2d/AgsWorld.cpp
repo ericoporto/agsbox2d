@@ -9,7 +9,15 @@ AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 
 
 AgsBody* AgsWorld::NewBody(float32 x, float32 y, b2BodyType bodytype) {
-	return new AgsBody(this, x, y, bodytype);
+	AgsBody* body = new AgsBody(this, x, y, bodytype);
+	//AgsBodyList.push_back(body);
+	return body;
+}
+
+void AgsWorld::DestroyBody(AgsBody* body) {
+	B2AgsWorld->DestroyBody(body->B2AgsBody);
+	delete body;
+	body = NULL;
 }
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {

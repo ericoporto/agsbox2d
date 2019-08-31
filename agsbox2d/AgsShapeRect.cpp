@@ -3,6 +3,8 @@
 
 AgsShapeRect::AgsShapeRect(float32 w, float32 h, float32 x, float32 y) {
 	B2AgsShapeRect = new b2PolygonShape();
+	Width = w;
+	Height = h;
 	B2AgsShapeRect->SetAsBox(
 		Scale::ScaleDown(w / 2.0f), Scale::ScaleDown(h / 2.0f),
 		Scale::ScaleDown(b2Vec2(x, y)), 0.0);
@@ -12,6 +14,45 @@ AgsShapeRect::~AgsShapeRect(void)
 {
 }
 
+void AgsShapeRect::SetWidthF(float32 wf) {
+	Width = wf;
+	B2AgsShapeRect->SetAsBox(
+		Scale::ScaleDown(wf / 2.0f),  Scale::ScaleDown(Height / 2.0f),
+		B2AgsShapeRect->m_centroid, 0.0);
+}
+
+float32 AgsShapeRect::GetWidthF() {
+	return Width;
+}
+
+float32 AgsShapeRect::GetHeightF() {
+	return Height;
+}
+
+void AgsShapeRect::SetHeightF(float32 hf) {
+	Height = hf;
+	B2AgsShapeRect->SetAsBox(
+		Scale::ScaleDown(Width / 2.0f), Scale::ScaleDown(hf / 2.0f),
+		B2AgsShapeRect->m_centroid, 0.0);
+}
+
+
+int32 AgsShapeRect::GetWidth() {
+	return (int32) GetWidthF();
+}
+
+void AgsShapeRect::SetWidth(int32 w) {
+	SetWidthF((float32)w);
+}
+
+
+int32 AgsShapeRect::GetHeight() {
+	return (int32)GetHeightF();
+}
+
+void AgsShapeRect::SetHeight(int32 h) {
+	SetHeightF((float32)h);
+}
 
 //------------------------------------------------------------------------------
 

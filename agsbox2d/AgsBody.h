@@ -23,6 +23,17 @@ public:
 	void SetPos(float32 x, float32 y);
 
 	void ApplyForce(float32 force_x, float32 force_y);
+	void SetLinearVelocity(float32 vel_x, float32 vel_y);
+	void ApplyAngularImpulse(float32 impulse);
+	float32 GetLinearVelocityX();
+	float32 GetLinearVelocityY();
+
+	bool GetFixedRotation();
+	void SetFixedRotation(bool fixed);
+
+	float32 GetAngle();
+	void SetAngle(float32 angle);
+
 	int32 ID;
 };
 

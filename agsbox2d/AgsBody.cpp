@@ -15,6 +15,22 @@ void AgsBody::ApplyForce(float32 force_x, float32 force_y) {
 	B2AgsBody->ApplyForceToCenter(Scale::ScaleDown(b2Vec2(force_x, force_y)), true);
 }
 
+void AgsBody::SetLinearVelocity(float32 vel_x, float32 vel_y) {
+	B2AgsBody->SetLinearVelocity(Scale::ScaleDown(b2Vec2(vel_x, vel_y)));
+}
+
+void AgsBody::ApplyAngularImpulse(float32 impulse) {
+	B2AgsBody->ApplyAngularImpulse(Scale::ScaleDown(impulse), true);
+}
+
+float32 AgsBody::GetLinearVelocityX() {
+	return Scale::ScaleUp(B2AgsBody->GetLinearVelocity().x);
+}
+
+float32 AgsBody::GetLinearVelocityY() {
+	return Scale::ScaleUp(B2AgsBody->GetLinearVelocity().y);
+}
+
 float32 AgsBody::GetPosX() {
 	return Scale::ScaleUp(B2AgsBody->GetPosition().x);
 }
@@ -33,6 +49,22 @@ void AgsBody::SetPosY(float32 y) {
 
 void AgsBody::SetPos(float32 x, float32 y) {
 	B2AgsBody->SetTransform(Scale::ScaleDown(b2Vec2(x,y)), B2AgsBody->GetAngle());
+}
+
+bool AgsBody::GetFixedRotation() {
+	return B2AgsBody->IsFixedRotation();
+}
+
+void AgsBody::SetFixedRotation(bool fixed) {
+	B2AgsBody->SetFixedRotation(fixed);
+}
+
+float32 AgsBody::GetAngle() {
+	return B2AgsBody->GetAngle();
+}
+
+void AgsBody::SetAngle(float32 angle) {
+	B2AgsBody->SetTransform(B2AgsBody->GetPosition(), angle);
 }
 
 AgsBody::~AgsBody(void)
@@ -54,6 +86,25 @@ const char* AgsBodyInterface::name = "Body";
 
 int AgsBodyInterface::Dispose(const char* address, bool force)
 {
+	//if (((AgsBody*)address)->World != NULL && 
+	//	((AgsBody*)address)->World->B2AgsWorld != NULL && 
+	//	((AgsBody*)address)->B2AgsBody != NULL &&
+	//	((AgsBody*)address)->World->B2AgsWorld->GetBodyCount() != 0) {
+
+	//	for (b2Body* body = ((AgsBody*)address)->World->B2AgsWorld->GetBodyList(); 
+	//		body; 
+	//		body = body->GetNext())
+	//	{
+
+	//		if (body == ((AgsBody*)address)->B2AgsBody) {
+	//			((AgsBody*)address)->World->B2AgsWorld->DestroyBody(((AgsBody*)address)->B2AgsBody);
+	//			((AgsBody*)address)->B2AgsBody = NULL;
+	//			break;
+	//		}
+
+	//	}
+
+	//}
 	delete ((AgsBody*)address);
 	return (1);
 }

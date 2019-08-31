@@ -56,9 +56,15 @@ const char *ourScriptHeader =
 "managed struct Body { \r\n"
 "  import attribute float fX; \r\n"
 "  import attribute float fY; \r\n"
+"  import attribute float Angle; \r\n"
 "  import attribute int X; \r\n"
 "  import attribute int Y; \r\n"
+"  import attribute bool FixedRotation; \r\n"
+"  readonly import attribute float LinearVelocityX; \r\n"
+"  readonly import attribute float LinearVelocityY; \r\n"
 "  import void ApplyForce(float fx, float fy);\r\n"
+"  import void SetLinearVelocity(float fx, float fy);\r\n"
+"  import void ApplyAngularImpulse(float impulse);\r\n"
 "}; \r\n"
 " \r\n"
 "managed struct World { \r\n"
@@ -84,6 +90,11 @@ const char *ourScriptHeader =
 "}; \r\n"
 " \r\n"
 "managed struct ShapeRectangle extends Shape { \r\n"
+"  \r\n"
+"  import attribute float fWidth; \r\n"
+"  import attribute float fHeight; \r\n"
+"  import attribute int Height; \r\n"
+"  import attribute int Width; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -235,6 +246,10 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 	return body;
 }
 
+void agsbox2d_DestroyBody(AgsWorld* world, AgsBody* body) {
+	world->DestroyBody(body);
+}
+
 AgsShape* agsbox2d_newRectangleShape(uint32_t w, uint32_t h, uint32_t x, uint32_t y) {
 	float32 fx, fy, fw, fh;
 
@@ -363,9 +378,80 @@ void AgsBody_ApplyForce(AgsBody* self, uint32_t force_x, uint32_t force_y) {
 	self->ApplyForce(f_forcex, f_forcey);
 }
 
+void AgsBody_SetLinearVelocity(AgsBody* self, uint32_t vel_x, uint32_t vel_y) {
+	float32 f_vel_x = ToNormalFloat(vel_x);
+	float32 f_vel_y = ToNormalFloat(vel_y);
+
+	self->SetLinearVelocity(f_vel_x, f_vel_y);
+}
+
+uint32_t AgsBody_GetLinearVelocityX(AgsBody* self) {
+	return ToAgsFloat(self->GetLinearVelocityX());
+}
+
+uint32_t AgsBody_GetLinearVelocityY(AgsBody* self) {
+	return ToAgsFloat(self->GetLinearVelocityY());
+}
+
+void AgsBody_SetFixedRotation(AgsBody* self, bool fixed) {
+	self->SetFixedRotation(fixed);
+}
+
+bool AgsBody_GetFixedRotation(AgsBody* self) {
+	return self->GetFixedRotation();
+}
+
+void AgsBody_ApplyAngularImpulse(AgsBody* self, uint32_t impulse) {
+	self->ApplyAngularImpulse(ToNormalFloat(impulse));
+}
+
+uint32_t AgsBody_GetAngle(AgsBody* self) {
+	return ToAgsFloat(self->GetAngle());
+}
+
+void AgsBody_SetAngle(AgsBody* self, uint32_t angle) {
+	float32 fangle = ToNormalFloat(angle);
+
+	self->SetAngle(fangle);
+}
+
 #pragma endregion // AgsBody_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsShapeRect_ScriptAPI
+
+uint32_t AgsShapeRect_GetWidthF(AgsShapeRect* self) {
+	return ToAgsFloat(self->GetWidthF());
+}
+
+void AgsShapeRect_SetWidthF(AgsShapeRect* self, uint32_t w) {
+	float32 fw = ToNormalFloat(w);
+	self->SetWidthF(fw);
+}
+
+uint32_t AgsShapeRect_GetHeightF(AgsShapeRect* self) {
+	return ToAgsFloat(self->GetHeightF());
+}
+
+void AgsShapeRect_SetHeightF(AgsShapeRect* self, uint32_t h) {
+	float32 fh = ToNormalFloat(h);
+	self->SetHeightF(fh);
+}
+
+int32 AgsShapeRect_GetWidth(AgsShapeRect* self) {
+	return self->GetWidthF();
+}
+
+void AgsShapeRect_SetWidth(AgsShapeRect* self, int32 w) {
+	self->SetWidth(w);
+}
+
+int32 AgsShapeRect_GetHeight(AgsShapeRect* self) {
+	return self->GetHeightF();
+}
+
+void AgsShapeRect_SetHeight(AgsShapeRect* self, int32 h) {
+	self->SetHeight(h);
+}
 
 #pragma endregion // AgsShapeRect_ScriptAPI
 //-----------------------------------------------------------------------------
@@ -422,6 +508,10 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 		engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
 
+		engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
+		engine->RegisterScriptFunction("Body::get_FixedRotation", (void*)AgsBody_GetFixedRotation);
+		engine->RegisterScriptFunction("Body::get_LinearVelocityX", (void*)AgsBody_GetLinearVelocityX);
+		engine->RegisterScriptFunction("Body::get_LinearVelocityY", (void*)AgsBody_GetLinearVelocityY);
 		engine->RegisterScriptFunction("Body::get_fX", (void*)AgsBody_GetPositionX);
 		engine->RegisterScriptFunction("Body::set_fX", (void*)AgsBody_SetPositionX);
 		engine->RegisterScriptFunction("Body::get_fY", (void*)AgsBody_GetPositionY);
@@ -430,12 +520,26 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("Body::set_X", (void*)AgsBody_SetIntPositionX);
 		engine->RegisterScriptFunction("Body::get_Y", (void*)AgsBody_GetIntPositionY);
 		engine->RegisterScriptFunction("Body::set_Y", (void*)AgsBody_SetIntPositionY);
+		engine->RegisterScriptFunction("Body::get_Angle", (void*)AgsBody_GetAngle);
+		engine->RegisterScriptFunction("Body::set_Angle", (void*)AgsBody_SetAngle);
 		engine->RegisterScriptFunction("Body::ApplyForce^2", (void*)AgsBody_ApplyForce);
+		engine->RegisterScriptFunction("Body::SetLinearVelocity^2", (void*)AgsBody_SetLinearVelocity);
+		engine->RegisterScriptFunction("Body::ApplyAngularImpulse^1", (void*)AgsBody_ApplyAngularImpulse);
 
 		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 
-		engine->RegisterScriptFunction("Shape::get_AsCircle^0", (void*)AgsShape_AsCircle);
-		engine->RegisterScriptFunction("Shape::get_AsRectangle^0", (void*)AgsShape_AsRectangle);
+		engine->RegisterScriptFunction("Shape::get_AsCircle", (void*)AgsShape_AsCircle);
+		engine->RegisterScriptFunction("Shape::get_AsRectangle", (void*)AgsShape_AsRectangle);
+
+		engine->RegisterScriptFunction("ShapeRectangle::get_fWidth", (void*)AgsShapeRect_GetWidthF);
+		engine->RegisterScriptFunction("ShapeRectangle::set_fWidth", (void*)AgsShapeRect_SetWidthF);
+		engine->RegisterScriptFunction("ShapeRectangle::get_fHeight", (void*)AgsShapeRect_GetHeightF);
+		engine->RegisterScriptFunction("ShapeRectangle::set_fHeight", (void*)AgsShapeRect_SetHeightF);
+		engine->RegisterScriptFunction("ShapeRectangle::get_Width", (void*)AgsShapeRect_GetWidth);
+		engine->RegisterScriptFunction("ShapeRectangle::set_Width", (void*)AgsShapeRect_SetWidth);
+		engine->RegisterScriptFunction("ShapeRectangle::get_Height", (void*)AgsShapeRect_GetHeight);
+		engine->RegisterScriptFunction("ShapeRectangle::set_Height", (void*)AgsShapeRect_SetHeight);
+
 				
 		engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 		engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
