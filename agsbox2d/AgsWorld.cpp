@@ -6,8 +6,8 @@ AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 }
 
 
-AgsBody* AgsWorld::NewBody(float32 x, float32 y) {
-	return new AgsBody(this, x, y);
+AgsBody* AgsWorld::NewBody(float32 x, float32 y, b2BodyType bodytype) {
+	return new AgsBody(this, x, y, bodytype);
 }
 
 AgsWorld::~AgsWorld(void)

@@ -14,7 +14,7 @@ public:
 	AgsWorld(float32 gravityX, float32 gravityY);
 	~AgsWorld(void);
 	b2World* B2AgsWorld;
-	AgsBody* NewBody(float32 x, float32 y);
+	AgsBody* NewBody(float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
 	int32 ID;
 };
 

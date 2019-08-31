@@ -47,8 +47,9 @@ IAGSEditor *editor; // Editor interface
 const char *ourScriptHeader =
         "  \r\n"
         "enum BodyType {  \r\n"
-        "  eBodyDynamic=0,\r\n"
-        "  eBodyStatic=1,\r\n"
+        "  eBodyStatic=0,\r\n"
+        "  eBodyKinematic=1,\r\n"
+        "  eBodyDynamic=2,\r\n"
         "};  \r\n"
         "  \r\n"
         "managed struct b2dBody{ \r\n"
@@ -191,12 +192,35 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 IAGSEngine* engine;
 
 AgsWorld* agsbox2d_newWorld(uint32_t gravityX, uint32_t gravityY) {
-	AgsWorld* world = new AgsWorld(ToNormalFloat(gravityX), ToNormalFloat(gravityY));
+	float32 gx = ToNormalFloat(gravityX);
+	float32 gy = ToNormalFloat(gravityY);
+
+	AgsWorld* world = new AgsWorld(gx, gy);
 
 	engine->RegisterManagedObject(world, &AgsWorld_Interface);
 
 	return world;
 }
+
+AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t bodytype) {
+	float32 bx = ToNormalFloat(x);
+	float32 by = ToNormalFloat(y);
+	b2BodyType bt;
+	if (bodytype == 0)
+		bt = b2_staticBody;
+	else if (bodytype == 1)
+		bt = b2_kinematicBody;
+	else
+		bt = b2_dynamicBody;
+
+	AgsBody* body = world->NewBody(bx, by, bt);
+
+	engine->RegisterManagedObject(body, &AgsBody_Interface);
+
+	return body;
+}
+
+
 
 #define REGISTER(x) engine->RegisterScriptFunction(#x, (void *) (x));
 #define STRINGIFY(s) STRINGIFY_X(s)
