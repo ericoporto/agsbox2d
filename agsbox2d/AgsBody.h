@@ -18,6 +18,10 @@ public:
 	b2BodyDef B2AgsBodyDef;
 	float32 GetPosX();
 	float32 GetPosY();
+	void SetPosX(float32 x);
+	void SetPosY(float32 y);
+	void SetPos(float32 x, float32 y);
+
 	void ApplyForce(float32 force_x, float32 force_y);
 	int32 ID;
 };

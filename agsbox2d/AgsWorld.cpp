@@ -12,6 +12,10 @@ AgsBody* AgsWorld::NewBody(float32 x, float32 y, b2BodyType bodytype) {
 	return new AgsBody(this, x, y, bodytype);
 }
 
+void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {
+	B2AgsWorld->Step(dt, velocityIterations, positionIterations);
+}
+
 AgsWorld::~AgsWorld(void)
 {
 }

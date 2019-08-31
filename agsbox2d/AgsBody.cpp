@@ -23,6 +23,18 @@ float32 AgsBody::GetPosY() {
 	return Scale::ScaleUp(B2AgsBody->GetPosition().y);
 }
 
+void AgsBody::SetPosX(float32 x) {
+	B2AgsBody->SetTransform(b2Vec2(Scale::ScaleDown(x), B2AgsBody->GetPosition().y), B2AgsBody->GetAngle());
+}
+
+void AgsBody::SetPosY(float32 y) {
+	B2AgsBody->SetTransform(b2Vec2(B2AgsBody->GetPosition().x, Scale::ScaleDown(y)), B2AgsBody->GetAngle());
+}
+
+void AgsBody::SetPos(float32 x, float32 y) {
+	B2AgsBody->SetTransform(Scale::ScaleDown(b2Vec2(x,y)), B2AgsBody->GetAngle());
+}
+
 AgsBody::~AgsBody(void)
 {
 }

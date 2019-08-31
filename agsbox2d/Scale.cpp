@@ -1,6 +1,6 @@
 #include "Scale.h"
 
-float32 Meter;
+float32 Meter = 32.0f;
 
 Scale* Scale::i()
 {
