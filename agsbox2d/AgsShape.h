@@ -52,8 +52,8 @@ public:
 
 //------------------------------------------------------------------------------
 
-extern AgsShapeInterface AgsShapeInterface_Interface;
-extern AgsShapeReader AgsShapeReader_Reader;
+extern AgsShapeInterface AgsShape_Interface;
+extern AgsShapeReader AgsShape_Reader;
 
 //------------------------------------------------------------------------------
 

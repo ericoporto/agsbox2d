@@ -46,8 +46,8 @@ public:
 
 //------------------------------------------------------------------------------
 
-extern AgsShapeCircleInterface AgsShapeCircleInterface_Interface;
-extern AgsShapeCircleReader AgsShapeCircleReader_Reader;
+extern AgsShapeCircleInterface AgsShapeCircle_Interface;
+extern AgsShapeCircleReader AgsShapeCircle_Reader;
 
 //------------------------------------------------------------------------------
 

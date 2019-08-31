@@ -54,8 +54,8 @@ public:
 
 //------------------------------------------------------------------------------
 
-extern AgsBodyInterface AgsBodyInterface_Interface;
-extern AgsBodyReader AgsBodyReader_Reader;
+extern AgsBodyInterface AgsBody_Interface;
+extern AgsBodyReader AgsBody_Reader;
 
 //------------------------------------------------------------------------------
 

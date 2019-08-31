@@ -24,13 +24,16 @@
 
 #include "plugin/agsplugin.h"
 #include "agsbox2d.h"
+
 #include "AgsNumberInterface.h"
+#include "Scale.h"
 
 #include "AgsWorld.h"
 #include "AgsBody.h"
 #include "AgsShape.h"
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
+#include "AgsFixture.h"
 	
 
 #if AGS_PLATFORM_OS_WINDOWS
@@ -94,7 +97,7 @@ const char *ourScriptHeader =
         "struct AgsBox2D { \r\n"
         "  \r\n"
         "  /// Creates a World  \r\n"
-        "  import static b2dWorld* newWorld(int gravityX, int gravityY, bool doSleep = 0); \r\n"
+        "  import static b2dWorld* newWorld(float gravityX, float gravityY); \r\n"
         "  \r\n"
         "  /// Creates a Body  \r\n"
         "  import static b2dBody* newBody(b2dWorld* world, int x, int y, BodyType type); \r\n"
@@ -186,6 +189,14 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 
 //define engine
 IAGSEngine* engine;
+
+AgsWorld* agsbox2d_newWorld(uint32_t gravityX, uint32_t gravityY) {
+	AgsWorld* world = new AgsWorld(ToNormalFloat(gravityX), ToNormalFloat(gravityY));
+
+	engine->RegisterManagedObject(world, &AgsWorld_Interface);
+
+	return world;
+}
 
 #define REGISTER(x) engine->RegisterScriptFunction(#x, (void *) (x));
 #define STRINGIFY(s) STRINGIFY_X(s)

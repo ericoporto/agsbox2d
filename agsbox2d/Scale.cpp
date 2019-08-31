@@ -8,18 +8,57 @@ Scale::~Scale()
 {
 }
 
-void Scale::SetScale(int meter) {
-
+void Scale::SetMeter(float scale)
+{
+	if (scale < 1) Meter = 1.0f;
+	Meter = scale;
 }
 
-void Scale::GetScale(int meter) {
-
+float Scale::GetMeter()
+{
+	return Meter;
 }
 
-int Scale::ScaleDownInt(float coordinate) {
-	return static_cast<int>(coordinate / _Meter);
+void Scale::ScaleDown(float32 &x, float32 &y)
+{
+	x /= Meter;
+	y /= Meter;
 }
 
-int Scale::ScaleUpInt(float coordinate) {
-	return static_cast<int>(coordinate * _Meter);
+void Scale::ScaleUp(float32 &x, float32 &y)
+{
+	x *= Meter;
+	y *= Meter;
+}
+
+float Scale::ScaleDown(float32 f)
+{
+	return f / Meter;
+}
+
+float Scale::ScaleUp(float32 f)
+{
+	return f * Meter;
+}
+
+b2Vec2 Scale::ScaleDown(const b2Vec2 &v)
+{
+	b2Vec2 t = v;
+	ScaleDown(t.x, t.y);
+	return t;
+}
+
+b2Vec2 Scale::ScaleUp(const b2Vec2 &v)
+{
+	b2Vec2 t = v;
+	ScaleUp(t.x, t.y);
+	return t;
+}
+
+b2AABB Scale::ScaleDown(const b2AABB &aabb)
+{
+	b2AABB t;
+	t.lowerBound = ScaleDown(aabb.lowerBound);
+	t.upperBound = ScaleDown(aabb.upperBound);
+	return t;
 }

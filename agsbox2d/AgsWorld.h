@@ -50,8 +50,8 @@ public:
 
 //------------------------------------------------------------------------------
 
-extern AgsWorldInterface AgsWorldInterface_Interface;
-extern AgsWorldReader AgsWorldReader_Reader;
+extern AgsWorldInterface AgsWorld_Interface;
+extern AgsWorldReader AgsWorld_Reader;
 
 //------------------------------------------------------------------------------
 
