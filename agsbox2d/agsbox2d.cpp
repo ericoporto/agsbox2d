@@ -191,6 +191,14 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 //define engine
 IAGSEngine* engine;
 
+void agsbox2d_SetMeter(uint32_t meter) {
+	Scale::SetMeter(ToNormalFloat(meter));
+}
+
+uint32_t agsbox2d_GetMeter() {
+	return ToAgsFloat(Scale::GetMeter());
+}
+
 AgsWorld* agsbox2d_newWorld(uint32_t gravityX, uint32_t gravityY) {
 	float32 gx = ToNormalFloat(gravityX);
 	float32 gy = ToNormalFloat(gravityY);
