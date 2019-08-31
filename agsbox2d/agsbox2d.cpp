@@ -58,6 +58,7 @@ const char *ourScriptHeader =
 "  import attribute float fY; \r\n"
 "  import attribute int X; \r\n"
 "  import attribute int Y; \r\n"
+"  import void ApplyForce(float fx, float fy);\r\n"
 "}; \r\n"
 " \r\n"
 "managed struct World { \r\n"
@@ -235,10 +236,20 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 }
 
 AgsShape* agsbox2d_newRectangleShape(uint32_t w, uint32_t h, uint32_t x, uint32_t y) {
-	float32 fx = ToNormalFloat(x);
-	float32 fy = ToNormalFloat(y);
-	float32 fw = ToNormalFloat(w);
-	float32 fh = ToNormalFloat(h);
+	float32 fx, fy, fw, fh;
+
+	if (x == 0)
+		fx = 0.0f;
+	else
+		fx = ToNormalFloat(x);
+
+	if (y == 0)
+		fy = 0.0f;
+	else
+		fy = ToNormalFloat(y);
+
+	fw = ToNormalFloat(w);
+	fh = ToNormalFloat(h);
 
 	AgsShape* shape = new AgsShape(new AgsShapeRect(fw, fh, fx, fy));
 
@@ -415,11 +426,11 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("Body::set_fX", (void*)AgsBody_SetPositionX);
 		engine->RegisterScriptFunction("Body::get_fY", (void*)AgsBody_GetPositionY);
 		engine->RegisterScriptFunction("Body::set_fY", (void*)AgsBody_SetPositionY);
-
 		engine->RegisterScriptFunction("Body::get_X", (void*)AgsBody_GetIntPositionX);
 		engine->RegisterScriptFunction("Body::set_X", (void*)AgsBody_SetIntPositionX);
 		engine->RegisterScriptFunction("Body::get_Y", (void*)AgsBody_GetIntPositionY);
 		engine->RegisterScriptFunction("Body::set_Y", (void*)AgsBody_SetIntPositionY);
+		engine->RegisterScriptFunction("Body::ApplyForce^2", (void*)AgsBody_ApplyForce);
 
 		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 

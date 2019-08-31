@@ -12,7 +12,7 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 }
 
 void AgsBody::ApplyForce(float32 force_x, float32 force_y) {
-	B2AgsBody->ApplyForce(Scale::ScaleDown(b2Vec2(force_x, force_y)),B2AgsBody->GetPosition(), true);
+	B2AgsBody->ApplyForceToCenter(Scale::ScaleDown(b2Vec2(force_x, force_y)), true);
 }
 
 float32 AgsBody::GetPosX() {
