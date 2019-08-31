@@ -34,7 +34,8 @@
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
 #include "AgsFixture.h"
-	
+
+#pragma endregion // Defines_and_Includes
 
 #if AGS_PLATFORM_OS_WINDOWS
 
@@ -191,6 +192,10 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 //define engine
 IAGSEngine* engine;
 
+
+//-----------------------------------------------------------------------------
+#pragma region agsbox2d_ScriptAPI
+
 void agsbox2d_SetMeter(uint32_t meter) {
 	Scale::SetMeter(ToNormalFloat(meter));
 }
@@ -251,6 +256,32 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	return fixture;
 }
 
+#pragma endregion // agsbox2d_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsWorld_ScriptAPI
+
+#pragma endregion // AgsWorld_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsBody_ScriptAPI
+
+#pragma endregion // AgsBody_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsShapeRect_ScriptAPI
+
+#pragma endregion // AgsShapeRect_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsShapeCircle_ScriptAPI
+
+#pragma endregion // AgsShapeCircle_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsShape_ScriptAPI
+
+#pragma endregion // AgsShape_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsFixture_ScriptAPI
+
+#pragma endregion // AgsFixture_ScriptAPI
+//-----------------------------------------------------------------------------
 
 #define REGISTER(x) engine->RegisterScriptFunction(#x, (void *) (x));
 #define STRINGIFY(s) STRINGIFY_X(s)
