@@ -67,6 +67,14 @@ void AgsBody::SetAngle(float32 angle) {
 	B2AgsBody->SetTransform(B2AgsBody->GetPosition(), angle);
 }
 
+float32 AgsBody::GetLinearDamping() {
+	return B2AgsBody->GetLinearDamping();
+}
+
+void AgsBody::SetLinearDamping(float32 ldamping) {
+	B2AgsBody->SetLinearDamping(ldamping);
+}
+
 AgsBody::~AgsBody(void)
 {
 }

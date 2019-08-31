@@ -34,6 +34,10 @@ public:
 	float32 GetAngle();
 	void SetAngle(float32 angle);
 
+	float32 GetLinearDamping();
+	void SetLinearDamping(float32 ldamping);
+
+
 	int32 ID;
 };
 

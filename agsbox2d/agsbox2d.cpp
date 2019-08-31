@@ -62,6 +62,7 @@ const char *ourScriptHeader =
 "  import attribute bool FixedRotation; \r\n"
 "  readonly import attribute float LinearVelocityX; \r\n"
 "  readonly import attribute float LinearVelocityY; \r\n"
+"  import attribute float LinearDamping; \r\n"
 "  import void ApplyForce(float fx, float fy);\r\n"
 "  import void SetLinearVelocity(float fx, float fy);\r\n"
 "  import void ApplyAngularImpulse(float impulse);\r\n"
@@ -415,6 +416,15 @@ void AgsBody_SetAngle(AgsBody* self, uint32_t angle) {
 	self->SetAngle(fangle);
 }
 
+uint32_t AgsBody_GetLinearDamping(AgsBody* self) {
+	return ToAgsFloat(self->GetLinearDamping());
+}
+
+void AgsBody_SetLinearDamping(AgsBody* self, uint32_t ldamping) {
+	float32 fldamping = ToNormalFloat(ldamping);
+	self->SetLinearDamping(fldamping);
+}
+
 #pragma endregion // AgsBody_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsShapeRect_ScriptAPI
@@ -522,6 +532,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("Body::set_Y", (void*)AgsBody_SetIntPositionY);
 		engine->RegisterScriptFunction("Body::get_Angle", (void*)AgsBody_GetAngle);
 		engine->RegisterScriptFunction("Body::set_Angle", (void*)AgsBody_SetAngle);
+		engine->RegisterScriptFunction("Body::get_LinearDamping", (void*)AgsBody_GetLinearDamping);
+		engine->RegisterScriptFunction("Body::set_LinearDamping", (void*)AgsBody_SetLinearDamping);
 		engine->RegisterScriptFunction("Body::ApplyForce^2", (void*)AgsBody_ApplyForce);
 		engine->RegisterScriptFunction("Body::SetLinearVelocity^2", (void*)AgsBody_SetLinearVelocity);
 		engine->RegisterScriptFunction("Body::ApplyAngularImpulse^1", (void*)AgsBody_ApplyAngularImpulse);
