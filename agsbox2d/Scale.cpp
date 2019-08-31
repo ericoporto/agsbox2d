@@ -1,5 +1,14 @@
 #include "Scale.h"
 
+float32 Meter;
+
+Scale* Scale::i()
+{
+	static Scale instance;
+
+	return &instance;
+}
+
 Scale::Scale()
 {
 }
@@ -8,13 +17,13 @@ Scale::~Scale()
 {
 }
 
-void Scale::SetMeter(float scale)
+void Scale::SetMeter(float32 scale)
 {
 	if (scale < 1) Meter = 1.0f;
 	Meter = scale;
 }
 
-float Scale::GetMeter()
+float32 Scale::GetMeter()
 {
 	return Meter;
 }
@@ -31,12 +40,12 @@ void Scale::ScaleUp(float32 &x, float32 &y)
 	y *= Meter;
 }
 
-float Scale::ScaleDown(float32 f)
+float32 Scale::ScaleDown(float32 f)
 {
 	return f / Meter;
 }
 
-float Scale::ScaleUp(float32 f)
+float32 Scale::ScaleUp(float32 f)
 {
 	return f * Meter;
 }

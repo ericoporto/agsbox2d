@@ -1,8 +1,10 @@
 #include "AgsWorld.h"
 #include "AgsBody.h"
+#include "Scale.h"
+
 
 AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
-	B2AgsWorld = new b2World(b2Vec2(gravityX, gravityY));
+	B2AgsWorld = new b2World(Scale::ScaleDown(b2Vec2(gravityX, gravityY)));
 }
 
 

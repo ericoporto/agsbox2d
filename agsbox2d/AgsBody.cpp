@@ -1,8 +1,10 @@
 #include "AgsBody.h"
 #include "AgsWorld.h"
+#include "Scale.h"
+
 
 AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
-	B2AgsBodyDef.position.Set(x, y);
+	B2AgsBodyDef.position.Set(Scale::ScaleDown(x), Scale::ScaleDown(y));
 	B2AgsBodyDef.type = bodytype;
 	B2AgsBodyDef.fixedRotation = true;
 	B2AgsBody = world->B2AgsWorld->CreateBody(&B2AgsBodyDef);
@@ -10,15 +12,15 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 }
 
 void AgsBody::ApplyForce(float32 force_x, float32 force_y) {
-	B2AgsBody->ApplyForce(b2Vec2(force_x, force_y),B2AgsBody->GetPosition(), true);
+	B2AgsBody->ApplyForce(Scale::ScaleDown(b2Vec2(force_x, force_y)),B2AgsBody->GetPosition(), true);
 }
 
 float32 AgsBody::GetPosX() {
-	return B2AgsBody->GetPosition().x;
+	return Scale::ScaleUp(B2AgsBody->GetPosition().x);
 }
 
 float32 AgsBody::GetPosY() {
-	return B2AgsBody->GetPosition().y;
+	return Scale::ScaleUp(B2AgsBody->GetPosition().y);
 }
 
 AgsBody::~AgsBody(void)

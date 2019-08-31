@@ -7,23 +7,24 @@
 
 class Scale
 {
-public:
+private:
 	Scale();
 	~Scale();
 
-	void SetMeter(float32 scale);
-	float32 GetMeter();
+public:
+	static Scale* i();
 
-	float ScaleDown(float32 f);
-	float ScaleUp(float32 f);
-	void ScaleDown(float32 &x, float32 &y);
-	void ScaleUp(float32 &x, float32 &y);
-	b2Vec2 ScaleDown(const b2Vec2 &v);
-	b2Vec2 ScaleUp(const b2Vec2 &v);
-	b2AABB ScaleDown(const b2AABB &aabb);
+	static void SetMeter(float32 scale);
+	static float32 GetMeter();
 
-private:
-	float32 Meter;
+	static float32 ScaleDown(float32 f);
+	static float32 ScaleUp(float32 f);
+	static void ScaleDown(float32 &x, float32 &y);
+	static void ScaleUp(float32 &x, float32 &y);
+	static b2Vec2 ScaleDown(const b2Vec2 &v);
+	static b2Vec2 ScaleUp(const b2Vec2 &v);
+	static b2AABB ScaleDown(const b2AABB &aabb);
+
 };
 
 #endif /* AGSBOX2D_SCALE_H */

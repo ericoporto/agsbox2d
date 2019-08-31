@@ -4,7 +4,17 @@ AgsFixture::AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density) {
 	Body = agsBody;
 	Shape = agsShape;
 	B2AgsFixtureDef.density = density;
-	B2AgsFixtureDef.shape = Shape->B2AgsShape;
+
+	if (agsShape->ShapeCircle != NULL) {
+		B2AgsFixtureDef.shape = Shape->ShapeCircle->B2AgsShapeCircle;
+	}
+	else if (agsShape->ShapeRect != NULL) {
+		B2AgsFixtureDef.shape = Shape->ShapeRect->B2AgsShapeRect;
+	}
+	else {
+		B2AgsFixtureDef.shape = Shape->B2AgsShape;
+	}
+
 	B2AgsFixture = Body->B2AgsBody->CreateFixture(&B2AgsFixtureDef);
 }
 

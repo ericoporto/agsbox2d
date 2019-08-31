@@ -9,7 +9,7 @@
 class AgsShapeRect
 {
 public:
-	AgsShapeRect(float32 hx, float32 hy);
+	AgsShapeRect(float32 w, float32 h, float32 x, float32 y);
 	~AgsShapeRect(void);
 	b2PolygonShape  * B2AgsShapeRect;
 };

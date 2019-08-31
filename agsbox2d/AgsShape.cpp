@@ -4,10 +4,12 @@
 
 AgsShape::AgsShape(AgsShapeCircle* shapeCircle) {
 	ShapeCircle = shapeCircle;
+	ShapeRect = NULL;
 }
 
 AgsShape::AgsShape(AgsShapeRect* shapeRect) {
 	ShapeRect = shapeRect;
+	ShapeCircle = NULL;
 }
 
 AgsShape::~AgsShape(void)

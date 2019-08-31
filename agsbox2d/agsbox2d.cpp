@@ -220,6 +220,28 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 	return body;
 }
 
+AgsShape* agsbox2d_newRectangleShape(uint32_t x, uint32_t y, uint32_t w, uint32_t h) {
+	float32 fx = ToNormalFloat(x);
+	float32 fy = ToNormalFloat(y);
+	float32 fw = ToNormalFloat(w);
+	float32 fh = ToNormalFloat(h);
+
+	AgsShape* shape = new AgsShape(new AgsShapeRect(fw, fh, fx, fy));
+
+	engine->RegisterManagedObject(shape, &AgsShape_Interface);
+
+	return shape;
+}
+
+AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density) {
+	float32 fdensity = ToNormalFloat(density);
+
+	AgsFixture* fixture = new AgsFixture(body, shape, fdensity);
+
+	engine->RegisterManagedObject(fixture, &AgsFixture_Interface);
+
+	return fixture;
+}
 
 
 #define REGISTER(x) engine->RegisterScriptFunction(#x, (void *) (x));

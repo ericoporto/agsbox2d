@@ -52,8 +52,8 @@ public:
 
 //------------------------------------------------------------------------------
 
-extern AgsFixtureInterface AgsFixtureInterface_Interface;
-extern AgsFixtureReader AgsFixtureReader_Reader;
+extern AgsFixtureInterface AgsFixture_Interface;
+extern AgsFixtureReader AgsFixture_Reader;
 
 //------------------------------------------------------------------------------
 
