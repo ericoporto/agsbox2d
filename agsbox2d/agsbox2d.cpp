@@ -448,7 +448,7 @@ void AgsShapeRect_SetHeightF(AgsShapeRect* self, uint32_t h) {
 }
 
 int32 AgsShapeRect_GetWidth(AgsShapeRect* self) {
-	return self->GetWidthF();
+	return self->GetWidth();
 }
 
 void AgsShapeRect_SetWidth(AgsShapeRect* self, int32 w) {
@@ -456,7 +456,7 @@ void AgsShapeRect_SetWidth(AgsShapeRect* self, int32 w) {
 }
 
 int32 AgsShapeRect_GetHeight(AgsShapeRect* self) {
-	return self->GetHeightF();
+	return self->GetHeight();
 }
 
 void AgsShapeRect_SetHeight(AgsShapeRect* self, int32 h) {

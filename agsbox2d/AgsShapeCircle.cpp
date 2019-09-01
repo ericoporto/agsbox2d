@@ -25,7 +25,7 @@ const char* AgsShapeCircleInterface::name = "ShapeCircle";
 
 int AgsShapeCircleInterface::Dispose(const char* address, bool force)
 {
-	delete ((AgsShapeCircle*)address);
+	//delete ((AgsShapeCircle*)address);
 	return (1);
 }
 

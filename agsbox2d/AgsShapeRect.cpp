@@ -68,7 +68,7 @@ const char* AgsShapeRectInterface::name = "ShapeRectangle";
 
 int AgsShapeRectInterface::Dispose(const char* address, bool force)
 {
-	delete ((AgsShapeRect*)address);
+	//delete (AgsShapeRect*)address;
 	return (1);
 }
 
