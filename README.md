@@ -15,6 +15,7 @@ AgsBox2D is still in early development.
   * [World](#world)
   * [Shape](#shape)
   * [Fixture](#fixture)
+- [Building agsbox2d](#building-agsbox2d)
 - [License and Author](#license-and-author)
 
 ## In development warning
@@ -307,6 +308,19 @@ You should not hold pointers to it, and instead access it directly like
 
 For now, fixtures have no accessible properties or methods and are only used
 when linking a shape to an object and assigning it's density.
+
+## Building agsbox2d 
+
+First, you need to clone this source somewhere.
+
+On Windows, you can load the solution on the root of it's directory and load 
+it on Visual Studio. It should work with VS 2015, 2017 and 2019. You will need
+v140 tools (VS should promptly warn you to install if you don't have it).
+The dll provided by Release Win32 builds is the one you should build to use
+with an AGS Game at the time of this writing.
+
+On Linux and MacOS, after cloning this repository, navigate to `agsbox2d/`
+and type `make`.
 
 ## License and Author
 
