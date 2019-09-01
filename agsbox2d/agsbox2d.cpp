@@ -56,16 +56,20 @@ const char *ourScriptHeader =
 "managed struct Body { \r\n"
 "  import attribute float fX; \r\n"
 "  import attribute float fY; \r\n"
-"  import attribute float Angle; \r\n"
 "  import attribute int X; \r\n"
 "  import attribute int Y; \r\n"
 "  import attribute bool FixedRotation; \r\n"
+"  import attribute float Angle; \r\n"
+"  import attribute float LinearDamping; \r\n"
+"  import attribute float AngularDamping; \r\n"
+"  import attribute float AngularVelocity; \r\n"
 "  readonly import attribute float LinearVelocityX; \r\n"
 "  readonly import attribute float LinearVelocityY; \r\n"
-"  import attribute float LinearDamping; \r\n"
 "  import void ApplyForce(float fx, float fy);\r\n"
 "  import void SetLinearVelocity(float fx, float fy);\r\n"
 "  import void ApplyAngularImpulse(float impulse);\r\n"
+"  import void ApplyLinearImpulse(float intensity_x, float intensity_y);\r\n"
+"  import void ApplyTorque(float torque);\r\n"
 "}; \r\n"
 " \r\n"
 "managed struct World { \r\n"
@@ -425,6 +429,38 @@ void AgsBody_SetLinearDamping(AgsBody* self, uint32_t ldamping) {
 	self->SetLinearDamping(fldamping);
 }
 
+uint32_t AgsBody_GetAngularDamping(AgsBody* self) {
+	return ToAgsFloat(self->GetAngularDamping());
+}
+
+void AgsBody_SetAngularDamping(AgsBody* self, uint32_t adamping) {
+	float32 fadamping = ToNormalFloat(adamping);
+	self->SetAngularDamping(fadamping);
+}
+
+uint32_t AgsBody_GetAngularVelocity(AgsBody* self) {
+	return ToAgsFloat(self->GetAngularVelocity());
+}
+
+void AgsBody_SetAngularVelocity(AgsBody* self, uint32_t avel) {
+	float32 favel = ToNormalFloat(avel);
+	self->SetAngularVelocity(favel);
+}
+
+void AgsBody_ApplyLinearImpulse(AgsBody* self, uint32_t intensity_x, uint32_t intensity_y) {
+	float32 f_intensity_x = ToNormalFloat(intensity_x);
+	float32 f_intensity_y = ToNormalFloat(intensity_y);
+
+	self->ApplyForce(f_intensity_x, f_intensity_y);
+}
+
+void AgsBody_ApplyTorque(AgsBody* self, uint32_t torque) {
+	float32 f_torque = ToNormalFloat(torque);
+
+	self->ApplyTorque(f_torque);
+}
+
+
 #pragma endregion // AgsBody_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsShapeRect_ScriptAPI
@@ -534,9 +570,15 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("Body::set_Angle", (void*)AgsBody_SetAngle);
 		engine->RegisterScriptFunction("Body::get_LinearDamping", (void*)AgsBody_GetLinearDamping);
 		engine->RegisterScriptFunction("Body::set_LinearDamping", (void*)AgsBody_SetLinearDamping);
+		engine->RegisterScriptFunction("Body::get_AngularDamping", (void*)AgsBody_GetAngularDamping);
+		engine->RegisterScriptFunction("Body::set_AngularDamping", (void*)AgsBody_SetAngularDamping);
+		engine->RegisterScriptFunction("Body::get_AngularVelocity", (void*)AgsBody_GetAngularVelocity);
+		engine->RegisterScriptFunction("Body::set_AngularVelocity", (void*)AgsBody_SetAngularVelocity);
 		engine->RegisterScriptFunction("Body::ApplyForce^2", (void*)AgsBody_ApplyForce);
 		engine->RegisterScriptFunction("Body::SetLinearVelocity^2", (void*)AgsBody_SetLinearVelocity);
 		engine->RegisterScriptFunction("Body::ApplyAngularImpulse^1", (void*)AgsBody_ApplyAngularImpulse);
+		engine->RegisterScriptFunction("Body::ApplyLinearImpulse^2", (void*)AgsBody_ApplyLinearImpulse);
+		engine->RegisterScriptFunction("Body::ApplyTorque^1", (void*)AgsBody_ApplyTorque);
 
 		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 

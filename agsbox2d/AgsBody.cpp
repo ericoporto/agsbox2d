@@ -75,6 +75,31 @@ void AgsBody::SetLinearDamping(float32 ldamping) {
 	B2AgsBody->SetLinearDamping(ldamping);
 }
 
+float32 AgsBody::GetAngularDamping() {
+	return B2AgsBody->GetAngularDamping();
+}
+
+void AgsBody::SetAngularDamping(float32 adamping) {
+	B2AgsBody->SetAngularDamping(adamping);
+}
+
+float32 AgsBody::GetAngularVelocity() {
+	return B2AgsBody->GetAngularVelocity();
+}
+
+void AgsBody::SetAngularVelocity(float32 avel) {
+	B2AgsBody->SetAngularVelocity(avel);
+}
+
+void AgsBody::ApplyLinearImpulse(float32 intensity_x, float32 intensity_y) {
+	B2AgsBody->ApplyLinearImpulse(Scale::ScaleDown(b2Vec2(intensity_x, intensity_y)), B2AgsBody->GetWorldCenter(), true);
+}
+
+void AgsBody::ApplyTorque(float32 torque) {
+	B2AgsBody->ApplyTorque(Scale::ScaleDown(torque), true);
+}
+
+
 AgsBody::~AgsBody(void)
 {
 }

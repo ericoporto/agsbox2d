@@ -22,9 +22,7 @@ public:
 	void SetPosY(float32 y);
 	void SetPos(float32 x, float32 y);
 
-	void ApplyForce(float32 force_x, float32 force_y);
 	void SetLinearVelocity(float32 vel_x, float32 vel_y);
-	void ApplyAngularImpulse(float32 impulse);
 	float32 GetLinearVelocityX();
 	float32 GetLinearVelocityY();
 
@@ -36,7 +34,17 @@ public:
 
 	float32 GetLinearDamping();
 	void SetLinearDamping(float32 ldamping);
+	
+	float32 GetAngularDamping();
+	void SetAngularDamping(float32 adamping);
 
+	float32 GetAngularVelocity();
+	void SetAngularVelocity(float32 avel);
+
+	void ApplyForce(float32 force_x, float32 force_y);
+	void ApplyAngularImpulse(float32 impulse);
+	void ApplyLinearImpulse(float32 intensity_x, float32 intensity_y);
+	void ApplyTorque(float32 torque);
 
 	int32 ID;
 };
