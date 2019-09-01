@@ -1,1 +1,1 @@
-OBJS = agsbox2d.o  Box2D.o
+OBJS = Box2D.o AgsBody.o AgsShapeCircle.o AgsWorld.o AgsShape.o AgsFixture.o  AgsShapeRect.o Scale.o agsbox2d.o
