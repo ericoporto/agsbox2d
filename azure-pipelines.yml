@@ -30,9 +30,7 @@ steps:
     git checkout release-3.5.0
     popd
     popd
-    pushd agsbox2d
-    make
-    popd
+    cd agsbox2d && make
   condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: 'make'
 
@@ -51,9 +49,7 @@ steps:
     git checkout release-3.5.0
     popd
     popd
-    pushd agsbox2d
-    make
-    popd
+    cd agsbox2d && make
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: 'make'
 
