@@ -5,6 +5,8 @@
 AgsBox2D is a physics plugin for Adventure Game Studio that gives access to the Box2D library created by Erin Catto.
 Because I never used Box2D directly before, I tried to make the API similar to Love physics module.
 
+AgsBox2D is still in early development.
+
 - [In development warning](#in-development-warning)
 - [Usage example](#usage-example)
 - [Script API](#script-api)
