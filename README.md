@@ -1,5 +1,7 @@
 # agsbox2d
 
+[![Build Status](https://dev.azure.com/ericoporto/agsbox2d/_apis/build/status/ericoporto.agsbox2d?branchName=master)](https://dev.azure.com/ericoporto/agsbox2d/_build/latest?definitionId=11&branchName=master)
+
 AgsBox2D is a physics plugin for Adventure Game Studio that gives access to the Box2D library created by Erin Catto.
 Because I never used Box2D directly before, I tried to make the API similar to Love physics module.
 
