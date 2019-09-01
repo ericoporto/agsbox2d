@@ -70,11 +70,6 @@ void initPhysics(){
   box2.fixture = AgsBox2D.CreateFixture(box2.body, box2.shape, 2.0);
 }
 
-function room_Load()
-{
-  initPhysics();
-}
-
 int DebugDraw(){
   if(dynspr!=null){
     dynspr.Delete();
@@ -104,6 +99,11 @@ int DebugDraw(){
   
   surf.Release();
   return dynspr.Graphic;
+}
+
+function room_Load()
+{
+  initPhysics();
 }
 
 function room_RepExec() {
