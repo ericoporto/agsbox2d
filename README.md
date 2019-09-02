@@ -303,6 +303,12 @@ Applies an impulse from the body center with the specified vector.
 
 Applies a torque on the body. Positive values are counter clockwise.
 
+#### `bool Body.IsTouching(Body* otherBody)`
+
+Returns true when a body is in contact (being touched) by other body.
+This function only evaluates at the current time, so prefer using it for
+resting states.
+
 ### World
 
 The world holds all the information needed for the physics simulation. Once a
