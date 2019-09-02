@@ -248,6 +248,13 @@ By default, bodies are created with FixedRotation set to true.
 A body with FixedRotation set to true does not rotate, causing it's rotational 
 inertia and it's inverse to be set to zero.
 
+#### `bool Body.Bullet`
+
+By default, bodies are created with Bullet set to false. 
+
+Set bullet to true when the body has a small shape and moves really fast, 
+this will prevent the body from having wrong collisions with thin bodies.
+
 #### `float Body.LinearDamping`
 
 The LinearDamping property of a body. Damping occurs independently from contact
