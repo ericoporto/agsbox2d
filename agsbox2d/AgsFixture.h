@@ -17,6 +17,16 @@ public:
 	AgsShape* Shape;
 	b2Fixture* B2AgsFixture;
 	b2FixtureDef B2AgsFixtureDef;
+
+	float32 GetDensity();
+	void SetDensity(float32 density);
+
+	float32 GetFriction();
+	void SetFriction(float32 friction);
+
+	float32 GetRestitution();
+	void SetRestitution(float32 restitution);
+
 	int32 ID;
 };
 

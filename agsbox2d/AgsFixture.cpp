@@ -18,6 +18,32 @@ AgsFixture::AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density) {
 	B2AgsFixture = Body->B2AgsBody->CreateFixture(&B2AgsFixtureDef);
 }
 
+
+float32 AgsFixture::GetDensity() {
+	return B2AgsFixture->GetDensity();
+}
+
+void AgsFixture::SetDensity(float32 density) {
+	B2AgsFixture->SetDensity(density);
+}
+
+float32 AgsFixture::GetFriction() {
+	return B2AgsFixture->GetFriction();
+}
+
+void AgsFixture::SetFriction(float32 friction) {
+	B2AgsFixture->SetFriction(friction);
+}
+
+float32 AgsFixture::GetRestitution() {
+	return B2AgsFixture->GetRestitution();
+}
+
+void AgsFixture::SetRestitution(float32 restitution) {
+	B2AgsFixture->SetRestitution(restitution);
+}
+
+
 AgsFixture::~AgsFixture(void)
 {
 }

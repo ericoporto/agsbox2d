@@ -106,6 +106,9 @@ const char *ourScriptHeader =
 "}; \r\n"
 " \r\n"
 "managed struct Fixture { \r\n"
+"  import attribute float Friction; \r\n"
+"  import attribute float Density; \r\n"
+"  import attribute float Restitution; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -551,6 +554,37 @@ AgsShapeRect* AgsShape_AsRectangle(AgsShape* self) {
 //-----------------------------------------------------------------------------
 #pragma region AgsFixture_ScriptAPI
 
+uint32_t AgsFixture_GetDensity(AgsFixture* self) {
+	return ToAgsFloat(self->GetDensity());
+}
+
+void AgsFixture_SetDensity(AgsFixture* self, uint32_t density) {
+	float32 fdensity = ToNormalFloat(density);
+
+	self->SetDensity(fdensity);
+}
+
+uint32_t AgsFixture_GetFriction(AgsFixture* self) {
+	return ToAgsFloat(self->GetFriction());
+}
+
+void AgsFixture_SetFriction(AgsFixture* self, uint32_t friction) {
+	float32 f_friction = ToNormalFloat(friction);
+
+	self->SetFriction(f_friction);
+}
+
+uint32_t AgsFixture_GetRestitution(AgsFixture* self) {
+	return ToAgsFloat(self->GetRestitution());
+}
+
+void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
+	float32 frestitution = ToNormalFloat(restitution);
+
+	self->SetRestitution(frestitution);
+}
+
+
 #pragma endregion // AgsFixture_ScriptAPI
 //-----------------------------------------------------------------------------
 
@@ -618,6 +652,12 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("ShapeRectangle::get_Height", (void*)AgsShapeRect_GetHeight);
 		engine->RegisterScriptFunction("ShapeRectangle::set_Height", (void*)AgsShapeRect_SetHeight);
 
+		engine->RegisterScriptFunction("Fixture::get_Density", (void*)AgsFixture_GetDensity);
+		engine->RegisterScriptFunction("Fixture::set_Density", (void*)AgsFixture_SetDensity);
+		engine->RegisterScriptFunction("Fixture::get_Friction", (void*)AgsFixture_GetFriction);
+		engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
+		engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
+		engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
 				
 		engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 		engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
