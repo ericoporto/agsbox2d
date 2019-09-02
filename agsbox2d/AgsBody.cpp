@@ -91,6 +91,18 @@ void AgsBody::SetAngularVelocity(float32 avel) {
 	B2AgsBody->SetAngularVelocity(avel);
 }
 
+float32 AgsBody::GetInertia() {
+	return Scale::ScaleUp(B2AgsBody->GetInertia());
+}
+
+void AgsBody::SetInertia(float32 inertia) {
+	b2MassData massData;
+	massData.center = B2AgsBody->GetLocalCenter();
+	massData.mass = B2AgsBody->GetMass();
+	massData.I = Scale::ScaleDown(Scale::ScaleDown(inertia));
+	B2AgsBody->SetMassData(&massData);
+}
+
 void AgsBody::ApplyLinearImpulse(float32 intensity_x, float32 intensity_y) {
 	B2AgsBody->ApplyLinearImpulse(Scale::ScaleDown(b2Vec2(intensity_x, intensity_y)), B2AgsBody->GetWorldCenter(), true);
 }

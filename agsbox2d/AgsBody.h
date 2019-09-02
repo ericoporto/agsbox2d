@@ -41,6 +41,9 @@ public:
 	float32 GetAngularVelocity();
 	void SetAngularVelocity(float32 avel);
 
+	float32 GetInertia();
+	void SetInertia(float32 inertia);
+
 	void ApplyForce(float32 force_x, float32 force_y);
 	void ApplyAngularImpulse(float32 impulse);
 	void ApplyLinearImpulse(float32 intensity_x, float32 intensity_y);
