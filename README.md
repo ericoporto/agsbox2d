@@ -334,8 +334,29 @@ You should not hold pointers to it, and instead access it directly like
 
 ### Fixture
 
-For now, fixtures have no accessible properties or methods and are only used
-when linking a shape to an object and assigning it's density.
+Fixtures are used when linking a shape to an object and assigning it's density.
+
+#### `float Fixture.Density`
+
+Density is used to compute the mass of the linked body. It's preferable to use
+similar densities to all your fixtures, because this will improve the 
+simulation.
+
+#### `float Fixture.Friction`
+
+Friction is used to make objects slide along each other realistically.
+
+It's usually a value between `0.0` and `1.0`, but can be any non-negative value.
+
+Box2D uses the square root of the multiplication of two contacting fixtures to 
+calculate the contact friction. This means if one fixture has `0.0` friction, 
+the contact will have no friction.
+
+#### `float Fixture.Restitution`
+
+Restitution is used to make objects bounce, and is usually a value between 
+`0.0` and `1.0`. A value of `0.0` means the object won't bounce, and a value
+of `1.0` means the object velocity will be exactly reflected.
 
 ## Building agsbox2d 
 
