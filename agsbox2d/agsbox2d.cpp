@@ -67,11 +67,12 @@ const char *ourScriptHeader =
 "  import attribute float Inertia; \r\n"
 "  readonly import attribute float LinearVelocityX; \r\n"
 "  readonly import attribute float LinearVelocityY; \r\n"
-"  import void ApplyForce(float fx, float fy);\r\n"
-"  import void SetLinearVelocity(float fx, float fy);\r\n"
-"  import void ApplyAngularImpulse(float impulse);\r\n"
-"  import void ApplyLinearImpulse(float intensity_x, float intensity_y);\r\n"
-"  import void ApplyTorque(float torque);\r\n"
+"  import void ApplyForce(float fx, float fy); \r\n"
+"  import void SetLinearVelocity(float fx, float fy); \r\n"
+"  import void ApplyAngularImpulse(float impulse); \r\n"
+"  import void ApplyLinearImpulse(float intensity_x, float intensity_y); \r\n"
+"  import void ApplyTorque(float torque); \r\n"
+"  import bool IsTouching(Body* other); \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct World { \r\n"
@@ -483,6 +484,10 @@ void AgsBody_ApplyTorque(AgsBody* self, uint32_t torque) {
 	self->ApplyTorque(f_torque);
 }
 
+bool AgsBody_IsTouching(AgsBody* self, AgsBody* other) {
+	return self->IsTouching(other);
+}
+
 
 #pragma endregion // AgsBody_ScriptAPI
 //-----------------------------------------------------------------------------
@@ -637,6 +642,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("Body::ApplyAngularImpulse^1", (void*)AgsBody_ApplyAngularImpulse);
 		engine->RegisterScriptFunction("Body::ApplyLinearImpulse^2", (void*)AgsBody_ApplyLinearImpulse);
 		engine->RegisterScriptFunction("Body::ApplyTorque^1", (void*)AgsBody_ApplyTorque);
+		engine->RegisterScriptFunction("Body::IsTouching^1", (void*)AgsBody_IsTouching);
 
 		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 

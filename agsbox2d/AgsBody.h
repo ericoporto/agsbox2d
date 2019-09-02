@@ -16,6 +16,9 @@ public:
 	AgsWorld* World;
 	b2Body* B2AgsBody;
 	b2BodyDef B2AgsBodyDef;
+
+	bool IsTouching(AgsBody* body);
+
 	float32 GetPosX();
 	float32 GetPosY();
 	void SetPosX(float32 x);

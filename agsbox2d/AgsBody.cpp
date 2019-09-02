@@ -11,6 +11,23 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	World = world;
 }
 
+bool AgsBody::IsTouching(AgsBody* body) {
+	const b2ContactEdge *ce = B2AgsBody->GetContactList();
+	b2Body *otherbody = body->B2AgsBody;
+
+	while (ce != nullptr)
+	{
+		if (ce->other == otherbody &&
+			ce->contact != nullptr && 
+			ce->contact->IsTouching())
+			return true;
+
+		ce = ce->next;
+	}
+
+	return false;
+}
+
 void AgsBody::ApplyForce(float32 force_x, float32 force_y) {
 	B2AgsBody->ApplyForceToCenter(Scale::ScaleDown(b2Vec2(force_x, force_y)), true);
 }
