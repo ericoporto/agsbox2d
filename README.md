@@ -190,6 +190,10 @@ to destroy it unless the world is destroyed.
 
 The specifics on a body form and mass are defined by using a Shape and Fixture.
 
+#### `void AgsBox2D.DestroyBody(World* world,  Body* body)`
+
+Removes a body from the world, and marks it with the property IsDestroyed true.
+
 #### `Shape* AgsBox2D.CreateRectangleShape(float w,  float h,  float x=0, float y=0)`
 
 Creates a RectangleShape with Width w and Height h, and returns a Shape object. 
@@ -254,6 +258,10 @@ By default, bodies are created with Bullet set to false.
 
 Set bullet to true when the body has a small shape and moves really fast, 
 this will prevent the body from having wrong collisions with thin bodies.
+
+#### `readonly bool Body.IsDestroyed`
+
+Returns true if it's destroyed by `AgsBox2D.DestroyBody()`.
 
 #### `float Body.LinearDamping`
 
