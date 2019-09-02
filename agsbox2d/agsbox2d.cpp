@@ -104,6 +104,8 @@ const char *ourScriptHeader =
 "  import attribute float fHeight; \r\n"
 "  import attribute int Height; \r\n"
 "  import attribute int Width; \r\n"
+"  readonly import attribute float PointsfX[]; \r\n"
+"  readonly import attribute float PointsfY[]; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -550,6 +552,21 @@ void AgsShapeRect_SetHeight(AgsShapeRect* self, int32 h) {
 	self->SetHeight(h);
 }
 
+uint32_t AgsShapeRect_GetPointsfX(AgsShapeRect *self, int32 i)
+{
+	if ((i < 0) || (i > 3))
+		return (0);
+
+	return ToAgsFloat(self->GetPointX(i));
+}
+
+uint32_t AgsShapeRect_GetPointsfY(AgsShapeRect *self, int32 i)
+{
+	if ((i < 0) || (i > 3))
+		return (0);
+
+	return ToAgsFloat(self->GetPointY(i));
+}
 #pragma endregion // AgsShapeRect_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsShapeCircle_ScriptAPI
@@ -681,6 +698,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("ShapeRectangle::set_Width", (void*)AgsShapeRect_SetWidth);
 		engine->RegisterScriptFunction("ShapeRectangle::get_Height", (void*)AgsShapeRect_GetHeight);
 		engine->RegisterScriptFunction("ShapeRectangle::set_Height", (void*)AgsShapeRect_SetHeight);
+		engine->RegisterScriptFunction("ShapeRectangle::geti_PointsfX", (void*)AgsShapeRect_GetPointsfX);
+		engine->RegisterScriptFunction("ShapeRectangle::geti_PointsfY", (void*)AgsShapeRect_GetPointsfY);
 
 		engine->RegisterScriptFunction("Fixture::get_Density", (void*)AgsFixture_GetDensity);
 		engine->RegisterScriptFunction("Fixture::set_Density", (void*)AgsFixture_SetDensity);

@@ -54,6 +54,14 @@ void AgsShapeRect::SetHeight(int32 h) {
 	SetHeightF((float32)h);
 }
 
+float32 AgsShapeRect::GetPointX(int32 i) {
+	return Scale::ScaleUp(B2AgsShapeRect->m_vertices[i].x);
+}
+
+float32 AgsShapeRect::GetPointY(int32 i) {
+	return Scale::ScaleUp(B2AgsShapeRect->m_vertices[i].y);
+}
+
 //------------------------------------------------------------------------------
 
 

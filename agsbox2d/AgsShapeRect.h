@@ -23,6 +23,8 @@ public:
 	void SetHeightF(float32 hf);
 	int32 GetHeight();
 	void SetHeight(int32 h);
+	float32 GetPointX(int32 i);
+	float32 GetPointY(int32 i);
 };
 
 
