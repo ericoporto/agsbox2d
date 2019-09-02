@@ -263,6 +263,10 @@ independently from contact.
 
 The AngularVelocity property of a body.
 
+#### `float Body.Inertia`
+
+Rotational Inertia, body's resistance to changes in angular velocity.
+
 #### `readonly float Body.LinearVelocityX`
 
 Gets the X vector from the body's Linear Velocity.
