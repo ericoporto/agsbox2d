@@ -254,6 +254,15 @@ The LinearDamping property of a body. Damping occurs independently from contact
 and is different than friction. Normally  the value for damping is between 
 `0.0` and `0.1`.
 
+#### `float Body.AngularDamping`
+
+The AngularDamping property of a body, the angular drag, also happens 
+independently from contact.
+
+#### `float Body.AngularVelocity`
+
+The AngularVelocity property of a body.
+
 #### `readonly float Body.LinearVelocityX`
 
 Gets the X vector from the body's Linear Velocity.
@@ -262,18 +271,26 @@ Gets the X vector from the body's Linear Velocity.
 
 Gets the Y vector from the body's Linear Velocity.
 
+#### `void Body.SetLinearVelocity(float fx, float fy)`
+
+Set's the body LinearVelocity vector.
+
 #### `void Body.ApplyForce(float fx, float fy)`
 
 Applies a force on a body from it's center `0.0, 0.0` to the specified `fx, fy`
 direction.
 
-#### `void Body.SetLinearVelocity(float fx, float fy)`
-
-Set's the body LinearVelocity vector.
-
 #### `void Body.ApplyAngularImpulse(float impulseIntensity)`
 
 Applies an angular impulse on the body.
+
+#### `void Body.ApplyLinearImpulse(float intensity_x, float intensity_y)`
+
+Applies an impulse from the body center with the specified vector.
+
+#### `void Body.ApplyTorque(float torque)`
+
+Applies a torque on the body. Positive values are counter clockwise.
 
 ### World
 
