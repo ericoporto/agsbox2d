@@ -59,6 +59,7 @@ const char *ourScriptHeader =
 "  import attribute int X; \r\n"
 "  import attribute int Y; \r\n"
 "  import attribute bool FixedRotation; \r\n"
+"  import attribute bool Bullet; \r\n"
 "  import attribute float Angle; \r\n"
 "  import attribute float LinearDamping; \r\n"
 "  import attribute float AngularDamping; \r\n"
@@ -407,6 +408,14 @@ bool AgsBody_GetFixedRotation(AgsBody* self) {
 	return self->GetFixedRotation();
 }
 
+void AgsBody_SetBullet(AgsBody* self, bool bullet) {
+	self->SetIsBullet(bullet);
+}
+
+bool AgsBody_GetBullet(AgsBody* self) {
+	return self->GetIsBullet();
+}
+
 void AgsBody_ApplyAngularImpulse(AgsBody* self, uint32_t impulse) {
 	self->ApplyAngularImpulse(ToNormalFloat(impulse));
 }
@@ -567,6 +576,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 
 		engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
 		engine->RegisterScriptFunction("Body::get_FixedRotation", (void*)AgsBody_GetFixedRotation);
+		engine->RegisterScriptFunction("Body::set_Bullet", (void*)AgsBody_SetBullet);
+		engine->RegisterScriptFunction("Body::get_Bullet", (void*)AgsBody_GetBullet);
 		engine->RegisterScriptFunction("Body::get_LinearVelocityX", (void*)AgsBody_GetLinearVelocityX);
 		engine->RegisterScriptFunction("Body::get_LinearVelocityY", (void*)AgsBody_GetLinearVelocityY);
 		engine->RegisterScriptFunction("Body::get_fX", (void*)AgsBody_GetPositionX);

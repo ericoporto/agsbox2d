@@ -29,6 +29,9 @@ public:
 	bool GetFixedRotation();
 	void SetFixedRotation(bool fixed);
 
+	bool GetIsBullet();
+	void SetIsBullet(bool bullet);
+
 	float32 GetAngle();
 	void SetAngle(float32 angle);
 

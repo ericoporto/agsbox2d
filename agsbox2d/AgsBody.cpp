@@ -59,6 +59,14 @@ void AgsBody::SetFixedRotation(bool fixed) {
 	B2AgsBody->SetFixedRotation(fixed);
 }
 
+bool AgsBody::GetIsBullet() {
+	return B2AgsBody->IsBullet();
+}
+
+void AgsBody::SetIsBullet(bool bullet) {
+	B2AgsBody->SetBullet(bullet);
+}
+
 float32 AgsBody::GetAngle() {
 	return B2AgsBody->GetAngle();
 }
