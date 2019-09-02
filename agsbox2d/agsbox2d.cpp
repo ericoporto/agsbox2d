@@ -60,6 +60,7 @@ const char *ourScriptHeader =
 "  import attribute int Y; \r\n"
 "  import attribute bool FixedRotation; \r\n"
 "  import attribute bool Bullet; \r\n"
+"  readonly import attribute bool IsDestroyed; \r\n"
 "  import attribute float Angle; \r\n"
 "  import attribute float LinearDamping; \r\n"
 "  import attribute float AngularDamping; \r\n"
@@ -126,6 +127,8 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Create Body \r\n"
 "  import static Body* CreateBody(World* world,  float x, float y, BodyType bodytype); \r\n"
+"  /// Destroy Body \r\n"
+"  import static void DestroyBody(World* world, Body* body);  \r\n"
 "  \r\n"
 "  /// Create Rectangle Shape \r\n"
 "  import static Shape* CreateRectangleShape(float w,  float h,  float x=0, float y=0); \r\n"
@@ -258,6 +261,9 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 }
 
 void agsbox2d_DestroyBody(AgsWorld* world, AgsBody* body) {
+	if (world == nullptr)
+		return;
+	
 	world->DestroyBody(body);
 }
 
@@ -329,6 +335,13 @@ void AgsWorld_Step(AgsWorld* self, uint32_t dt, int32 velocityIterations, int32 
 #pragma endregion // AgsWorld_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsBody_ScriptAPI
+
+int32 AgsBody_IsDestroyed(AgsBody* self) {
+	if (self->GetIsDestroyed()) {
+		return 1;
+	}
+	return 0;
+}
 
 
 int32 AgsBody_GetIntPositionX(AgsBody* self) {
@@ -404,20 +417,28 @@ uint32_t AgsBody_GetLinearVelocityY(AgsBody* self) {
 	return ToAgsFloat(self->GetLinearVelocityY());
 }
 
-void AgsBody_SetFixedRotation(AgsBody* self, bool fixed) {
-	self->SetFixedRotation(fixed);
+void AgsBody_SetFixedRotation(AgsBody* self, int32 fixed) {
+	if(fixed == 1)
+		self->SetFixedRotation(true);
+	self->SetFixedRotation(false);
 }
 
-bool AgsBody_GetFixedRotation(AgsBody* self) {
-	return self->GetFixedRotation();
+int32 AgsBody_GetFixedRotation(AgsBody* self) {
+	if (self->GetFixedRotation())
+		return 1;
+	return 0;
 }
 
-void AgsBody_SetBullet(AgsBody* self, bool bullet) {
-	self->SetIsBullet(bullet);
+void AgsBody_SetBullet(AgsBody* self, int32 bullet) {
+	if (bullet == 1)
+		self->SetIsBullet(true);
+	self->SetIsBullet(false);
 }
 
-bool AgsBody_GetBullet(AgsBody* self) {
-	return self->GetIsBullet();
+int32 AgsBody_GetBullet(AgsBody* self) {
+	if (self->GetIsBullet())
+		return 1;
+	return 0;
 }
 
 void AgsBody_ApplyAngularImpulse(AgsBody* self, uint32_t impulse) {
@@ -484,8 +505,10 @@ void AgsBody_ApplyTorque(AgsBody* self, uint32_t torque) {
 	self->ApplyTorque(f_torque);
 }
 
-bool AgsBody_IsTouching(AgsBody* self, AgsBody* other) {
-	return self->IsTouching(other);
+int32 AgsBody_IsTouching(AgsBody* self, AgsBody* other) {
+	if (self->IsTouching(other))
+		return 1;
+	return 0;
 }
 
 
@@ -613,6 +636,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 		engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
 
+		engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
 		engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
 		engine->RegisterScriptFunction("Body::get_FixedRotation", (void*)AgsBody_GetFixedRotation);
 		engine->RegisterScriptFunction("Body::set_Bullet", (void*)AgsBody_SetBullet);
@@ -669,6 +693,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 		engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
 		engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
 		engine->RegisterScriptFunction("AgsBox2D::CreateBody^4", (void*)agsbox2d_newBody);
+		engine->RegisterScriptFunction("AgsBox2D::DestroyBody^2", (void*)agsbox2d_DestroyBody);
 		engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
 		engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
 		engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);

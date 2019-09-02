@@ -4,6 +4,7 @@
 
 
 AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
+	IsDestroyed = false;
 	B2AgsBodyDef.position.Set(Scale::ScaleDown(x), Scale::ScaleDown(y));
 	B2AgsBodyDef.type = bodytype;
 	B2AgsBodyDef.fixedRotation = true;
@@ -12,6 +13,10 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 }
 
 bool AgsBody::IsTouching(AgsBody* body) {
+	if (body == nullptr) {
+		return false;
+	}
+
 	const b2ContactEdge *ce = B2AgsBody->GetContactList();
 	b2Body *otherbody = body->B2AgsBody;
 
@@ -26,6 +31,14 @@ bool AgsBody::IsTouching(AgsBody* body) {
 	}
 
 	return false;
+}
+
+bool AgsBody::GetIsDestroyed() {
+	return IsDestroyed;
+}
+
+void AgsBody::SetIsDestroyed() {
+	IsDestroyed = true;
 }
 
 void AgsBody::ApplyForce(float32 force_x, float32 force_y) {

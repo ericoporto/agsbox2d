@@ -15,9 +15,12 @@ AgsBody* AgsWorld::NewBody(float32 x, float32 y, b2BodyType bodytype) {
 }
 
 void AgsWorld::DestroyBody(AgsBody* body) {
+	if (body == nullptr && body->GetIsDestroyed()) {
+		return;
+	}
+
 	B2AgsWorld->DestroyBody(body->B2AgsBody);
-	delete body;
-	body = NULL;
+	body->SetIsDestroyed();
 }
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {

@@ -10,6 +10,7 @@ class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
 
 class AgsBody
 {
+	bool IsDestroyed;
 public:
 	AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
 	~AgsBody(void);
@@ -18,6 +19,9 @@ public:
 	b2BodyDef B2AgsBodyDef;
 
 	bool IsTouching(AgsBody* body);
+
+	bool GetIsDestroyed();
+	void SetIsDestroyed();
 
 	float32 GetPosX();
 	float32 GetPosY();
