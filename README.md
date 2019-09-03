@@ -16,6 +16,7 @@ AgsBox2D is still in early development.
   * [Shape](#shape)
   * [Fixture](#fixture)
 - [Building agsbox2d](#building-agsbox2d)
+- [Download agsbox2d](#download-agsbox2d)
 - [License and Author](#license-and-author)
 
 ## In development warning
@@ -374,7 +375,15 @@ of `1.0` means the object velocity will be exactly reflected.
 
 ## Building agsbox2d 
 
-First, you need to clone this source somewhere.
+AgsBox2D both Makefile and the VS Solution file, expects to find [Adventure Game Studio source code](https://github.com/adventuregamestudio/ags)
+in a folder `../ags/`. After you do this, you need to clone this source code.
+
+```
+  ~/git/ags/
+  ~/git/agsbox2d/
+```
+
+Navigate then to the directory where you cloned this repository.
 
 On Windows, you can load the solution on the root of it's directory and load 
 it on Visual Studio. It should work with VS 2015, 2017 and 2019. You will need
@@ -382,8 +391,13 @@ v140 tools (VS should promptly warn you to install if you don't have it).
 The dll provided by Release Win32 builds is the one you should build to use
 with an AGS Game at the time of this writing.
 
-On Linux and MacOS, after cloning this repository, navigate to `agsbox2d/`
-and type `make`.
+On Linux and MacOS, navigate to `agsbox2d/` inside the directory and type `make`.
+
+## Download AgsBox2D
+
+This plugin is available as `agsbox2d.dll` under [assets, in the latest release](https://github.com/ericoporto/agsbox2d/releases/latest/),
+for usage with Windows and the AGS Editor. You can also find it there built 
+for Linux as `libagsbox2d.so` and for MacOS as `libagsbox2d.dylib`.
 
 ## License and Author
 
