@@ -54,31 +54,71 @@ const char *ourScriptHeader =
 "}; \r\n"
 " \r\n"
 "managed struct Body { \r\n"
-"  import attribute float fX; \r\n"
-"  import attribute float fY; \r\n"
-"  import attribute int X; \r\n"
-"  import attribute int Y; \r\n"
-"  import attribute bool FixedRotation; \r\n"
-"  import attribute bool Bullet; \r\n"
+"  \r\n"
+"  /// Returns true after the body is targeted with AgsBox2D.DestroyBody(). \r\n"
 "  readonly import attribute bool IsDestroyed; \r\n"
+"  \r\n"
+"  /// Set to true to prevent the body from rotating. \r\n"
+"  import attribute bool FixedRotation; \r\n"
+"  \r\n"
+"  /// Set to true if the body is small and moves really fast. \r\n"
+"  import attribute bool Bullet; \r\n"
+"  \r\n"
+"  /// X position of the center of the body as int. \r\n"
+"  import attribute int X; \r\n"
+"  \r\n"
+"  /// Y position of the center of the body as int. \r\n"
+"  import attribute int Y; \r\n"
+"  \r\n"
+"  /// Real X position of the center of the body. \r\n"
+"  import attribute float fX; \r\n"
+"  \r\n"
+"  /// Real Y position of the center of the body. \r\n"
+"  import attribute float fY; \r\n"
+"  \r\n"
+"  /// The angle of the body. Requires FixedRotation be false. \r\n"
 "  import attribute float Angle; \r\n"
+"  \r\n"
+"  /// A value between 0.0 and 1.0 that reduces movement independent of contact. \r\n"
 "  import attribute float LinearDamping; \r\n"
+"  \r\n"
+"  /// Angular drag of the movement that happens independent of contact. \r\n"
 "  import attribute float AngularDamping; \r\n"
+"  \r\n"
+"  /// The angular velocity of the body. \r\n"
 "  import attribute float AngularVelocity; \r\n"
+"  \r\n"
+"  /// The rotational inertia of the body. \r\n"
 "  import attribute float Inertia; \r\n"
+"  \r\n"
+"  /// X vector of the linear velocity of the body. \r\n"
 "  readonly import attribute float LinearVelocityX; \r\n"
+"  \r\n"
+"  /// Y vector of the linear velocity of the body. \r\n"
 "  readonly import attribute float LinearVelocityY; \r\n"
-"  import void ApplyForce(float fx, float fy); \r\n"
+"  \r\n"
+"  /// Sets the body linear velocity vector. \r\n"
 "  import void SetLinearVelocity(float fx, float fy); \r\n"
+"  \r\n"
+"  /// Applies a force on the body from it's center, with the specified vector. \r\n"
+"  import void ApplyForce(float fx, float fy); \r\n"
+"  \r\n"
+"  /// Applies an angular impulse on the body. \r\n"
 "  import void ApplyAngularImpulse(float impulse); \r\n"
+"  \r\n"
+"  /// Applies an impulse from the body center with the specified vector. \r\n"
 "  import void ApplyLinearImpulse(float intensity_x, float intensity_y); \r\n"
+"  \r\n"
+"  /// Applies a rotational force on the body. \r\n"
 "  import void ApplyTorque(float torque); \r\n"
+"  \r\n"
+"  /// Returns true if the body is in contact with other body when evaluated. \r\n"
 "  import bool IsTouching(Body* other); \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct World { \r\n"
 "  \r\n"
-"  /// Advances one step of the simulation \r\n"
+"  /// Advances one step of time dt in seconds of the simulation. \r\n"
 "  import void Step(float dt, int velocityIteractions = 8, int positionIteractions = 3); \r\n"
 "}; \r\n"
 " \r\n"
@@ -104,41 +144,52 @@ const char *ourScriptHeader =
 "  import attribute float fHeight; \r\n"
 "  import attribute int Height; \r\n"
 "  import attribute int Width; \r\n"
+"  \r\n"
+"  /// Array of the local x position of the corners of the rectangle. \r\n"
 "  readonly import attribute float PointsfX[]; \r\n"
+"  \r\n"
+"  /// Array of the local y position of the corners of the rectangle. \r\n"
 "  readonly import attribute float PointsfY[]; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct Fixture { \r\n"
+"  \r\n"
+"  /// Usually a value between 0.0 and 1.0 to make objects slide realistically. \r\n"
 "  import attribute float Friction; \r\n"
+"  \r\n"
+"  /// Used to compute the mass, prefer similar densities to all your fixtures. \r\n"
 "  import attribute float Density; \r\n"
+"  \r\n"
+"  /// Usually a value between 0.0 and 1.0 to make objects bounce. \r\n"
 "  import attribute float Restitution; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
 "struct AgsBox2D { \r\n"
 "  \r\n"
-"  /// Set Meter \r\n"
+"  /// Sets how many pixels equals to a meter. Doesn't apply retroactively. \r\n"
 "  import static void SetMeter(float meter); \r\n"
 "  \r\n"
-"  /// Get Meter \r\n"
+"  /// Get how many pixels equals to a meter. Prefer moving objects between 0.1 and 10 meters. \r\n"
 "  import static float GetMeter(); \r\n"
 "  \r\n"
-"  /// Create World \r\n"
+"  /// Create a World, and set it's gravity vector. Positive Y acceleration goes downwards. \r\n"
 "  import static World* CreateWorld(float gravityX, float gravityY); \r\n"
 "  \r\n"
-"  /// Create Body \r\n"
+"  /// Creates a body at world x,y position, with type eBodyStatic, eBodyDynamic or eBodyKinematic. \r\n"
 "  import static Body* CreateBody(World* world,  float x, float y, BodyType bodytype); \r\n"
-"  /// Destroy Body \r\n"
+"  \r\n"
+"  /// Removes a body from the world, and marks it with the property IsDestroyed true. \r\n"
 "  import static void DestroyBody(World* world, Body* body);  \r\n"
 "  \r\n"
-"  /// Create Rectangle Shape \r\n"
+"  /// Create Rectangle Shape with specified size. You can change local shape pivot from center. \r\n"
 "  import static Shape* CreateRectangleShape(float w,  float h,  float x=0, float y=0); \r\n"
 "  \r\n"
-"  /// Create Circle Shape \r\n"
+"  /// Create Circle Shape with specified radius. You can change local shape pivot from center. \r\n"
 "  import static Shape* CreateCircleShape(float radius,  float x=0, float y=0); \r\n"
 "  \r\n"
-"  /// Create Fixture \r\n"
+"  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
 "  import static Fixture* CreateFixture(Body* body, Shape* shape, float density=0); \r\n"
 "  \r\n"
 "}; \r\n";
@@ -210,7 +261,7 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 
 //==============================================================================
 
-#endif
+#endif  //AGS_PLATFORM_OS_WINDOWS
 
 // ***** Run time *****
 
@@ -220,7 +271,6 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 
 //define engine
 IAGSEngine* engine;
-
 
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
@@ -345,80 +395,6 @@ int32 AgsBody_IsDestroyed(AgsBody* self) {
 	return 0;
 }
 
-
-int32 AgsBody_GetIntPositionX(AgsBody* self) {
-	return (int32) self->GetPosX();
-}
-
-int32 AgsBody_GetIntPositionY(AgsBody* self) {
-	return (int32)self->GetPosY();
-}
-
-void AgsBody_SetIntPositionX(AgsBody* self, int32 x) {
-	float32 fx = (float32) x;
-
-	self->SetPosX(fx);
-}
-
-void AgsBody_SetIntPositionY(AgsBody* self, int32 y) {
-	float32 fy = (float32)y;
-
-	self->SetPosX(fy);
-}
-//end of int positions
-
-//float positions
-uint32_t AgsBody_GetPositionX(AgsBody* self) {
-	return ToAgsFloat(self->GetPosX());
-}
-
-uint32_t AgsBody_GetPositionY(AgsBody* self) {
-	return ToAgsFloat(self->GetPosY());
-}
-
-void AgsBody_SetPositionX(AgsBody* self, uint32_t x) {
-	float32 fx = ToNormalFloat(x);
-
-	self->SetPosX(fx);
-}
-
-void AgsBody_SetPositionY(AgsBody* self, uint32_t y) {
-	float32 fy = ToNormalFloat(y);
-
-	self->SetPosX(fy);
-}
-
-void AgsBody_SetPosition(AgsBody* self, uint32_t x, uint32_t y) {
-	float32 fx = ToNormalFloat(x);
-	float32 fy = ToNormalFloat(y);
-
-	self->SetPos(fx, fy);
-}
-
-//end of float positions
-
-void AgsBody_ApplyForce(AgsBody* self, uint32_t force_x, uint32_t force_y) {
-	float32 f_forcex = ToNormalFloat(force_x);
-	float32 f_forcey = ToNormalFloat(force_y);
-
-	self->ApplyForce(f_forcex, f_forcey);
-}
-
-void AgsBody_SetLinearVelocity(AgsBody* self, uint32_t vel_x, uint32_t vel_y) {
-	float32 f_vel_x = ToNormalFloat(vel_x);
-	float32 f_vel_y = ToNormalFloat(vel_y);
-
-	self->SetLinearVelocity(f_vel_x, f_vel_y);
-}
-
-uint32_t AgsBody_GetLinearVelocityX(AgsBody* self) {
-	return ToAgsFloat(self->GetLinearVelocityX());
-}
-
-uint32_t AgsBody_GetLinearVelocityY(AgsBody* self) {
-	return ToAgsFloat(self->GetLinearVelocityY());
-}
-
 void AgsBody_SetFixedRotation(AgsBody* self, int32 fixed) {
 	if(fixed == 1)
 		self->SetFixedRotation(true);
@@ -443,12 +419,44 @@ int32 AgsBody_GetBullet(AgsBody* self) {
 	return 0;
 }
 
-void AgsBody_ApplyAngularImpulse(AgsBody* self, uint32_t impulse) {
-	self->ApplyAngularImpulse(ToNormalFloat(impulse));
+void AgsBody_SetIntPositionX(AgsBody* self, int32 x) {
+	float32 fx = (float32) x;
+
+	self->SetPosX(fx);
 }
 
-uint32_t AgsBody_GetAngle(AgsBody* self) {
-	return ToAgsFloat(self->GetAngle());
+int32 AgsBody_GetIntPositionX(AgsBody* self) {
+	return (int32) self->GetPosX();
+}
+
+void AgsBody_SetIntPositionY(AgsBody* self, int32 y) {
+	float32 fy = (float32)y;
+
+	self->SetPosX(fy);
+}
+
+int32 AgsBody_GetIntPositionY(AgsBody* self) {
+	return (int32)self->GetPosY();
+}
+
+void AgsBody_SetPositionX(AgsBody* self, uint32_t x) {
+	float32 fx = ToNormalFloat(x);
+
+	self->SetPosX(fx);
+}
+
+uint32_t AgsBody_GetPositionX(AgsBody* self) {
+	return ToAgsFloat(self->GetPosX());
+}
+
+void AgsBody_SetPositionY(AgsBody* self, uint32_t y) {
+	float32 fy = ToNormalFloat(y);
+
+	self->SetPosX(fy);
+}
+
+uint32_t AgsBody_GetPositionY(AgsBody* self) {
+	return ToAgsFloat(self->GetPosY());
 }
 
 void AgsBody_SetAngle(AgsBody* self, uint32_t angle) {
@@ -457,8 +465,35 @@ void AgsBody_SetAngle(AgsBody* self, uint32_t angle) {
 	self->SetAngle(fangle);
 }
 
-uint32_t AgsBody_GetInertia(AgsBody* self) {
-	return ToAgsFloat(self->GetInertia());
+uint32_t AgsBody_GetAngle(AgsBody* self) {
+	return ToAgsFloat(self->GetAngle());
+}
+
+void AgsBody_SetLinearDamping(AgsBody* self, uint32_t ldamping) {
+	float32 fldamping = ToNormalFloat(ldamping);
+	self->SetLinearDamping(fldamping);
+}
+
+uint32_t AgsBody_GetLinearDamping(AgsBody* self) {
+	return ToAgsFloat(self->GetLinearDamping());
+}
+
+void AgsBody_SetAngularDamping(AgsBody* self, uint32_t adamping) {
+	float32 fadamping = ToNormalFloat(adamping);
+	self->SetAngularDamping(fadamping);
+}
+
+uint32_t AgsBody_GetAngularDamping(AgsBody* self) {
+	return ToAgsFloat(self->GetAngularDamping());
+}
+
+void AgsBody_SetAngularVelocity(AgsBody* self, uint32_t avel) {
+	float32 favel = ToNormalFloat(avel);
+	self->SetAngularVelocity(favel);
+}
+
+uint32_t AgsBody_GetAngularVelocity(AgsBody* self) {
+	return ToAgsFloat(self->GetAngularVelocity());
 }
 
 void AgsBody_SetInertia(AgsBody* self, uint32_t inertia) {
@@ -467,31 +502,41 @@ void AgsBody_SetInertia(AgsBody* self, uint32_t inertia) {
 	self->SetInertia(finertia);
 }
 
-uint32_t AgsBody_GetLinearDamping(AgsBody* self) {
-	return ToAgsFloat(self->GetLinearDamping());
+uint32_t AgsBody_GetInertia(AgsBody* self) {
+	return ToAgsFloat(self->GetInertia());
 }
 
-void AgsBody_SetLinearDamping(AgsBody* self, uint32_t ldamping) {
-	float32 fldamping = ToNormalFloat(ldamping);
-	self->SetLinearDamping(fldamping);
+uint32_t AgsBody_GetLinearVelocityX(AgsBody* self) {
+	return ToAgsFloat(self->GetLinearVelocityX());
 }
 
-uint32_t AgsBody_GetAngularDamping(AgsBody* self) {
-	return ToAgsFloat(self->GetAngularDamping());
+uint32_t AgsBody_GetLinearVelocityY(AgsBody* self) {
+	return ToAgsFloat(self->GetLinearVelocityY());
 }
 
-void AgsBody_SetAngularDamping(AgsBody* self, uint32_t adamping) {
-	float32 fadamping = ToNormalFloat(adamping);
-	self->SetAngularDamping(fadamping);
+void AgsBody_SetLinearVelocity(AgsBody* self, uint32_t vel_x, uint32_t vel_y) {
+	float32 f_vel_x = ToNormalFloat(vel_x);
+	float32 f_vel_y = ToNormalFloat(vel_y);
+
+	self->SetLinearVelocity(f_vel_x, f_vel_y);
 }
 
-uint32_t AgsBody_GetAngularVelocity(AgsBody* self) {
-	return ToAgsFloat(self->GetAngularVelocity());
+void AgsBody_SetPosition(AgsBody* self, uint32_t x, uint32_t y) {
+	float32 fx = ToNormalFloat(x);
+	float32 fy = ToNormalFloat(y);
+
+	self->SetPos(fx, fy);
 }
 
-void AgsBody_SetAngularVelocity(AgsBody* self, uint32_t avel) {
-	float32 favel = ToNormalFloat(avel);
-	self->SetAngularVelocity(favel);
+void AgsBody_ApplyForce(AgsBody* self, uint32_t force_x, uint32_t force_y) {
+	float32 f_forcex = ToNormalFloat(force_x);
+	float32 f_forcey = ToNormalFloat(force_y);
+
+	self->ApplyForce(f_forcex, f_forcey);
+}
+
+void AgsBody_ApplyAngularImpulse(AgsBody* self, uint32_t impulse) {
+	self->ApplyAngularImpulse(ToNormalFloat(impulse));
 }
 
 void AgsBody_ApplyLinearImpulse(AgsBody* self, uint32_t intensity_x, uint32_t intensity_y) {
@@ -512,7 +557,6 @@ int32 AgsBody_IsTouching(AgsBody* self, AgsBody* other) {
 		return 1;
 	return 0;
 }
-
 
 #pragma endregion // AgsBody_ScriptAPI
 //-----------------------------------------------------------------------------
@@ -629,7 +673,6 @@ void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
 	self->SetRestitution(frestitution);
 }
 
-
 #pragma endregion // AgsFixture_ScriptAPI
 //-----------------------------------------------------------------------------
 
@@ -639,100 +682,100 @@ void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
 
 void AGS_EngineStartup(IAGSEngine *lpEngine)
 {
-        engine = lpEngine;
+	engine = lpEngine;
 
-        // Make sure it's got the version with the features we need
-        if (engine->version < MIN_ENGINE_VERSION)
-                engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
+	// Make sure it's got the version with the features we need
+	if (engine->version < MIN_ENGINE_VERSION)
+			engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
-        //register functions
-		engine->AddManagedObjectReader(AgsWorldInterface::name, &AgsWorld_Reader);
-		engine->AddManagedObjectReader(AgsBodyInterface::name, &AgsBody_Reader);
-		engine->AddManagedObjectReader(AgsShapeInterface::name, &AgsShape_Reader);
-		engine->AddManagedObjectReader(AgsShapeRectInterface::name, &AgsShapeRect_Reader);
-		engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
-		engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
+	//register functions
+	engine->AddManagedObjectReader(AgsWorldInterface::name, &AgsWorld_Reader);
+	engine->AddManagedObjectReader(AgsBodyInterface::name, &AgsBody_Reader);
+	engine->AddManagedObjectReader(AgsShapeInterface::name, &AgsShape_Reader);
+	engine->AddManagedObjectReader(AgsShapeRectInterface::name, &AgsShapeRect_Reader);
+	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
+	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
+	
+	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
+	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
+	engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
+	engine->RegisterScriptFunction("AgsBox2D::CreateBody^4", (void*)agsbox2d_newBody);
+	engine->RegisterScriptFunction("AgsBox2D::DestroyBody^2", (void*)agsbox2d_DestroyBody);
+	engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
+	engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
+	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
 
-		engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
-		engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
-		engine->RegisterScriptFunction("Body::get_FixedRotation", (void*)AgsBody_GetFixedRotation);
-		engine->RegisterScriptFunction("Body::set_Bullet", (void*)AgsBody_SetBullet);
-		engine->RegisterScriptFunction("Body::get_Bullet", (void*)AgsBody_GetBullet);
-		engine->RegisterScriptFunction("Body::get_LinearVelocityX", (void*)AgsBody_GetLinearVelocityX);
-		engine->RegisterScriptFunction("Body::get_LinearVelocityY", (void*)AgsBody_GetLinearVelocityY);
-		engine->RegisterScriptFunction("Body::get_fX", (void*)AgsBody_GetPositionX);
-		engine->RegisterScriptFunction("Body::set_fX", (void*)AgsBody_SetPositionX);
-		engine->RegisterScriptFunction("Body::get_fY", (void*)AgsBody_GetPositionY);
-		engine->RegisterScriptFunction("Body::set_fY", (void*)AgsBody_SetPositionY);
-		engine->RegisterScriptFunction("Body::get_X", (void*)AgsBody_GetIntPositionX);
-		engine->RegisterScriptFunction("Body::set_X", (void*)AgsBody_SetIntPositionX);
-		engine->RegisterScriptFunction("Body::get_Y", (void*)AgsBody_GetIntPositionY);
-		engine->RegisterScriptFunction("Body::set_Y", (void*)AgsBody_SetIntPositionY);
-		engine->RegisterScriptFunction("Body::get_Angle", (void*)AgsBody_GetAngle);
-		engine->RegisterScriptFunction("Body::set_Angle", (void*)AgsBody_SetAngle);
-		engine->RegisterScriptFunction("Body::get_LinearDamping", (void*)AgsBody_GetLinearDamping);
-		engine->RegisterScriptFunction("Body::set_LinearDamping", (void*)AgsBody_SetLinearDamping);
-		engine->RegisterScriptFunction("Body::get_AngularDamping", (void*)AgsBody_GetAngularDamping);
-		engine->RegisterScriptFunction("Body::set_AngularDamping", (void*)AgsBody_SetAngularDamping);
-		engine->RegisterScriptFunction("Body::get_AngularVelocity", (void*)AgsBody_GetAngularVelocity);
-		engine->RegisterScriptFunction("Body::set_AngularVelocity", (void*)AgsBody_SetAngularVelocity);
-		engine->RegisterScriptFunction("Body::get_Inertia", (void*)AgsBody_GetInertia);
-		engine->RegisterScriptFunction("Body::set_Inertia", (void*)AgsBody_SetInertia);
-		engine->RegisterScriptFunction("Body::ApplyForce^2", (void*)AgsBody_ApplyForce);
-		engine->RegisterScriptFunction("Body::SetLinearVelocity^2", (void*)AgsBody_SetLinearVelocity);
-		engine->RegisterScriptFunction("Body::ApplyAngularImpulse^1", (void*)AgsBody_ApplyAngularImpulse);
-		engine->RegisterScriptFunction("Body::ApplyLinearImpulse^2", (void*)AgsBody_ApplyLinearImpulse);
-		engine->RegisterScriptFunction("Body::ApplyTorque^1", (void*)AgsBody_ApplyTorque);
-		engine->RegisterScriptFunction("Body::IsTouching^1", (void*)AgsBody_IsTouching);
+	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 
-		engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
+	engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
+	engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
+	engine->RegisterScriptFunction("Body::get_FixedRotation", (void*)AgsBody_GetFixedRotation);
+	engine->RegisterScriptFunction("Body::set_Bullet", (void*)AgsBody_SetBullet);
+	engine->RegisterScriptFunction("Body::get_Bullet", (void*)AgsBody_GetBullet);
+	engine->RegisterScriptFunction("Body::set_X", (void*)AgsBody_SetIntPositionX);
+	engine->RegisterScriptFunction("Body::get_X", (void*)AgsBody_GetIntPositionX);
+	engine->RegisterScriptFunction("Body::set_Y", (void*)AgsBody_SetIntPositionY);
+	engine->RegisterScriptFunction("Body::get_Y", (void*)AgsBody_GetIntPositionY);
+	engine->RegisterScriptFunction("Body::set_fX", (void*)AgsBody_SetPositionX);
+	engine->RegisterScriptFunction("Body::get_fX", (void*)AgsBody_GetPositionX);
+	engine->RegisterScriptFunction("Body::set_fY", (void*)AgsBody_SetPositionY);
+	engine->RegisterScriptFunction("Body::get_fY", (void*)AgsBody_GetPositionY);
+	engine->RegisterScriptFunction("Body::set_Angle", (void*)AgsBody_SetAngle);
+	engine->RegisterScriptFunction("Body::get_Angle", (void*)AgsBody_GetAngle);
+	engine->RegisterScriptFunction("Body::set_LinearDamping", (void*)AgsBody_SetLinearDamping);
+	engine->RegisterScriptFunction("Body::get_LinearDamping", (void*)AgsBody_GetLinearDamping);
+	engine->RegisterScriptFunction("Body::set_AngularDamping", (void*)AgsBody_SetAngularDamping);
+	engine->RegisterScriptFunction("Body::get_AngularDamping", (void*)AgsBody_GetAngularDamping);
+	engine->RegisterScriptFunction("Body::set_AngularVelocity", (void*)AgsBody_SetAngularVelocity);
+	engine->RegisterScriptFunction("Body::get_AngularVelocity", (void*)AgsBody_GetAngularVelocity);
+	engine->RegisterScriptFunction("Body::set_Inertia", (void*)AgsBody_SetInertia);
+	engine->RegisterScriptFunction("Body::get_Inertia", (void*)AgsBody_GetInertia);
+	engine->RegisterScriptFunction("Body::get_LinearVelocityX", (void*)AgsBody_GetLinearVelocityX);
+	engine->RegisterScriptFunction("Body::get_LinearVelocityY", (void*)AgsBody_GetLinearVelocityY);
+	engine->RegisterScriptFunction("Body::SetLinearVelocity^2", (void*)AgsBody_SetLinearVelocity);
+	engine->RegisterScriptFunction("Body::ApplyForce^2", (void*)AgsBody_ApplyForce);
+	engine->RegisterScriptFunction("Body::ApplyAngularImpulse^1", (void*)AgsBody_ApplyAngularImpulse);
+	engine->RegisterScriptFunction("Body::ApplyLinearImpulse^2", (void*)AgsBody_ApplyLinearImpulse);
+	engine->RegisterScriptFunction("Body::ApplyTorque^1", (void*)AgsBody_ApplyTorque);
+	engine->RegisterScriptFunction("Body::IsTouching^1", (void*)AgsBody_IsTouching);
 
-		engine->RegisterScriptFunction("Shape::get_AsCircle", (void*)AgsShape_AsCircle);
-		engine->RegisterScriptFunction("Shape::get_AsRectangle", (void*)AgsShape_AsRectangle);
+	engine->RegisterScriptFunction("ShapeRectangle::get_Width", (void*)AgsShapeRect_GetWidth);
+	engine->RegisterScriptFunction("ShapeRectangle::set_Width", (void*)AgsShapeRect_SetWidth);
+	engine->RegisterScriptFunction("ShapeRectangle::get_Height", (void*)AgsShapeRect_GetHeight);
+	engine->RegisterScriptFunction("ShapeRectangle::set_Height", (void*)AgsShapeRect_SetHeight);
+	engine->RegisterScriptFunction("ShapeRectangle::get_fWidth", (void*)AgsShapeRect_GetWidthF);
+	engine->RegisterScriptFunction("ShapeRectangle::set_fWidth", (void*)AgsShapeRect_SetWidthF);
+	engine->RegisterScriptFunction("ShapeRectangle::get_fHeight", (void*)AgsShapeRect_GetHeightF);
+	engine->RegisterScriptFunction("ShapeRectangle::set_fHeight", (void*)AgsShapeRect_SetHeightF);
+	engine->RegisterScriptFunction("ShapeRectangle::geti_PointsfX", (void*)AgsShapeRect_GetPointsfX);
+	engine->RegisterScriptFunction("ShapeRectangle::geti_PointsfY", (void*)AgsShapeRect_GetPointsfY);
 
-		engine->RegisterScriptFunction("ShapeRectangle::get_fWidth", (void*)AgsShapeRect_GetWidthF);
-		engine->RegisterScriptFunction("ShapeRectangle::set_fWidth", (void*)AgsShapeRect_SetWidthF);
-		engine->RegisterScriptFunction("ShapeRectangle::get_fHeight", (void*)AgsShapeRect_GetHeightF);
-		engine->RegisterScriptFunction("ShapeRectangle::set_fHeight", (void*)AgsShapeRect_SetHeightF);
-		engine->RegisterScriptFunction("ShapeRectangle::get_Width", (void*)AgsShapeRect_GetWidth);
-		engine->RegisterScriptFunction("ShapeRectangle::set_Width", (void*)AgsShapeRect_SetWidth);
-		engine->RegisterScriptFunction("ShapeRectangle::get_Height", (void*)AgsShapeRect_GetHeight);
-		engine->RegisterScriptFunction("ShapeRectangle::set_Height", (void*)AgsShapeRect_SetHeight);
-		engine->RegisterScriptFunction("ShapeRectangle::geti_PointsfX", (void*)AgsShapeRect_GetPointsfX);
-		engine->RegisterScriptFunction("ShapeRectangle::geti_PointsfY", (void*)AgsShapeRect_GetPointsfY);
+	engine->RegisterScriptFunction("Shape::get_AsCircle", (void*)AgsShape_AsCircle);
+	engine->RegisterScriptFunction("Shape::get_AsRectangle", (void*)AgsShape_AsRectangle);
 
-		engine->RegisterScriptFunction("Fixture::get_Density", (void*)AgsFixture_GetDensity);
-		engine->RegisterScriptFunction("Fixture::set_Density", (void*)AgsFixture_SetDensity);
-		engine->RegisterScriptFunction("Fixture::get_Friction", (void*)AgsFixture_GetFriction);
-		engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
-		engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
-		engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
-				
-		engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
-		engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
-		engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
-		engine->RegisterScriptFunction("AgsBox2D::CreateBody^4", (void*)agsbox2d_newBody);
-		engine->RegisterScriptFunction("AgsBox2D::DestroyBody^2", (void*)agsbox2d_DestroyBody);
-		engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
-		engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
-		engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
+	engine->RegisterScriptFunction("Fixture::get_Density", (void*)AgsFixture_GetDensity);
+	engine->RegisterScriptFunction("Fixture::set_Density", (void*)AgsFixture_SetDensity);
+	engine->RegisterScriptFunction("Fixture::get_Friction", (void*)AgsFixture_GetFriction);
+	engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
+	engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
+	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);				
 }
 
 //------------------------------------------------------------------------------
 
 void AGS_EngineShutdown()
 {
-        // Called by the game engine just before it exits.
-        // This gives you a chance to free any memory and do any cleanup
-        // that you need to do before the engine shuts down.
+	// Called by the game engine just before it exits.
+	// This gives you a chance to free any memory and do any cleanup
+	// that you need to do before the engine shuts down.
 }
 
 //------------------------------------------------------------------------------
 
 int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
 {
-        switch (event)
-        {
+	switch (event)
+	{
 /*
     case AGSE_KEYPRESS:
     case AGSE_MOUSECLICK:
@@ -753,12 +796,12 @@ int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
     case AGSE_PRESAVEGAME:
     case AGSE_POSTRESTOREGAME:
  */
-        default:
-                break;
-        }
+	default:
+			break;
+	}
 
-        // Return 1 to stop event from processing further (when needed)
-        return (0);
+	// Return 1 to stop event from processing further (when needed)
+	return (0);
 }
 
 //------------------------------------------------------------------------------
@@ -766,16 +809,16 @@ int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
 int AGS_EngineDebugHook(const char *scriptName,
                         int lineNum, int reserved)            //*** optional ***
 {
-        // Can be used to debug scripts, see documentation
-        return 0;
+	// Can be used to debug scripts, see documentation
+	return 0;
 }
 
 //------------------------------------------------------------------------------
 
 void AGS_EngineInitGfx(const char *driverID, void *data)      //*** optional ***
 {
-        // This allows you to make changes to how the graphics driver starts up.
-        // See documentation
+	// This allows you to make changes to how the graphics driver starts up.
+	// See documentation
 }
 
 //..............................................................................
