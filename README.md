@@ -35,7 +35,7 @@ boxes and a ball. The ball is controlled by keyboard input.
 
 This example uses a room script and a gui named gDebugGui, with size 320x180 
 and border and color set to 0, used to print the example objects. These are not
-AGS Objects.
+AGS Objects. This example mimics [Love physics tutorial](https://love2d.org/wiki/Tutorial:Physics).
 
 ```AGS Script
 // example room script file
