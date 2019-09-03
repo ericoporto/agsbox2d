@@ -15,8 +15,8 @@ AgsBox2D is still in early development.
   * [World](#world)
   * [Shape](#shape)
   * [Fixture](#fixture)
-- [Building agsbox2d](#building-agsbox2d)
 - [Download agsbox2d](#download-agsbox2d)
+- [Building agsbox2d](#building-agsbox2d)
 - [License and Author](#license-and-author)
 
 ## In development warning
@@ -373,6 +373,12 @@ Restitution is used to make objects bounce, and is usually a value between
 `0.0` and `1.0`. A value of `0.0` means the object won't bounce, and a value
 of `1.0` means the object velocity will be exactly reflected.
 
+## Download AgsBox2D
+
+This plugin is available as `agsbox2d.dll` under [assets, in the latest release](https://github.com/ericoporto/agsbox2d/releases/latest/),
+for usage with Windows and the AGS Editor. You can also find it there built 
+for Linux as `libagsbox2d.so` and for MacOS as `libagsbox2d.dylib`.
+
 ## Building agsbox2d 
 
 AgsBox2D both Makefile and the VS Solution file, expects to find [Adventure Game Studio source code](https://github.com/adventuregamestudio/ags)
@@ -392,12 +398,6 @@ The dll provided by Release Win32 builds is the one you should build to use
 with an AGS Game at the time of this writing.
 
 On Linux and MacOS, navigate to `agsbox2d/` inside the directory and type `make`.
-
-## Download AgsBox2D
-
-This plugin is available as `agsbox2d.dll` under [assets, in the latest release](https://github.com/ericoporto/agsbox2d/releases/latest/),
-for usage with Windows and the AGS Editor. You can also find it there built 
-for Linux as `libagsbox2d.so` and for MacOS as `libagsbox2d.dylib`.
 
 ## License and Author
 
