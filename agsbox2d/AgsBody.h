@@ -12,6 +12,7 @@ class AgsBody
 {
 	bool IsDestroyed;
 public:
+	AgsBody();
 	AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
 	~AgsBody(void);
 	AgsWorld* World;

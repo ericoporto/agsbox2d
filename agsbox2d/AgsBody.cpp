@@ -12,6 +12,10 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	World = world;
 }
 
+AgsBody::AgsBody() {
+	IsDestroyed = true;
+}
+
 bool AgsBody::IsTouching(AgsBody* body) {
 	if (body == nullptr) {
 		return false;
@@ -167,6 +171,9 @@ const char* AgsBodyInterface::name = "Body";
 
 //------------------------------------------------------------------------------
 
+#include "SerialHelper.h"
+using namespace SerialHelper;
+
 int AgsBodyInterface::Dispose(const char* address, bool force)
 {
 	//if (((AgsBody*)address)->World != NULL && 
@@ -198,9 +205,19 @@ int AgsBodyInterface::Dispose(const char* address, bool force)
 
 int AgsBodyInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-	AgsBody* arr = (AgsBody*)address;
+	AgsBody* body = (AgsBody*)address;
 	char* ptr = buffer;
-	
+	char* end = buffer + bufsize;
+
+	if (body->GetIsDestroyed()) {
+		ptr = BoolToChar(true, ptr, end);
+		return (ptr - buffer);
+	}
+	ptr = BoolToChar(false, ptr, end);
+	ptr = IntToChar(body->World->ID, ptr, end);
+
+	ptr = b2BodyToChar(body->B2AgsBody, ptr, end);
+
 	return (ptr - buffer);
 }
 
@@ -210,19 +227,41 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 {
 	int body_id = key;
 	AgsBody* body;
+	char* ptr = (char*)serializedData;
+
+	bool isdestroyed;
+	int32 world_id;
+	ptr = CharToBool(isdestroyed, ptr);
+	
+	if (isdestroyed) {
+		body = new AgsBody();
+		engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
+		return;
+	}
+
+	ptr = CharToInt(world_id, ptr);
+
+	AgsWorld * world;
+	if (Book::isAgsWorldRegisteredByID(world_id)) {
+		world = Book::IDtoAgsWorld(world_id);
+	}
+	else {
+		world = new AgsWorld(0, 0);
+		Book::RegisterAgsWorld(world_id, world);
+	}
 
 	if (Book::isAgsBodyRegisteredByID(body_id)) {
 		body = Book::IDtoAgsBody(body_id);
+		body->World = world;
 	}
 	else {
-		//body = new AgsBody()
+		body = new AgsBody(world, 0.0, 0.0, b2_staticBody);
+		body->ID = body_id;
 	}
-	
-	//AgsBody* arr = new AgsBody();
 
-	//const char* ptr = serializedData;
+	ptr = CharTob2Body(body->B2AgsBody, ptr);
 
-	//engine->RegisterUnserializedObject(key, arr, &AgsBody_Interface);
+	engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
 }
 
 //..............................................................................

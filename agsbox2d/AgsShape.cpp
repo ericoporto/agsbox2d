@@ -56,7 +56,7 @@ void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSi
 //	const char* ptr = serializedData;
 
 //	engine->RegisterUnserializedObject(key, arr, &AgsShape_Interface);
-
+/*
 	AgsShape* shape;
 
 	int shape_id = key;
@@ -65,12 +65,12 @@ void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSi
 		shape = Book::IDtoAgsShape(shape_id);
 	}
 	else {
-		//shape = new AgsShape()
+		shape = new AgsShape();
 	}
 
 	const char* ptr = serializedData;
 
-	engine->RegisterUnserializedObject(key, shape, &AgsShape_Interface);
+	engine->RegisterUnserializedObject(key, shape, &AgsShape_Interface);*/
 }
 
 //..............................................................................
