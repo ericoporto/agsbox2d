@@ -34,6 +34,7 @@
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
 #include "AgsFixture.h"
+#include "Book.h"
 
 #pragma endregion // Defines_and_Includes
 
@@ -290,6 +291,7 @@ AgsWorld* agsbox2d_newWorld(uint32_t gravityX, uint32_t gravityY) {
 	AgsWorld* world = new AgsWorld(gx, gy);
 
 	world->ID = engine->RegisterManagedObject(world, &AgsWorld_Interface);
+	Book::RegisterAgsWorld(world->ID, world);
 
 	return world;
 }
@@ -308,6 +310,7 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 	AgsBody* body = world->NewBody(bx, by, bt);
 
 	body->ID = engine->RegisterManagedObject(body, &AgsBody_Interface);
+	Book::RegisterAgsBody(body->ID, body);
 
 	return body;
 }
@@ -338,6 +341,7 @@ AgsShape* agsbox2d_newRectangleShape(uint32_t w, uint32_t h, uint32_t x, uint32_
 	AgsShape* shape = new AgsShape(new AgsShapeRect(fw, fh, fx, fy));
 
 	shape->ID = engine->RegisterManagedObject(shape, &AgsShape_Interface);
+	Book::RegisterAgsShape(shape->ID, shape);
 
 	return shape;
 }
@@ -351,6 +355,7 @@ AgsShape* agsbox2d_newCircleShape(uint32_t radius, uint32_t x, uint32_t y) {
 	AgsShape* shape = new AgsShape(new AgsShapeCircle(fradius));
 
 	shape->ID = engine->RegisterManagedObject(shape, &AgsShape_Interface);
+	Book::RegisterAgsShape(shape->ID, shape);
 
 	return shape;
 }
@@ -367,6 +372,7 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	AgsFixture* fixture = new AgsFixture(body, shape, fdensity);
 
 	fixture->ID = engine->RegisterManagedObject(fixture, &AgsFixture_Interface);
+	Book::RegisterAgsFixture(fixture->ID, fixture);
 
 	return fixture;
 }

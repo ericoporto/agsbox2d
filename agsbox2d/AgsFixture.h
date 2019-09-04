@@ -14,7 +14,6 @@ public:
 	AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density);
 	~AgsFixture(void);
 	AgsBody* Body;
-	AgsShape* Shape;
 	b2Fixture* B2AgsFixture;
 	b2FixtureDef B2AgsFixtureDef;
 

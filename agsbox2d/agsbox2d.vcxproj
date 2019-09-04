@@ -166,6 +166,7 @@
     <ClCompile Include="AgsShapeCircle.cpp" />
     <ClCompile Include="AgsShapeRect.cpp" />
     <ClCompile Include="AgsWorld.cpp" />
+    <ClCompile Include="Book.cpp" />
     <ClCompile Include="Box2D.cpp" />
     <ClCompile Include="Scale.cpp" />
   </ItemGroup>
@@ -177,6 +178,7 @@
     <ClInclude Include="AgsShapeCircle.h" />
     <ClInclude Include="AgsShapeRect.h" />
     <ClInclude Include="AgsWorld.h" />
+    <ClInclude Include="Book.h" />
     <ClInclude Include="Box2D.h" />
     <ClInclude Include="AgsNumberInterface.h" />
     <ClInclude Include="Scale.h" />

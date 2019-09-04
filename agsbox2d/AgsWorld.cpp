@@ -1,6 +1,7 @@
 #include "AgsWorld.h"
 #include "AgsBody.h"
 #include "Scale.h"
+#include "Book.h"
 
 
 AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
@@ -46,6 +47,7 @@ const char* AgsWorldInterface::name = "World";
 
 int AgsWorldInterface::Dispose(const char* address, bool force)
 {
+	Book::UnregisterAgsWorldByID(((AgsWorld*)address)->ID);
 	delete ((AgsWorld*)address);
 	return (1);
 }
@@ -64,11 +66,20 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-	AgsWorld* arr = new AgsWorld(0,0);
+	AgsWorld* world;
+	
+	int world_id = key;
 
+	if (Book::isAgsWorldRegisteredByID(world_id)) {
+		world = Book::IDtoAgsWorld(world_id);
+	}
+	else {
+		world = new AgsWorld(0, 0);
+	}
+	
 	const char* ptr = serializedData;
 
-	engine->RegisterUnserializedObject(key, arr, &AgsWorld_Interface);
+	engine->RegisterUnserializedObject(key, world, &AgsWorld_Interface);
 }
 
 //..............................................................................

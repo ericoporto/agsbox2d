@@ -1,6 +1,7 @@
 #include "AgsShape.h"
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
+#include "Book.h"
 
 AgsShape::AgsShape(AgsShapeCircle* shapeCircle) {
 	ShapeCircle = shapeCircle;
@@ -31,6 +32,7 @@ const char* AgsShapeInterface::name = "Shape";
 
 int AgsShapeInterface::Dispose(const char* address, bool force)
 {
+	Book::UnregisterAgsShapeByID(((AgsShape*)address)->ID);
 	delete ((AgsShape*)address);
 	return (1);
 }
@@ -54,6 +56,21 @@ void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSi
 //	const char* ptr = serializedData;
 
 //	engine->RegisterUnserializedObject(key, arr, &AgsShape_Interface);
+
+	AgsShape* shape;
+
+	int shape_id = key;
+
+	if (Book::isAgsShapeRegisteredByID(shape_id)) {
+		shape = Book::IDtoAgsShape(shape_id);
+	}
+	else {
+		//shape = new AgsShape()
+	}
+
+	const char* ptr = serializedData;
+
+	engine->RegisterUnserializedObject(key, shape, &AgsShape_Interface);
 }
 
 //..............................................................................

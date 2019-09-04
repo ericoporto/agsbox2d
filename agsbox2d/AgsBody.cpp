@@ -1,7 +1,7 @@
 #include "AgsBody.h"
 #include "AgsWorld.h"
 #include "Scale.h"
-
+#include "Book.h"
 
 AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	IsDestroyed = false;
@@ -188,6 +188,8 @@ int AgsBodyInterface::Dispose(const char* address, bool force)
 	//	}
 
 	//}
+
+	Book::UnregisterAgsBodyByID(((AgsBody*)address)->ID);
 	delete ((AgsBody*)address);
 	return (1);
 }
@@ -206,6 +208,16 @@ int AgsBodyInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
+	int body_id = key;
+	AgsBody* body;
+
+	if (Book::isAgsBodyRegisteredByID(body_id)) {
+		body = Book::IDtoAgsBody(body_id);
+	}
+	else {
+		//body = new AgsBody()
+	}
+	
 	//AgsBody* arr = new AgsBody();
 
 	//const char* ptr = serializedData;

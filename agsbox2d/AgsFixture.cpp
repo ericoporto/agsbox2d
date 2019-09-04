@@ -1,18 +1,18 @@
 #include "AgsFixture.h"
+#include "Book.h"
 
 AgsFixture::AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density) {
 	Body = agsBody;
-	Shape = agsShape;
 	B2AgsFixtureDef.density = density;
 
 	if (agsShape->ShapeCircle != NULL) {
-		B2AgsFixtureDef.shape = Shape->ShapeCircle->B2AgsShapeCircle;
+		B2AgsFixtureDef.shape = agsShape->ShapeCircle->B2AgsShapeCircle;
 	}
 	else if (agsShape->ShapeRect != NULL) {
-		B2AgsFixtureDef.shape = Shape->ShapeRect->B2AgsShapeRect;
+		B2AgsFixtureDef.shape = agsShape->ShapeRect->B2AgsShapeRect;
 	}
 	else {
-		B2AgsFixtureDef.shape = Shape->B2AgsShape;
+		B2AgsFixtureDef.shape = agsShape->B2AgsShape;
 	}
 
 	B2AgsFixture = Body->B2AgsBody->CreateFixture(&B2AgsFixtureDef);
@@ -70,6 +70,7 @@ int AgsFixtureInterface::Dispose(const char* address, bool force)
 	//	((AgsFixture*)address)->Body->B2AgsBody->DestroyFixture(((AgsFixture*)address)->B2AgsFixture);
 	//}
 
+	Book::UnregisterAgsFixtureByID(((AgsFixture*)address)->ID);
 	delete ((AgsFixture*)address);
 	return (1);
 }
