@@ -8,8 +8,8 @@ AgsShapeRect::AgsShapeRect(float32 w, float32 h, float32 x, float32 y) {
 		Scale::ScaleDown(w / 2.0f), Scale::ScaleDown(h / 2.0f),
 		Scale::ScaleDown(b2Vec2(x, y)), 0.0);
 
-	Width = 2.0f * B2AgsShapeRect->m_vertices[2].x;
-	Height = 2.0f * B2AgsShapeRect->m_vertices[2].y;
+	Width = Scale::ScaleUp(2.0f * B2AgsShapeRect->m_vertices[2].x);
+	Height = Scale::ScaleUp(2.0f * B2AgsShapeRect->m_vertices[2].y);
 }
 
 AgsShapeRect::AgsShapeRect(b2PolygonShape* shape) {
