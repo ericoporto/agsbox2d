@@ -257,6 +257,7 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 	else {
 		body = new AgsBody(world, 0.0, 0.0, b2_staticBody);
 		body->ID = body_id;
+		Book::RegisterAgsBody(body_id, body);
 	}
 
 	ptr = CharTob2Body(body->B2AgsBody, ptr);

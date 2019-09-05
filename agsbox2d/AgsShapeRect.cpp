@@ -3,12 +3,22 @@
 
 AgsShapeRect::AgsShapeRect(float32 w, float32 h, float32 x, float32 y) {
 	B2AgsShapeRect = new b2PolygonShape();
-	Width = w;
-	Height = h;
+
 	B2AgsShapeRect->SetAsBox(
 		Scale::ScaleDown(w / 2.0f), Scale::ScaleDown(h / 2.0f),
 		Scale::ScaleDown(b2Vec2(x, y)), 0.0);
+
+	Width = 2.0f * B2AgsShapeRect->m_vertices[2].x;
+	Height = 2.0f * B2AgsShapeRect->m_vertices[2].y;
 }
+
+AgsShapeRect::AgsShapeRect(b2PolygonShape* shape) {
+	B2AgsShapeRect = shape;
+
+	Width = 2.0f * B2AgsShapeRect->m_vertices[2].x;
+	Height = 2.0f * B2AgsShapeRect->m_vertices[2].y;
+}
+
 
 AgsShapeRect::~AgsShapeRect(void)
 {

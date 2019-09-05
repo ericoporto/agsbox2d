@@ -5,18 +5,16 @@ namespace SerialHelper {
 	char* IntToChar(int32 i, char * buf, char* end) {
 		assert(buf + sizeof(int32) > end);
 
-		u_ci converter;
-		converter.i = i;
-		buf = converter.s;
+		*((int32*)buf) = i;
+
 		return buf + sizeof(int32);
 	}
 
 	char* FloatToChar(float32 f, char * buf, char* end) {
 		assert(buf + sizeof(float32) > end);
 
-		u_cf converter;
-		converter.f = f;
-		buf = converter.s;
+		*((float*)buf) = f;
+
 		return buf + sizeof(float32);
 	}
 
@@ -110,6 +108,17 @@ namespace SerialHelper {
 		buf = b2Vec2ToChar(massData.center, buf, end);
 		buf = FloatToChar(massData.I, buf, end);
 
+		int fixturecount = 0;
+		for (b2Fixture* fixture = b2body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+			fixturecount++;
+		}
+
+		buf = IntToChar(fixturecount, buf, end);
+
+		for (b2Fixture* fixture = b2body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+			buf = b2FixtureToChar(fixture, buf, end);
+		}
+
 		return buf;
 	}
 
@@ -142,24 +151,24 @@ namespace SerialHelper {
 		int32 itype;
 		b2BodyType type;
 
+		if (b2shape != nullptr) {
+			delete b2shape;
+		}
+
 		buf = CharToInt(itype, buf);
 		type = (b2BodyType)itype;
 
-		b2Shape* pshape;
-
 		if (type == b2Shape::e_circle)
 		{
-			b2CircleShape circleShape;
+			b2shape = new b2CircleShape;
 			float32 radius;
 			b2Vec2 center;
 
 			buf = CharToFloat(radius, buf);
 			buf = CharTob2Vec2(center, buf);
 
-			circleShape.m_radius = radius;
-			circleShape.m_p = center;
-
-			pshape = &circleShape;
+			((b2CircleShape*)b2shape)->m_radius = radius;
+			((b2CircleShape*)b2shape)->m_p = center;
 		}
 		else if (type == b2Shape::e_edge)
 		{
@@ -171,39 +180,33 @@ namespace SerialHelper {
 		}
 		else if (type == b2Shape::e_polygon)
 		{
-			b2Vec2 vertices[b2_maxPolygonVertices];
 			int vertexCount;
 			buf = CharToInt(vertexCount, buf);
 			assert(vertexCount <= b2_maxPolygonVertices);
 
+			b2shape = new b2PolygonShape;
+
 			if (vertexCount > 2) {
 				for (int i = 0; i < vertexCount; i++)
-					buf = CharTob2Vec2(vertices[i], buf);
+					buf = CharTob2Vec2(((b2PolygonShape*)b2shape)->m_vertices[i], buf);
 			}
-
-			b2PolygonShape polygonShape;
-			pshape = &polygonShape;
 		}
-
-		if (b2shape != nullptr) {
-			delete b2shape;
-		}
-
-		b2shape = pshape;
 
 		return buf;
 	}
 
-	char* CharTob2Fixture(b2Fixture* b2fixture, char* buf) {
-		float32 restitution;
-		float32 friction;
-		float32 density;
-		bool issensor;
+	char* CharTob2FixtureDef(b2FixtureDef* b2fixturedef, char* buf) {
+		buf = CharToFloat(b2fixturedef->restitution, buf);
+		buf = CharToFloat(b2fixturedef->friction, buf);
+		buf = CharToFloat(b2fixturedef->density, buf);
+		buf = CharToBool(b2fixturedef->isSensor, buf);
 
-		buf = CharToFloat(restitution, buf);
-		buf = CharToFloat(friction, buf);
-		buf = CharToFloat(density, buf);
-		buf = CharToBool(issensor, buf);
+		b2Shape* shape = nullptr;
+		buf = CharTob2Shape(shape, buf);
+
+		b2fixturedef->shape = shape;
+
+		return buf;
 	}
 
 	char* CharTob2Body(b2Body* b2body, char* buf) {
@@ -247,6 +250,15 @@ namespace SerialHelper {
 		b2body->SetBullet(is_bullet);
 		b2body->SetActive(is_active);
 		b2body->SetAwake(is_awake);
+
+		int fixturecount;
+		buf = CharToInt(fixturecount, buf);
+
+		for (int i = 0; i < fixturecount; i++) {
+			b2FixtureDef* fixturedef = new b2FixtureDef;
+			buf = CharTob2FixtureDef(fixturedef, buf);
+			b2body->CreateFixture(fixturedef);
+		}
 		b2body->SetMassData(&massData);
 
 		return buf;

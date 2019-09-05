@@ -32,7 +32,7 @@ namespace SerialHelper {
 	char* CharToFloat(float32 &f, char * buf);
 	char* CharTob2Vec2(b2Vec2 &vec, char * buf);
 	char* CharTob2Shape(b2Shape* b2shape, char * buf);
-	char* CharTob2Fixture(b2Fixture* b2fixture, char* buf);
+	char* CharTob2FixtureDef(b2FixtureDef* b2fixturedef, char* buf);
 	char* CharTob2Body(b2Body* b2body, char* buf);
 }
 

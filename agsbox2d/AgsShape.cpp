@@ -5,12 +5,22 @@
 
 AgsShape::AgsShape(AgsShapeCircle* shapeCircle) {
 	ShapeCircle = shapeCircle;
-	ShapeRect = NULL;
+	ShapeRect = nullptr;
 }
 
 AgsShape::AgsShape(AgsShapeRect* shapeRect) {
 	ShapeRect = shapeRect;
-	ShapeCircle = NULL;
+	ShapeCircle = nullptr;
+}
+
+AgsShape::AgsShape(b2Shape* b2shape) {
+	if (b2shape->GetType() == b2Shape::e_circle) {
+		ShapeCircle = new AgsShapeCircle((b2CircleShape*) b2shape);
+		ShapeRect = nullptr;
+	} else {
+		ShapeRect = new AgsShapeRect((b2PolygonShape*) b2shape);
+		ShapeCircle = nullptr;
+	}
 }
 
 AgsShape::~AgsShape(void)
@@ -29,6 +39,8 @@ AgsShapeReader AgsShape_Reader;
 const char* AgsShapeInterface::name = "Shape";
 
 //------------------------------------------------------------------------------
+#include "SerialHelper.h"
+using namespace SerialHelper;
 
 int AgsShapeInterface::Dispose(const char* address, bool force)
 {
@@ -41,8 +53,11 @@ int AgsShapeInterface::Dispose(const char* address, bool force)
 
 int AgsShapeInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-	AgsShape* arr = (AgsShape*)address;
+	AgsShape* shape = (AgsShape*)address;
 	char* ptr = buffer;
+	char* end = buffer + bufsize;
+
+	ptr = b2ShapeToChar(shape->B2AgsShape, ptr, end);
 	
 	return (ptr - buffer);
 }
@@ -51,26 +66,17 @@ int AgsShapeInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-//	AgsShape* arr = new AgsShape(0,0);
-
-//	const char* ptr = serializedData;
-
-//	engine->RegisterUnserializedObject(key, arr, &AgsShape_Interface);
-/*
-	AgsShape* shape;
-
+	char* ptr = (char*) serializedData;
 	int shape_id = key;
 
-	if (Book::isAgsShapeRegisteredByID(shape_id)) {
-		shape = Book::IDtoAgsShape(shape_id);
-	}
-	else {
-		shape = new AgsShape();
-	}
+	b2Shape * shape = nullptr;
 
-	const char* ptr = serializedData;
+	ptr = CharTob2Shape(shape, ptr);
+	AgsShape* agsshape = new AgsShape(shape);
+	agsshape->ID = shape_id;
+	Book::RegisterAgsShape(shape_id, agsshape);
 
-	engine->RegisterUnserializedObject(key, shape, &AgsShape_Interface);*/
+	engine->RegisterUnserializedObject(key, agsshape, &AgsShape_Interface);
 }
 
 //..............................................................................
