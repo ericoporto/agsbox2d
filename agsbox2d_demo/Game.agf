@@ -1160,7 +1160,7 @@
               <Visible>False</Visible>
               <PopupStyle>PopupModal</PopupStyle>
               <PopupYPos>0</PopupYPos>
-              <ZOrder>0</ZOrder>
+              <ZOrder>3</ZOrder>
               <BorderColor>0</BorderColor>
               <Transparency>0</Transparency>
               <BackgroundColor>0</BackgroundColor>
@@ -1522,7 +1522,7 @@
               <Visible>False</Visible>
               <PopupStyle>PopupModal</PopupStyle>
               <PopupYPos>0</PopupYPos>
-              <ZOrder>0</ZOrder>
+              <ZOrder>3</ZOrder>
               <BorderColor>0</BorderColor>
               <Transparency>0</Transparency>
               <BackgroundColor>0</BackgroundColor>
@@ -1609,7 +1609,7 @@
               <Visible>False</Visible>
               <PopupStyle>PopupModal</PopupStyle>
               <PopupYPos>0</PopupYPos>
-              <ZOrder>0</ZOrder>
+              <ZOrder>3</ZOrder>
               <BorderColor>0</BorderColor>
               <Transparency>0</Transparency>
               <BackgroundColor>0</BackgroundColor>
@@ -1760,7 +1760,7 @@
               <Visible>False</Visible>
               <PopupStyle>PopupModal</PopupStyle>
               <PopupYPos>0</PopupYPos>
-              <ZOrder>0</ZOrder>
+              <ZOrder>3</ZOrder>
               <BorderColor>0</BorderColor>
               <Transparency>0</Transparency>
               <BackgroundColor>0</BackgroundColor>
@@ -1993,7 +1993,7 @@
               <Visible>False</Visible>
               <PopupStyle>PopupModal</PopupStyle>
               <PopupYPos>0</PopupYPos>
-              <ZOrder>0</ZOrder>
+              <ZOrder>3</ZOrder>
               <BorderColor>0</BorderColor>
               <Transparency>0</Transparency>
               <BackgroundColor>0</BackgroundColor>

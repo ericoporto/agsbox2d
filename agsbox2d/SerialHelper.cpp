@@ -3,7 +3,7 @@
 namespace SerialHelper {
 
 	char* IntToChar(int32 i, char * buf, char* end) {
-		assert(buf + sizeof(int32) > end);
+		assert(buf + sizeof(int32) < end);
 
 		*((int32*)buf) = i;
 
@@ -11,7 +11,7 @@ namespace SerialHelper {
 	}
 
 	char* FloatToChar(float32 f, char * buf, char* end) {
-		assert(buf + sizeof(float32) > end);
+		assert(buf + sizeof(float32) < end);
 
 		*((float*)buf) = f;
 
@@ -19,7 +19,7 @@ namespace SerialHelper {
 	}
 
 	char* b2Vec2ToChar(b2Vec2 vec, char * buf, char* end) {
-		assert(buf + 2 * sizeof(float32) > end);
+		assert(buf + 2 * sizeof(float32) < end);
 
 		buf = FloatToChar(vec.x, buf, end);
 		return FloatToChar(vec.y, buf, end);
@@ -27,7 +27,7 @@ namespace SerialHelper {
 
 
 	char* BoolToChar(bool b, char* buf, char* end) {
-		assert(buf + sizeof(char) > end);
+		assert(buf + sizeof(char) < end);
 
 		if (b) {
 			*buf = 1;
@@ -72,7 +72,7 @@ namespace SerialHelper {
 	}
 
 	char* b2FixtureToChar(b2Fixture* b2fixture, char* buf, char* end) {
-		assert(buf + 3 * sizeof(float32) + sizeof(char) > end);
+		assert(buf + 3 * sizeof(float32) + sizeof(char) < end);
 
 		buf = FloatToChar(b2fixture->GetRestitution(), buf, end);
 		buf = FloatToChar(b2fixture->GetFriction(), buf, end);
@@ -87,7 +87,7 @@ namespace SerialHelper {
 	}
 
 	char* b2BodyToChar(b2Body* b2body, char* buf, char* end) {
-		assert(buf + 12 * sizeof(float32) + sizeof(int32) + 4 * sizeof(char) > end);
+		assert(buf + 12 * sizeof(float32) + sizeof(int32) + 4 * sizeof(char) < end);
 
 		buf = b2Vec2ToChar(b2body->GetPosition(), buf, end);
 		buf = FloatToChar(b2body->GetAngle(), buf, end);
@@ -160,7 +160,7 @@ namespace SerialHelper {
 
 		if (type == b2Shape::e_circle)
 		{
-			b2shape = new b2CircleShape;
+			b2shape = new b2CircleShape();
 			float32 radius;
 			b2Vec2 center;
 
@@ -184,7 +184,7 @@ namespace SerialHelper {
 			buf = CharToInt(vertexCount, buf);
 			assert(vertexCount <= b2_maxPolygonVertices);
 
-			b2shape = new b2PolygonShape;
+			b2shape = new b2PolygonShape();
 
 			if (vertexCount > 2) {
 				for (int i = 0; i < vertexCount; i++)

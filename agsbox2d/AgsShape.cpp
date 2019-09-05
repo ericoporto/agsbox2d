@@ -6,11 +6,13 @@
 AgsShape::AgsShape(AgsShapeCircle* shapeCircle) {
 	ShapeCircle = shapeCircle;
 	ShapeRect = nullptr;
+	B2AgsShape = shapeCircle->B2AgsShapeCircle;
 }
 
 AgsShape::AgsShape(AgsShapeRect* shapeRect) {
 	ShapeRect = shapeRect;
 	ShapeCircle = nullptr;
+	B2AgsShape = shapeRect->B2AgsShapeRect;
 }
 
 AgsShape::AgsShape(b2Shape* b2shape) {
