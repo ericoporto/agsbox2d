@@ -31,9 +31,9 @@ namespace SerialHelper {
 	char* CharToInt(int32 &i, char * buf);
 	char* CharToFloat(float32 &f, char * buf);
 	char* CharTob2Vec2(b2Vec2 &vec, char * buf);
-	char* CharTob2Shape(b2Shape* b2shape, char * buf);
-	char* CharTob2FixtureDef(b2FixtureDef* b2fixturedef, char* buf);
-	char* CharTob2Body(b2Body* b2body, char* buf);
+	char* CharTob2Shape(b2Shape** b2shape, char * buf);
+	char* CharTob2FixtureDef(b2FixtureDef &b2fixturedef, char* buf);
+	char* CharTob2Body(b2Body** b2body, char* buf);
 }
 
 #endif /* AGSBOX2D_SERIALHELPER_H */

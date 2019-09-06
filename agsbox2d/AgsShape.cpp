@@ -73,7 +73,7 @@ void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSi
 
 	b2Shape * shape = nullptr;
 
-	ptr = CharTob2Shape(shape, ptr);
+	ptr = CharTob2Shape(&shape, ptr);
 	AgsShape* agsshape = new AgsShape(shape);
 	agsshape->ID = shape_id;
 	Book::RegisterAgsShape(shape_id, agsshape);

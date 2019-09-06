@@ -260,7 +260,7 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 		Book::RegisterAgsBody(body_id, body);
 	}
 
-	ptr = CharTob2Body(body->B2AgsBody, ptr);
+	ptr = CharTob2Body(&(body->B2AgsBody), ptr);
 
 	engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
 }
