@@ -27,7 +27,7 @@ bool AgsBody::IsTouching(AgsBody* body) {
 	while (ce != nullptr)
 	{
 		if (ce->other == otherbody &&
-			ce->contact != nullptr && 
+			ce->contact != nullptr &&
 			ce->contact->IsTouching())
 			return true;
 
@@ -176,13 +176,13 @@ using namespace SerialHelper;
 
 int AgsBodyInterface::Dispose(const char* address, bool force)
 {
-	//if (((AgsBody*)address)->World != NULL && 
-	//	((AgsBody*)address)->World->B2AgsWorld != NULL && 
+	//if (((AgsBody*)address)->World != NULL &&
+	//	((AgsBody*)address)->World->B2AgsWorld != NULL &&
 	//	((AgsBody*)address)->B2AgsBody != NULL &&
 	//	((AgsBody*)address)->World->B2AgsWorld->GetBodyCount() != 0) {
 
-	//	for (b2Body* body = ((AgsBody*)address)->World->B2AgsWorld->GetBodyList(); 
-	//		body; 
+	//	for (b2Body* body = ((AgsBody*)address)->World->B2AgsWorld->GetBodyList();
+	//		body;
 	//		body = body->GetNext())
 	//	{
 
@@ -209,6 +209,8 @@ int AgsBodyInterface::Serialize(const char* address, char* buffer, int bufsize)
 	char* ptr = buffer;
 	char* end = buffer + bufsize;
 
+	//printf("--- serializing AgsBody %d --------->>>\n", body->ID);
+
 	if (body->GetIsDestroyed()) {
 		ptr = BoolToChar(true, ptr, end);
 		return (ptr - buffer);
@@ -229,10 +231,12 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 	AgsBody* body;
 	char* ptr = (char*)serializedData;
 
+	//printf("--- deserializing AgsBody %d ---------<<<\n", body_id);
+
 	bool isdestroyed;
 	int32 world_id;
 	ptr = CharToBool(isdestroyed, ptr);
-	
+
 	if (isdestroyed) {
 		body = new AgsBody();
 		engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
@@ -255,7 +259,7 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 		body->World = world;
 	}
 	else {
-		body = new AgsBody(world, 0.0, 0.0, b2_staticBody);
+		body = new AgsBody(world, 0.0, 0.0, b2_dynamicBody);
 		body->ID = body_id;
 		Book::RegisterAgsBody(body_id, body);
 	}

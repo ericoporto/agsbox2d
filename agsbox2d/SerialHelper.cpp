@@ -46,7 +46,7 @@ namespace SerialHelper {
 			b2CircleShape* circle = (b2CircleShape*)b2shape;
 			buf = FloatToChar(circle->m_radius, buf, end);
 			buf = b2Vec2ToChar(circle->m_p, buf, end); //circle center
-
+			printf("serialized circle\n");
 		}
 		else if (b2shape->GetType() == b2Shape::e_edge)
 		{
@@ -66,6 +66,7 @@ namespace SerialHelper {
 			for (int32 i = 0; i < vertexCount; ++i) {
 				buf = b2Vec2ToChar(poly->m_vertices[i], buf, end);
 			}
+			printf("serialized rectangle\n");
 		}
 
 		return buf;
@@ -87,6 +88,7 @@ namespace SerialHelper {
 	}
 
 	char* b2BodyToChar(b2Body* b2body, char* buf, char* end) {
+		printf("b2BodyToChar \n");
 		assert(buf + 12 * sizeof(float32) + sizeof(int32) + 4 * sizeof(char) < end);
 
 		buf = b2Vec2ToChar(b2body->GetPosition(), buf, end);
@@ -111,6 +113,7 @@ namespace SerialHelper {
 		int fixturecount = 0;
 		for (b2Fixture* fixture = b2body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 			fixturecount++;
+			printf("fixture count %d\n", fixturecount);
 		}
 
 		buf = IntToChar(fixturecount, buf, end);
@@ -149,10 +152,10 @@ namespace SerialHelper {
 
 	char* CharTob2Shape(b2Shape** pb2shape, char * buf) {
 		int32 itype;
-		b2BodyType type;
-		
+		b2Shape::Type type;
+
 		buf = CharToInt(itype, buf);
-		type = (b2BodyType)itype;
+		type = (b2Shape::Type)itype;
 
 		if (type == b2Shape::e_circle)
 		{
@@ -165,6 +168,9 @@ namespace SerialHelper {
 
 			((b2CircleShape*)(*pb2shape))->m_radius = radius;
 			((b2CircleShape*)(*pb2shape))->m_p = center;
+
+
+			printf(" deserialized circle\n");
 		}
 		else if (type == b2Shape::e_edge)
 		{
@@ -180,12 +186,18 @@ namespace SerialHelper {
 			buf = CharToInt(vertexCount, buf);
 			assert(vertexCount <= b2_maxPolygonVertices);
 
+			printf("vertexCount %d ]\n", vertexCount);
+
 			(*pb2shape) = new b2PolygonShape();
 
 			if (vertexCount > 2) {
 				for (int i = 0; i < vertexCount; i++)
 					buf = CharTob2Vec2(((b2PolygonShape*)(*pb2shape))->m_vertices[i], buf);
 			}
+
+			((b2PolygonShape*)(*pb2shape))->m_count = vertexCount;
+
+			printf(" deserialized rectangle\n");
 		}
 
 		return buf;
@@ -202,10 +214,21 @@ namespace SerialHelper {
 
 		b2fixturedef->shape = shape;
 
+		printf("Restitution: %f ; Friction: %f ; Density: %f ; IsSensor %d\n",
+						b2fixturedef->restitution, b2fixturedef->friction, b2fixturedef->density, b2fixturedef->isSensor);
+
+		if(shape->GetType() == b2Shape::e_circle){
+			printf(" got e_circle\n");
+		} else if(shape->GetType() == b2Shape::e_polygon){
+			printf(" got e_polygon\n");
+		}
+
 		return buf;
 	}
 
 	char* CharTob2Body(b2Body** pb2body, char* buf) {
+		printf("deserialized body\n");
+
 		b2Body* b2body = (*pb2body);
 
 		b2Vec2 position;
@@ -238,6 +261,11 @@ namespace SerialHelper {
 		buf = CharTob2Vec2(massData.center, buf);
 		buf = CharToFloat(massData.I, buf);
 
+		printf("Body deserialized (%f,%f), type %d \n    %f %f (%f,%f) %f\n %d %d %d %d\n",
+		      position.x, position.y, bodytype, linear_damping, angular_damping,
+					linear_velocity.x, linear_velocity.y, angular_velocity,
+				  is_fixed_rotation, is_bullet, is_active, is_awake);
+
 		b2body->SetTransform(position, angle);
 		b2body->SetType((b2BodyType)bodytype);
 		b2body->SetLinearDamping(linear_damping);
@@ -257,7 +285,14 @@ namespace SerialHelper {
 			buf = CharTob2FixtureDef(fixturedef, buf);
 			b2body->CreateFixture(fixturedef);
 		}
-		//b2body->SetMassData(&massData);
+
+		if(massData.mass != 0.0f ||
+			massData.center.x != 0.0f ||
+			massData.center.y != 0.0f ||
+		  massData.I != 0.0) {
+				printf("set mass data");
+				b2body->SetMassData(&massData);
+	  }
 
 		return buf;
 	}

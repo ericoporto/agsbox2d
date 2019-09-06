@@ -8,15 +8,10 @@ AgsShapeRect::AgsShapeRect(float32 w, float32 h, float32 x, float32 y) {
 		Scale::ScaleDown(w / 2.0f), Scale::ScaleDown(h / 2.0f),
 		Scale::ScaleDown(b2Vec2(x, y)), 0.0);
 
-	Width = Scale::ScaleUp(2.0f * B2AgsShapeRect->m_vertices[2].x);
-	Height = Scale::ScaleUp(2.0f * B2AgsShapeRect->m_vertices[2].y);
 }
 
 AgsShapeRect::AgsShapeRect(b2PolygonShape* shape) {
 	B2AgsShapeRect = shape;
-
-	Width = 2.0f * B2AgsShapeRect->m_vertices[2].x;
-	Height = 2.0f * B2AgsShapeRect->m_vertices[2].y;
 }
 
 
@@ -27,22 +22,22 @@ AgsShapeRect::~AgsShapeRect(void)
 void AgsShapeRect::SetWidthF(float32 wf) {
 	Width = wf;
 	B2AgsShapeRect->SetAsBox(
-		Scale::ScaleDown(wf / 2.0f),  Scale::ScaleDown(Height / 2.0f),
+		Scale::ScaleDown(wf / 2.0f), B2AgsShapeRect->m_vertices[2].y,
 		B2AgsShapeRect->m_centroid, 0.0);
 }
 
 float32 AgsShapeRect::GetWidthF() {
-	return Width;
+	return Scale::ScaleUp(2.0f * B2AgsShapeRect->m_vertices[2].x);
 }
 
 float32 AgsShapeRect::GetHeightF() {
-	return Height;
+	return Scale::ScaleUp(2.0f * B2AgsShapeRect->m_vertices[2].y);
 }
 
 void AgsShapeRect::SetHeightF(float32 hf) {
 	Height = hf;
 	B2AgsShapeRect->SetAsBox(
-		Scale::ScaleDown(Width / 2.0f), Scale::ScaleDown(hf / 2.0f),
+		B2AgsShapeRect->m_vertices[2].x, Scale::ScaleDown(hf / 2.0f),
 		B2AgsShapeRect->m_centroid, 0.0);
 }
 
@@ -96,7 +91,7 @@ int AgsShapeRectInterface::Serialize(const char* address, char* buffer, int bufs
 {
 	AgsShapeRect* arr = (AgsShapeRect*)address;
 	char* ptr = buffer;
-	
+
 	return (ptr - buffer);
 }
 

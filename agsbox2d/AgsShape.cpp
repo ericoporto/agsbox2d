@@ -59,8 +59,10 @@ int AgsShapeInterface::Serialize(const char* address, char* buffer, int bufsize)
 	char* ptr = buffer;
 	char* end = buffer + bufsize;
 
+	//printf("--- serializing AgsShape %d --------->>>\n", shape->ID);
+
 	ptr = b2ShapeToChar(shape->B2AgsShape, ptr, end);
-	
+
 	return (ptr - buffer);
 }
 
@@ -72,6 +74,8 @@ void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSi
 	int shape_id = key;
 
 	b2Shape * shape = nullptr;
+
+	//printf("--- deserializing AgsShape %d ---------<<<\n", key);
 
 	ptr = CharTob2Shape(&shape, ptr);
 	AgsShape* agsshape = new AgsShape(shape);

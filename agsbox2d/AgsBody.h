@@ -45,7 +45,7 @@ public:
 
 	float32 GetLinearDamping();
 	void SetLinearDamping(float32 ldamping);
-	
+
 	float32 GetAngularDamping();
 	void SetAngularDamping(float32 adamping);
 
@@ -81,7 +81,7 @@ public:
 
 };
 
-//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class AgsBodyReader : public IAGSManagedObjectReader
 {

@@ -25,6 +25,7 @@ void AgsWorld::DestroyBody(AgsBody* body) {
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {
 	B2AgsWorld->Step(dt, velocityIterations, positionIterations);
+	//printf("step of world id %d of dt %f and v %d and p %d\n", ID, dt, velocityIterations, positionIterations );
 }
 
 AgsWorld::~AgsWorld(void)
@@ -52,7 +53,7 @@ int AgsWorldInterface::Dispose(const char* address, bool force)
 	Book::UnregisterAgsWorldByID(((AgsWorld*)address)->ID);
 
 	//still need to figure an strategy for when to dispose of the Box2D World
-
+	//printf("dispose of world %d\n", ((AgsWorld*)address)->ID);
 	delete ((AgsWorld*)address);
 	return (1);
 }
@@ -64,6 +65,8 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 	AgsWorld* world = (AgsWorld*)address;
 	char* ptr = buffer;
 	char* end = buffer + bufsize;
+
+	ptr = FloatToChar(Scale::GetMeter(), ptr, end);
 
 	ptr = b2Vec2ToChar(world->B2AgsWorld->GetGravity(), ptr, end);
 
@@ -77,16 +80,24 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 	AgsWorld* world;
 	char* ptr = (char*)serializedData;
 	int world_id = key;
+	float32 meter;
+	ptr = CharToFloat(meter, ptr);
+	Scale::SetMeter(meter);
 
 	b2Vec2 gravity;
 	ptr = CharTob2Vec2(gravity, ptr);
 
 	if (Book::isAgsWorldRegisteredByID(world_id)) {
 		world = Book::IDtoAgsWorld(world_id);
+		//printf("   --->>  got world already existed %d\n", world_id);
 	}
 	else {
+		//printf("   --->>  created world %d\n", world_id);
 		world = new AgsWorld(0, 0);
+		world-> ID = world_id;
+		Book::RegisterAgsWorld(world_id, world);
 	}
+
 
 	world->B2AgsWorld->SetGravity(gravity);
 
