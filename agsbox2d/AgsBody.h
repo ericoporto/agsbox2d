@@ -12,6 +12,7 @@ class AgsBody
 {
 	bool IsDestroyed;
 public:
+	AgsBody(bool destroyed = true);
 	AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
 	~AgsBody(void);
 	AgsWorld* World;
@@ -44,7 +45,7 @@ public:
 
 	float32 GetLinearDamping();
 	void SetLinearDamping(float32 ldamping);
-	
+
 	float32 GetAngularDamping();
 	void SetAngularDamping(float32 adamping);
 
@@ -80,7 +81,7 @@ public:
 
 };
 
-//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class AgsBodyReader : public IAGSManagedObjectReader
 {

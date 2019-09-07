@@ -6,6 +6,11 @@ AgsShapeCircle::AgsShapeCircle(float32 radius) {
 	B2AgsShapeCircle->m_radius = Scale::ScaleDown(radius);
 }
 
+AgsShapeCircle::AgsShapeCircle(b2CircleShape* circleshape) {
+	B2AgsShapeCircle = circleshape;
+}
+
+
 AgsShapeCircle::~AgsShapeCircle(void)
 {
 }

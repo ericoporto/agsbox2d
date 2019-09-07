@@ -166,8 +166,11 @@
     <ClCompile Include="AgsShapeCircle.cpp" />
     <ClCompile Include="AgsShapeRect.cpp" />
     <ClCompile Include="AgsWorld.cpp" />
+    <ClCompile Include="Book.cpp" />
     <ClCompile Include="Box2D.cpp" />
+    <ClCompile Include="DebugDraw.cpp" />
     <ClCompile Include="Scale.cpp" />
+    <ClCompile Include="SerialHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AgsBody.h" />
@@ -177,8 +180,11 @@
     <ClInclude Include="AgsShapeCircle.h" />
     <ClInclude Include="AgsShapeRect.h" />
     <ClInclude Include="AgsWorld.h" />
+    <ClInclude Include="Book.h" />
     <ClInclude Include="Box2D.h" />
     <ClInclude Include="AgsNumberInterface.h" />
+    <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="SerialHelper.h" />
     <ClInclude Include="Scale.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

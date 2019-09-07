@@ -1,7 +1,7 @@
 #include "AgsBody.h"
 #include "AgsWorld.h"
 #include "Scale.h"
-
+#include "Book.h"
 
 AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	IsDestroyed = false;
@@ -10,6 +10,10 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	B2AgsBodyDef.fixedRotation = true;
 	B2AgsBody = world->B2AgsWorld->CreateBody(&B2AgsBodyDef);
 	World = world;
+}
+
+AgsBody::AgsBody(bool destroyed) {
+	IsDestroyed = destroyed;
 }
 
 bool AgsBody::IsTouching(AgsBody* body) {
@@ -23,7 +27,7 @@ bool AgsBody::IsTouching(AgsBody* body) {
 	while (ce != nullptr)
 	{
 		if (ce->other == otherbody &&
-			ce->contact != nullptr && 
+			ce->contact != nullptr &&
 			ce->contact->IsTouching())
 			return true;
 
@@ -167,15 +171,18 @@ const char* AgsBodyInterface::name = "Body";
 
 //------------------------------------------------------------------------------
 
+#include "SerialHelper.h"
+using namespace SerialHelper;
+
 int AgsBodyInterface::Dispose(const char* address, bool force)
 {
-	//if (((AgsBody*)address)->World != NULL && 
-	//	((AgsBody*)address)->World->B2AgsWorld != NULL && 
+	//if (((AgsBody*)address)->World != NULL &&
+	//	((AgsBody*)address)->World->B2AgsWorld != NULL &&
 	//	((AgsBody*)address)->B2AgsBody != NULL &&
 	//	((AgsBody*)address)->World->B2AgsWorld->GetBodyCount() != 0) {
 
-	//	for (b2Body* body = ((AgsBody*)address)->World->B2AgsWorld->GetBodyList(); 
-	//		body; 
+	//	for (b2Body* body = ((AgsBody*)address)->World->B2AgsWorld->GetBodyList();
+	//		body;
 	//		body = body->GetNext())
 	//	{
 
@@ -188,6 +195,8 @@ int AgsBodyInterface::Dispose(const char* address, bool force)
 	//	}
 
 	//}
+
+	Book::UnregisterAgsBodyByID(((AgsBody*)address)->ID);
 	delete ((AgsBody*)address);
 	return (1);
 }
@@ -196,9 +205,21 @@ int AgsBodyInterface::Dispose(const char* address, bool force)
 
 int AgsBodyInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-	AgsBody* arr = (AgsBody*)address;
+	AgsBody* body = (AgsBody*)address;
 	char* ptr = buffer;
-	
+	char* end = buffer + bufsize;
+
+	//printf("--- serializing AgsBody %d --------->>>\n", body->ID);
+
+	if (body->GetIsDestroyed()) {
+		ptr = BoolToChar(true, ptr, end);
+		return (ptr - buffer);
+	}
+	ptr = BoolToChar(false, ptr, end);
+	ptr = IntToChar(body->World->ID, ptr, end);
+
+	ptr = b2BodyToChar(body->B2AgsBody, ptr, end);
+
 	return (ptr - buffer);
 }
 
@@ -206,11 +227,46 @@ int AgsBodyInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-	//AgsBody* arr = new AgsBody();
+	int body_id = key;
+	AgsBody* body;
+	char* ptr = (char*)serializedData;
 
-	//const char* ptr = serializedData;
+	//printf("--- deserializing AgsBody %d ---------<<<\n", body_id);
 
-	//engine->RegisterUnserializedObject(key, arr, &AgsBody_Interface);
+	bool isdestroyed;
+	int32 world_id;
+	ptr = CharToBool(isdestroyed, ptr);
+
+	if (isdestroyed) {
+		body = new AgsBody();
+		engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
+		return;
+	}
+
+	ptr = CharToInt(world_id, ptr);
+
+	AgsWorld * world;
+	if (Book::isAgsWorldRegisteredByID(world_id)) {
+		world = Book::IDtoAgsWorld(world_id);
+	}
+	else {
+		world = new AgsWorld(0, 0);
+		Book::RegisterAgsWorld(world_id, world);
+	}
+
+	if (Book::isAgsBodyRegisteredByID(body_id)) {
+		body = Book::IDtoAgsBody(body_id);
+		body->World = world;
+	}
+	else {
+		body = new AgsBody(false);
+		body->ID = body_id;
+		body->World = world;
+		Book::RegisterAgsBody(body_id, body);
+		ptr = CharTob2Body(body->B2AgsBodyDef, &(body->B2AgsBody), body->World->B2AgsWorld, ptr);
+	}
+
+	engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
 }
 
 //..............................................................................

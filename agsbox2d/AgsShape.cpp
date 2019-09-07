@@ -1,15 +1,30 @@
 #include "AgsShape.h"
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
+#include "Book.h"
 
 AgsShape::AgsShape(AgsShapeCircle* shapeCircle) {
 	ShapeCircle = shapeCircle;
-	ShapeRect = NULL;
+	ShapeRect = nullptr;
+	B2AgsShape = shapeCircle->B2AgsShapeCircle;
 }
 
 AgsShape::AgsShape(AgsShapeRect* shapeRect) {
 	ShapeRect = shapeRect;
-	ShapeCircle = NULL;
+	ShapeCircle = nullptr;
+	B2AgsShape = shapeRect->B2AgsShapeRect;
+}
+
+AgsShape::AgsShape(b2Shape* b2shape) {
+	if (b2shape->GetType() == b2Shape::e_circle) {
+		ShapeCircle = new AgsShapeCircle((b2CircleShape*) b2shape);
+		B2AgsShape = ShapeCircle->B2AgsShapeCircle;
+		ShapeRect = nullptr;
+	} else {
+		ShapeRect = new AgsShapeRect((b2PolygonShape*) b2shape);
+		B2AgsShape = ShapeRect->B2AgsShapeRect;
+		ShapeCircle = nullptr;
+	}
 }
 
 AgsShape::~AgsShape(void)
@@ -28,9 +43,14 @@ AgsShapeReader AgsShape_Reader;
 const char* AgsShapeInterface::name = "Shape";
 
 //------------------------------------------------------------------------------
+#include "SerialHelper.h"
+using namespace SerialHelper;
 
 int AgsShapeInterface::Dispose(const char* address, bool force)
 {
+	Book::UnregisterAgsShapeByID(((AgsShape*)address)->ID);
+	((AgsShape*)address)->B2AgsShape->~b2Shape();
+	delete ((AgsShape*)address)->B2AgsShape;
 	delete ((AgsShape*)address);
 	return (1);
 }
@@ -39,9 +59,14 @@ int AgsShapeInterface::Dispose(const char* address, bool force)
 
 int AgsShapeInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-	AgsShape* arr = (AgsShape*)address;
+	AgsShape* shape = (AgsShape*)address;
 	char* ptr = buffer;
-	
+	char* end = buffer + bufsize;
+
+	//printf("--- serializing AgsShape %d --------->>>\n", shape->ID);
+
+	ptr = b2ShapeToChar(shape->B2AgsShape, ptr, end);
+
 	return (ptr - buffer);
 }
 
@@ -49,11 +74,19 @@ int AgsShapeInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 void AgsShapeReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-//	AgsShape* arr = new AgsShape(0,0);
+	char* ptr = (char*) serializedData;
+	int shape_id = key;
 
-//	const char* ptr = serializedData;
+	b2Shape * shape = nullptr;
 
-//	engine->RegisterUnserializedObject(key, arr, &AgsShape_Interface);
+	//printf("--- deserializing AgsShape %d ---------<<<\n", key);
+
+	ptr = CharTob2Shape(&shape, ptr);
+	AgsShape* agsshape = new AgsShape(shape);
+	agsshape->ID = shape_id;
+	Book::RegisterAgsShape(shape_id, agsshape);
+
+	engine->RegisterUnserializedObject(key, agsshape, &AgsShape_Interface);
 }
 
 //..............................................................................

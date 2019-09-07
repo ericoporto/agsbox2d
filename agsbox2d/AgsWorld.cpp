@@ -1,7 +1,7 @@
 #include "AgsWorld.h"
 #include "AgsBody.h"
 #include "Scale.h"
-
+#include "Book.h"
 
 AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 	B2AgsWorld = new b2World(Scale::ScaleDown(b2Vec2(gravityX, gravityY)));
@@ -25,6 +25,7 @@ void AgsWorld::DestroyBody(AgsBody* body) {
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {
 	B2AgsWorld->Step(dt, velocityIterations, positionIterations);
+	//printf("step of world id %d of dt %f and v %d and p %d\n", ID, dt, velocityIterations, positionIterations );
 }
 
 AgsWorld::~AgsWorld(void)
@@ -44,8 +45,15 @@ const char* AgsWorldInterface::name = "World";
 
 //------------------------------------------------------------------------------
 
+#include "SerialHelper.h"
+using namespace SerialHelper;
+
 int AgsWorldInterface::Dispose(const char* address, bool force)
 {
+	Book::UnregisterAgsWorldByID(((AgsWorld*)address)->ID);
+
+	//still need to figure an strategy for when to dispose of the Box2D World
+	//printf("dispose of world %d\n", ((AgsWorld*)address)->ID);
 	delete ((AgsWorld*)address);
 	return (1);
 }
@@ -54,9 +62,14 @@ int AgsWorldInterface::Dispose(const char* address, bool force)
 
 int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-	AgsWorld* arr = (AgsWorld*)address;
+	AgsWorld* world = (AgsWorld*)address;
 	char* ptr = buffer;
-	
+	char* end = buffer + bufsize;
+
+	ptr = FloatToChar(Scale::GetMeter(), ptr, end);
+
+	ptr = b2Vec2ToChar(world->B2AgsWorld->GetGravity(), ptr, end);
+
 	return (ptr - buffer);
 }
 
@@ -64,11 +77,30 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-	AgsWorld* arr = new AgsWorld(0,0);
+	AgsWorld* world;
+	char* ptr = (char*)serializedData;
+	int world_id = key;
+	float32 meter;
+	ptr = CharToFloat(meter, ptr);
+	Scale::SetMeter(meter);
 
-	const char* ptr = serializedData;
+	b2Vec2 gravity;
+	ptr = CharTob2Vec2(gravity, ptr);
 
-	engine->RegisterUnserializedObject(key, arr, &AgsWorld_Interface);
+	if (Book::isAgsWorldRegisteredByID(world_id)) {
+		world = Book::IDtoAgsWorld(world_id);
+		//printf("   --->>  got world already existed %d\n", world_id);
+	}
+	else {
+		//printf("   --->>  created world %d\n", world_id);
+		world = new AgsWorld(0, 0);
+		world-> ID = world_id;
+		Book::RegisterAgsWorld(world_id, world);
+	}
+
+
+	world->B2AgsWorld->SetGravity(gravity);
+
+	engine->RegisterUnserializedObject(key, world, &AgsWorld_Interface);
 }
-
 //..............................................................................

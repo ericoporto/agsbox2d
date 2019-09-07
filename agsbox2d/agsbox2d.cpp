@@ -34,6 +34,9 @@
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
 #include "AgsFixture.h"
+#include "Book.h"
+
+#include "DebugDraw.h"
 
 #pragma endregion // Defines_and_Includes
 
@@ -120,6 +123,8 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Advances one step of time dt in seconds of the simulation. \r\n"
 "  import void Step(float dt, int velocityIteractions = 8, int positionIteractions = 3); \r\n"
+"  /// Returns a sprite with debug data. Set as GUI Background over screen for debugging your physics. \r\n"
+"  import int GetDebugSprite(); \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct ShapeCircle; \r\n"
@@ -272,6 +277,8 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 //define engine
 IAGSEngine* engine;
 
+AgsDebugDraw debugDraw;  // Declare an instance of our DebugDraw class so we can actually use it
+
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
 
@@ -290,6 +297,7 @@ AgsWorld* agsbox2d_newWorld(uint32_t gravityX, uint32_t gravityY) {
 	AgsWorld* world = new AgsWorld(gx, gy);
 
 	world->ID = engine->RegisterManagedObject(world, &AgsWorld_Interface);
+	Book::RegisterAgsWorld(world->ID, world);
 
 	return world;
 }
@@ -308,6 +316,7 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 	AgsBody* body = world->NewBody(bx, by, bt);
 
 	body->ID = engine->RegisterManagedObject(body, &AgsBody_Interface);
+	Book::RegisterAgsBody(body->ID, body);
 
 	return body;
 }
@@ -315,7 +324,7 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 void agsbox2d_DestroyBody(AgsWorld* world, AgsBody* body) {
 	if (world == nullptr)
 		return;
-	
+
 	world->DestroyBody(body);
 }
 
@@ -338,6 +347,7 @@ AgsShape* agsbox2d_newRectangleShape(uint32_t w, uint32_t h, uint32_t x, uint32_
 	AgsShape* shape = new AgsShape(new AgsShapeRect(fw, fh, fx, fy));
 
 	shape->ID = engine->RegisterManagedObject(shape, &AgsShape_Interface);
+	Book::RegisterAgsShape(shape->ID, shape);
 
 	return shape;
 }
@@ -351,6 +361,7 @@ AgsShape* agsbox2d_newCircleShape(uint32_t radius, uint32_t x, uint32_t y) {
 	AgsShape* shape = new AgsShape(new AgsShapeCircle(fradius));
 
 	shape->ID = engine->RegisterManagedObject(shape, &AgsShape_Interface);
+	Book::RegisterAgsShape(shape->ID, shape);
 
 	return shape;
 }
@@ -367,6 +378,7 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	AgsFixture* fixture = new AgsFixture(body, shape, fdensity);
 
 	fixture->ID = engine->RegisterManagedObject(fixture, &AgsFixture_Interface);
+	Book::RegisterAgsFixture(fixture->ID, fixture);
 
 	return fixture;
 }
@@ -382,6 +394,16 @@ void AgsWorld_Step(AgsWorld* self, uint32_t dt, int32 velocityIterations, int32 
 	if (positionIterations <= 0) velocityIterations = 3;
 
 	self->Step(fdt, velocityIterations, positionIterations);
+}
+
+int32 AgsWorld_GetDebugSprite(AgsWorld* self) {
+	debugDraw.ClearSprite();
+	debugDraw.GetSurfaceForDebugDraw();
+	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit);
+	self->B2AgsWorld->SetDebugDraw(&debugDraw);
+	self->B2AgsWorld->DrawDebugData();
+	debugDraw.ReleaseSurfaceForDebugDraw();
+	return debugDraw.GetDebugSprite();
 }
 
 #pragma endregion // AgsWorld_ScriptAPI
@@ -695,7 +717,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsShapeRectInterface::name, &AgsShapeRect_Reader);
 	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
-	
+
 	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
@@ -706,6 +728,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
+	engine->RegisterScriptFunction("World::GetDebugSprite^0", (void*)AgsWorld_GetDebugSprite);
 
 	engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
 	engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
@@ -758,7 +781,9 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Fixture::get_Friction", (void*)AgsFixture_GetFriction);
 	engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
 	engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
-	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);				
+	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
+
+  engine->RequestEventHook(AGSE_PRESCREENDRAW);
 }
 
 //------------------------------------------------------------------------------
@@ -774,9 +799,16 @@ void AGS_EngineShutdown()
 
 int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
 {
+  if(event==AGSE_PRESCREENDRAW){
+  	//initialize debug
+    int screenWidth, screenHeight, colDepth;
+    engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
+    debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
+  }
+
+/*
 	switch (event)
 	{
-/*
     case AGSE_KEYPRESS:
     case AGSE_MOUSECLICK:
     case AGSE_POSTSCREENDRAW:
@@ -795,10 +827,10 @@ int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
     case AGSE_PRERENDER:
     case AGSE_PRESAVEGAME:
     case AGSE_POSTRESTOREGAME:
- */
 	default:
 			break;
 	}
+*/
 
 	// Return 1 to stop event from processing further (when needed)
 	return (0);

@@ -13,6 +13,7 @@ class AgsShape
 public:
 	AgsShape(AgsShapeCircle* shapeCircle);
 	AgsShape(AgsShapeRect* shapeRect);
+	AgsShape(b2Shape* b2shape);
 	~AgsShape(void);
 	b2Shape* B2AgsShape;
 	AgsShapeCircle* ShapeCircle;
