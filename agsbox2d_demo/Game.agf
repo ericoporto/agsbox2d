@@ -2096,7 +2096,7 @@
               <Height>200</Height>
               <Width>320</Width>
               <Left>0</Left>
-              <Top>0</Top>
+              <Top>20</Top>
               <Clickable>False</Clickable>
               <Visible>True</Visible>
               <PopupStyle>Persistent</PopupStyle>

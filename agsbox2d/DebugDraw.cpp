@@ -84,7 +84,7 @@ int Pixel32::GetColorAsInt() {
 #pragma endregion
 
 void _DrawPixel(unsigned int **longbufferBitmap, int x, int y, int agsColor, int width, int height) {
-	if (x > 0 && x < width && y > 0 && y < height) {
+	if (x >= 0 && x < width && y >= 0 && y < height) {
 		longbufferBitmap[y][x] = agsColor;
 	}
 }
@@ -217,6 +217,12 @@ void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
 		else {
 			_DrawLine(Longbuffer,
 				vertices[i-1].x*Scale::GetMeter(), vertices[i-1].y*Scale::GetMeter(),
+				vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(),
+				agscolor, ScreenWidth, ScreenHeight);
+		}
+		if(i==vertexCount-1){
+			_DrawLine(Longbuffer,
+				vertices[0].x*Scale::GetMeter(), vertices[0].y*Scale::GetMeter(),
 				vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(),
 				agscolor, ScreenWidth, ScreenHeight);
 		}
