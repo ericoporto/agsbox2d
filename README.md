@@ -333,6 +333,16 @@ Because AGS uses fixed game steps, a good value is  `dt = 1.0/IntToFloat(GetGame
 velocityIteractions and positionIteractions relates to how Box2D simulates the
 world, so for information on these values I recommend looking into Box2D own documentation.
 
+#### `int GetDebugSprite()`
+
+Returns a sprite of the size of the screen with the objects in the world drawn on it.
+
+A common usage is to create a GUI of the size of the screen and set the background
+graphic of it with the sprite this function outputs.
+
+This is just to debug a scene and still doesn't support basic things like camera 
+scrolling - we will get this soon.
+
 ### Shape
 
 #### `ShapeRectangle* Shape.AsRectangle`
