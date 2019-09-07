@@ -66,6 +66,11 @@ namespace SerialHelper {
 			for (int32 i = 0; i < vertexCount; ++i) {
 				buf = b2Vec2ToChar(poly->m_vertices[i], buf, end);
 			}
+
+			for (int32 i = 0; i < vertexCount; ++i) {
+				buf = b2Vec2ToChar(poly->m_normals[i], buf, end);
+			}
+
 			printf("serialized rectangle\n");
 		}
 
@@ -190,12 +195,17 @@ namespace SerialHelper {
 
 			(*pb2shape) = new b2PolygonShape();
 
+			((b2PolygonShape*)(*pb2shape))->m_count = vertexCount;
+
 			if (vertexCount > 2) {
 				for (int i = 0; i < vertexCount; i++)
 					buf = CharTob2Vec2(((b2PolygonShape*)(*pb2shape))->m_vertices[i], buf);
+
+				for (int i = 0; i < vertexCount; i++)
+					buf = CharTob2Vec2(((b2PolygonShape*)(*pb2shape))->m_normals[i], buf);
 			}
 
-			((b2PolygonShape*)(*pb2shape))->m_count = vertexCount;
+			((b2PolygonShape*)(*pb2shape))->m_centroid.SetZero();
 
 			printf(" deserialized rectangle\n");
 		}
@@ -230,8 +240,8 @@ namespace SerialHelper {
 		printf("deserialized body\n");
 
 		b2Vec2 position;
-		float32 angle;		
-		int32 bodytype;		
+		float32 angle;
+		int32 bodytype;
 		float32 linearDamping;
 		float32 angularDamping;
 		b2Vec2 linearVelocity;
@@ -273,7 +283,7 @@ namespace SerialHelper {
 		buf = CharToFloat(massData.mass, buf);
 		buf = CharTob2Vec2(massData.center, buf);
 		buf = CharToFloat(massData.I, buf);
-				
+
 		(*pb2body) = world->CreateBody(&b2bodydef);
 
 		int fixturecount;
