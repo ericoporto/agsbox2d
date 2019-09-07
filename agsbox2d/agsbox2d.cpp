@@ -124,7 +124,7 @@ const char *ourScriptHeader =
 "  /// Advances one step of time dt in seconds of the simulation. \r\n"
 "  import void Step(float dt, int velocityIteractions = 8, int positionIteractions = 3); \r\n"
 "  /// Returns a sprite with debug data. Set as GUI Background over screen for debugging your physics. \r\n"
-"  import int GetDebugSprite(int camera_x, int camera_y); \r\n"
+"  import int GetDebugSprite(int camera_x = 0, int camera_y = 0); \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct ShapeCircle; \r\n"
