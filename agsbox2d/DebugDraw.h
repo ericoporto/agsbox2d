@@ -13,13 +13,15 @@ class AgsDebugDraw : public b2Draw
 	int ScreenHeight;
 	IAGSEngine * Engine;
 	unsigned int **Longbuffer;
+	float32 CameraX;
+	float32 CameraY;
 
 public:
 	void InitializeAgsDebugDraw(IAGSEngine* engine, int screenWidth, int screenHeight, int colDepth);
 
 	int GetDebugSprite();
 	void ClearSprite();
-	void GetSurfaceForDebugDraw();
+	void GetSurfaceForDebugDraw(int camera_x, int camera_y);
 	void ReleaseSurfaceForDebugDraw();
 
 	void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color);

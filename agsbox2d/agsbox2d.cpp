@@ -124,7 +124,7 @@ const char *ourScriptHeader =
 "  /// Advances one step of time dt in seconds of the simulation. \r\n"
 "  import void Step(float dt, int velocityIteractions = 8, int positionIteractions = 3); \r\n"
 "  /// Returns a sprite with debug data. Set as GUI Background over screen for debugging your physics. \r\n"
-"  import int GetDebugSprite(); \r\n"
+"  import int GetDebugSprite(int camera_x, int camera_y); \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct ShapeCircle; \r\n"
@@ -396,9 +396,9 @@ void AgsWorld_Step(AgsWorld* self, uint32_t dt, int32 velocityIterations, int32 
 	self->Step(fdt, velocityIterations, positionIterations);
 }
 
-int32 AgsWorld_GetDebugSprite(AgsWorld* self) {
+int32 AgsWorld_GetDebugSprite(AgsWorld* self, int32 camera_x, int32 camera_y) {
 	debugDraw.ClearSprite();
-	debugDraw.GetSurfaceForDebugDraw();
+	debugDraw.GetSurfaceForDebugDraw(camera_x, camera_y);
 	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit);
 	self->B2AgsWorld->SetDebugDraw(&debugDraw);
 	self->B2AgsWorld->DrawDebugData();
@@ -728,7 +728,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
-	engine->RegisterScriptFunction("World::GetDebugSprite^0", (void*)AgsWorld_GetDebugSprite);
+	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);
 
 	engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
 	engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);

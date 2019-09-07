@@ -148,6 +148,9 @@ void AgsDebugDraw::InitializeAgsDebugDraw(IAGSEngine* engine, int screenWidth, i
 	Engine = engine;
 	ScreenWidth = screenWidth;
 	ScreenHeight = screenHeight;
+	CameraX = 0.0f;
+	CameraY = 0.0f;
+
 }
 
 int AgsDebugDraw::GetDebugSprite() {
@@ -157,8 +160,11 @@ int AgsDebugDraw::GetDebugSprite() {
 	return SpriteId;
 }
 
-void AgsDebugDraw::GetSurfaceForDebugDraw() {
+void AgsDebugDraw::GetSurfaceForDebugDraw(int camera_x, int camera_y) {
 	if (Engine == nullptr || SpriteId <= 0)  SpriteId = Engine->CreateDynamicSprite(32, ScreenWidth, ScreenHeight);
+
+	CameraX = Scale::ScaleDown((float32) camera_x);
+	CameraY = Scale::ScaleDown((float32) camera_y);
 
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	unsigned char **charbuffer = Engine->GetRawBitmapSurface(engineSprite);
@@ -201,7 +207,7 @@ void AgsDebugDraw::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color
 	Pixel32 pix = Pixel32(color);
 	int agscolor = pix.GetColorAsInt();
 
-	_DrawPixel(Longbuffer, p.x*Scale::GetMeter(), p.y*Scale::GetMeter(), 0, ScreenWidth, ScreenHeight);
+	_DrawPixel(Longbuffer, Scale::ScaleUp(p.x-CameraX), Scale::ScaleUp(p.y-CameraY), 0, ScreenWidth, ScreenHeight);
 }
 
 void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) {
@@ -216,14 +222,14 @@ void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
 		}
 		else {
 			_DrawLine(Longbuffer,
-				vertices[i-1].x*Scale::GetMeter(), vertices[i-1].y*Scale::GetMeter(),
-				vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(),
+				Scale::ScaleUp(vertices[i-1].x-CameraX), Scale::ScaleUp(vertices[i-1].y-CameraY),
+				Scale::ScaleUp(vertices[i].x-CameraX), Scale::ScaleUp(vertices[i].y-CameraY),
 				agscolor, ScreenWidth, ScreenHeight);
 		}
 		if(i==vertexCount-1){
 			_DrawLine(Longbuffer,
-				vertices[0].x*Scale::GetMeter(), vertices[0].y*Scale::GetMeter(),
-				vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(),
+				Scale::ScaleUp(vertices[0].x-CameraX), Scale::ScaleUp(vertices[0].y-CameraY),
+				Scale::ScaleUp(vertices[i].x-CameraX), Scale::ScaleUp(vertices[i].y-CameraY),
 				agscolor, ScreenWidth, ScreenHeight);
 		}
 	}
@@ -242,7 +248,9 @@ void AgsDebugDraw::DrawCircle(const b2Vec2& center, float32 radius, const b2Colo
 	Pixel32 pix = Pixel32(color);
 	int agscolor = pix.GetColorAsInt();
 
-	_DrawCircle(Longbuffer, center.x*Scale::GetMeter(), center.y*Scale::GetMeter(), radius*Scale::GetMeter(), agscolor, ScreenWidth, ScreenHeight);
+	_DrawCircle(Longbuffer,
+		Scale::ScaleUp(center.x-CameraX), Scale::ScaleUp(center.y-CameraY),
+		Scale::ScaleUp(radius), agscolor, ScreenWidth, ScreenHeight);
 }
 
 void AgsDebugDraw::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color) {
@@ -258,8 +266,8 @@ void AgsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color
 	int agscolor = pix.GetColorAsInt();
 
 	_DrawLine(Longbuffer,
-		p1.x*Scale::GetMeter(), p1.y*Scale::GetMeter(),
-		p2.x*Scale::GetMeter(), p2.y*Scale::GetMeter(),
+		Scale::ScaleUp(p1.x-CameraX), Scale::ScaleUp(p1.y-CameraY),
+		Scale::ScaleUp(p2.x-CameraX), Scale::ScaleUp(p2.y-CameraY),
 		agscolor, ScreenWidth, ScreenHeight);
 }
 
