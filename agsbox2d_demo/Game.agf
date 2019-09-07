@@ -78,7 +78,7 @@
       <SaveGameFolderName>agsbox2d_demo</SaveGameFolderName>
       <BinaryFilesInSourceControl>False</BinaryFilesInSourceControl>
       <AudioIndexer>0</AudioIndexer>
-      <BuildTargets xml:space="preserve">Windows, Linux</BuildTargets>
+      <BuildTargets>Windows</BuildTargets>
       <RenderAtScreenResolution>UserDefined</RenderAtScreenResolution>
     </Settings>
     <RuntimeSetup>
@@ -2086,7 +2086,28 @@
               <BackgroundColor>0</BackgroundColor>
               <BackgroundImage>0</BackgroundImage>
               <ID>9</ID>
-              <Name>gDebugGui</Name>
+              <Name>gWorldGUI</Name>
+            </NormalGUI>
+            <Controls />
+          </GUIMain>
+          <GUIMain>
+            <NormalGUI>
+              <OnClick />
+              <Height>200</Height>
+              <Width>320</Width>
+              <Left>0</Left>
+              <Top>0</Top>
+              <Clickable>False</Clickable>
+              <Visible>True</Visible>
+              <PopupStyle>Persistent</PopupStyle>
+              <PopupYPos>0</PopupYPos>
+              <ZOrder>1</ZOrder>
+              <BorderColor>0</BorderColor>
+              <Transparency>0</Transparency>
+              <BackgroundColor>0</BackgroundColor>
+              <BackgroundImage>0</BackgroundImage>
+              <ID>10</ID>
+              <Name>gDebugGUI</Name>
             </NormalGUI>
             <Controls />
           </GUIMain>
@@ -4456,34 +4477,6 @@ See KeyboardMovement.txt for details.
   <Component Name="AudioNew" />
   <Component Name="GlobalVariables" />
   <Component Name="Scripts" />
-  <Component Name="SpeechCenter">
-    <SpeechCenter Version="2.1.0.0">
-      <Document Version="2.0.0.0">
-        <Settings>
-          <CustomFunctions />
-          <VoiceActorScripts NewParagraph="PER_FUNCTION">
-            <Format>
-              <Styles>
-                <CSSStyle CSSName="body" FontFamily="Cambria" Color="" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".currentCharacter" FontFamily="" Color="" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".otherCharacter" FontFamily="" Color="LightGray" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".lineNumber" FontFamily="" Color="Firebrick" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".duplicate" FontFamily="" Color="Thistle" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".speechCorrect" FontFamily="" Color="MediumBlue" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".speechIncorrect" FontFamily="" Color="Red" FontStyle="inherit" FontWeight="inherit" />
-                <CSSStyle CSSName=".filtered" FontFamily="" Color="LightSlateGray" FontStyle="italic" FontWeight="inherit" />
-              </Styles>
-            </Format>
-          </VoiceActorScripts>
-          <Translations EnableEditing="false" />
-          <Edit ShowWarning="true" ExitEditModeAfterSave="true" RefreshProjectAfterSave="Any" />
-          <DialogParsing ShowAllOoptionText="false" />
-        </Settings>
-        <SpeechLines />
-        <Translations />
-      </Document>
-    </SpeechCenter>
-  </Component>
   <Component Name="Plugins" />
   <Component Name="Rooms" />
   <Component Name="Translations" />

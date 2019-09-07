@@ -229,34 +229,41 @@ namespace SerialHelper {
 	char* CharTob2Body(b2BodyDef &b2bodydef, b2Body** pb2body, b2World* world, char* buf) {
 		printf("deserialized body\n");
 
-		int32 bodytype;
-		b2MassData massData;
-
+		b2Vec2 position;
+		float32 angle;		
+		int32 bodytype;		
 		float32 linearDamping;
 		float32 angularDamping;
 		b2Vec2 linearVelocity;
 		float32 angularVelocity;
+		bool fixedRotation;
 		bool bullet;
 		bool active;
 		bool awake;
 
-		buf = CharTob2Vec2(b2bodydef.position, buf);
-		buf = CharToFloat(b2bodydef.angle, buf);
+		b2MassData massData;
+
+		buf = CharTob2Vec2(position, buf);
+		buf = CharToFloat(angle, buf);
 		buf = CharToInt(bodytype, buf);
 		buf = CharToFloat(linearDamping, buf);
 		buf = CharToFloat(angularDamping, buf);
 		buf = CharTob2Vec2(linearVelocity, buf);
 		buf = CharToFloat(angularVelocity, buf);
-		buf = CharToBool(b2bodydef.fixedRotation, buf);
+		buf = CharToBool(fixedRotation, buf);
 		buf = CharToBool(bullet, buf);
 		buf = CharToBool(active, buf);
 		buf = CharToBool(awake, buf);
 		b2bodydef.type = (b2BodyType) bodytype;
 
+		b2bodydef.position.Set(position.x, position.y);
+		b2bodydef.angle = angle;
+		b2bodydef.fixedRotation = fixedRotation;
+
 		if (b2bodydef.type != b2BodyType::b2_staticBody) {
 			b2bodydef.linearDamping = linearDamping;
 			b2bodydef.angularDamping = angularDamping;
-			b2bodydef.linearVelocity = linearVelocity;
+			b2bodydef.linearVelocity.Set(linearVelocity.x, linearVelocity.y);
 			b2bodydef.angularVelocity = angularVelocity;
 			b2bodydef.bullet = bullet;
 			b2bodydef.active = active;

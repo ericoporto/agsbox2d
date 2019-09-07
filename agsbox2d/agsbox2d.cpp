@@ -36,6 +36,8 @@
 #include "AgsFixture.h"
 #include "Book.h"
 
+#include "DebugDraw.h"
+
 #pragma endregion // Defines_and_Includes
 
 #if AGS_PLATFORM_OS_WINDOWS
@@ -121,6 +123,8 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Advances one step of time dt in seconds of the simulation. \r\n"
 "  import void Step(float dt, int velocityIteractions = 8, int positionIteractions = 3); \r\n"
+"  /// Returns a sprite with debug data. Set as GUI Background over screen for debugging your physics. \r\n"
+"  import int GetDebugSprite(); \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct ShapeCircle; \r\n"
@@ -273,6 +277,8 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 //define engine
 IAGSEngine* engine;
 
+AgsDebugDraw debugDraw;  // Declare an instance of our DebugDraw class so we can actually use it
+
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
 
@@ -388,6 +394,16 @@ void AgsWorld_Step(AgsWorld* self, uint32_t dt, int32 velocityIterations, int32 
 	if (positionIterations <= 0) velocityIterations = 3;
 
 	self->Step(fdt, velocityIterations, positionIterations);
+}
+
+int32 AgsWorld_GetDebugSprite(AgsWorld* self) {
+	debugDraw.ClearSprite();
+	debugDraw.GetSurfaceForDebugDraw();
+	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit);
+	self->B2AgsWorld->SetDebugDraw(&debugDraw);
+	self->B2AgsWorld->DrawDebugData();
+	debugDraw.ReleaseSurfaceForDebugDraw();
+	return debugDraw.GetDebugSprite();
 }
 
 #pragma endregion // AgsWorld_ScriptAPI
@@ -694,6 +710,11 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	if (engine->version < MIN_ENGINE_VERSION)
 			engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
+	//initialize debug
+	int screenWidth, screenHeight, colDepth;
+	engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
+	debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
+
 	//register functions
 	engine->AddManagedObjectReader(AgsWorldInterface::name, &AgsWorld_Reader);
 	engine->AddManagedObjectReader(AgsBodyInterface::name, &AgsBody_Reader);
@@ -712,6 +733,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
+	engine->RegisterScriptFunction("World::GetDebugSprite^0", (void*)AgsWorld_GetDebugSprite);
 
 	engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
 	engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
