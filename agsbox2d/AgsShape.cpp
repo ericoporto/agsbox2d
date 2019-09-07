@@ -18,9 +18,11 @@ AgsShape::AgsShape(AgsShapeRect* shapeRect) {
 AgsShape::AgsShape(b2Shape* b2shape) {
 	if (b2shape->GetType() == b2Shape::e_circle) {
 		ShapeCircle = new AgsShapeCircle((b2CircleShape*) b2shape);
+		B2AgsShape = ShapeCircle->B2AgsShapeCircle;
 		ShapeRect = nullptr;
 	} else {
 		ShapeRect = new AgsShapeRect((b2PolygonShape*) b2shape);
+		B2AgsShape = ShapeRect->B2AgsShapeRect;
 		ShapeCircle = nullptr;
 	}
 }
@@ -47,6 +49,8 @@ using namespace SerialHelper;
 int AgsShapeInterface::Dispose(const char* address, bool force)
 {
 	Book::UnregisterAgsShapeByID(((AgsShape*)address)->ID);
+	((AgsShape*)address)->B2AgsShape->~b2Shape();
+	delete ((AgsShape*)address)->B2AgsShape;
 	delete ((AgsShape*)address);
 	return (1);
 }

@@ -12,8 +12,8 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	World = world;
 }
 
-AgsBody::AgsBody() {
-	IsDestroyed = true;
+AgsBody::AgsBody(bool destroyed) {
+	IsDestroyed = destroyed;
 }
 
 bool AgsBody::IsTouching(AgsBody* body) {
@@ -259,12 +259,12 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 		body->World = world;
 	}
 	else {
-		body = new AgsBody(world, 0.0, 0.0, b2_dynamicBody);
+		body = new AgsBody(false);
 		body->ID = body_id;
+		body->World = world;
 		Book::RegisterAgsBody(body_id, body);
+		ptr = CharTob2Body(body->B2AgsBodyDef, &(body->B2AgsBody), body->World->B2AgsWorld, ptr);
 	}
-
-	ptr = CharTob2Body(&(body->B2AgsBody), ptr);
 
 	engine->RegisterUnserializedObject(key, body, &AgsBody_Interface);
 }

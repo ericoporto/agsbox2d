@@ -226,56 +226,48 @@ namespace SerialHelper {
 		return buf;
 	}
 
-	char* CharTob2Body(b2Body** pb2body, char* buf) {
+	char* CharTob2Body(b2BodyDef &b2bodydef, b2Body** pb2body, b2World* world, char* buf) {
 		printf("deserialized body\n");
 
-		b2Body* b2body = (*pb2body);
-
-		b2Vec2 position;
-		float32 angle;
 		int32 bodytype;
-		float32 linear_damping;
-		float32 angular_damping;
-		b2Vec2 linear_velocity;
-		float32 angular_velocity;
-		bool is_fixed_rotation;
-		bool is_bullet;
-		bool is_active;
-		bool is_awake;
-
 		b2MassData massData;
 
-		buf = CharTob2Vec2(position, buf);
-		buf = CharToFloat(angle, buf);
+		float32 linearDamping;
+		float32 angularDamping;
+		b2Vec2 linearVelocity;
+		float32 angularVelocity;
+		bool bullet;
+		bool active;
+		bool awake;
+
+		buf = CharTob2Vec2(b2bodydef.position, buf);
+		buf = CharToFloat(b2bodydef.angle, buf);
 		buf = CharToInt(bodytype, buf);
-		buf = CharToFloat(linear_damping, buf);
-		buf = CharToFloat(angular_damping, buf);
-		buf = CharTob2Vec2(linear_velocity, buf);
-		buf = CharToFloat(angular_velocity, buf);
-		buf = CharToBool(is_fixed_rotation, buf);
-		buf = CharToBool(is_bullet, buf);
-		buf = CharToBool(is_active, buf);
-		buf = CharToBool(is_awake, buf);
+		buf = CharToFloat(linearDamping, buf);
+		buf = CharToFloat(angularDamping, buf);
+		buf = CharTob2Vec2(linearVelocity, buf);
+		buf = CharToFloat(angularVelocity, buf);
+		buf = CharToBool(b2bodydef.fixedRotation, buf);
+		buf = CharToBool(bullet, buf);
+		buf = CharToBool(active, buf);
+		buf = CharToBool(awake, buf);
+		b2bodydef.type = (b2BodyType) bodytype;
+
+		if (b2bodydef.type != b2BodyType::b2_staticBody) {
+			b2bodydef.linearDamping = linearDamping;
+			b2bodydef.angularDamping = angularDamping;
+			b2bodydef.linearVelocity = linearVelocity;
+			b2bodydef.angularVelocity = angularVelocity;
+			b2bodydef.bullet = bullet;
+			b2bodydef.active = active;
+			b2bodydef.awake = awake;
+		}
 
 		buf = CharToFloat(massData.mass, buf);
 		buf = CharTob2Vec2(massData.center, buf);
 		buf = CharToFloat(massData.I, buf);
-
-		printf("Body deserialized (%f,%f), type %d \n    %f %f (%f,%f) %f\n %d %d %d %d\n",
-		      position.x, position.y, bodytype, linear_damping, angular_damping,
-					linear_velocity.x, linear_velocity.y, angular_velocity,
-				  is_fixed_rotation, is_bullet, is_active, is_awake);
-
-		b2body->SetTransform(position, angle);
-		b2body->SetType((b2BodyType)bodytype);
-		b2body->SetLinearDamping(linear_damping);
-		b2body->SetAngularDamping(angular_damping);
-		b2body->SetLinearVelocity(linear_velocity);
-		b2body->SetAngularVelocity(angular_velocity);
-		b2body->SetFixedRotation(is_fixed_rotation);
-		b2body->SetBullet(is_bullet);
-		b2body->SetActive(is_active);
-		b2body->SetAwake(is_awake);
+				
+		(*pb2body) = world->CreateBody(&b2bodydef);
 
 		int fixturecount;
 		buf = CharToInt(fixturecount, buf);
@@ -283,15 +275,16 @@ namespace SerialHelper {
 		for (int i = 0; i < fixturecount; i++) {
 			b2FixtureDef* fixturedef = new b2FixtureDef;
 			buf = CharTob2FixtureDef(fixturedef, buf);
-			b2body->CreateFixture(fixturedef);
+			(*pb2body)->CreateFixture(fixturedef);
 		}
 
-		if(massData.mass != 0.0f ||
+		if(b2bodydef.type != b2BodyType::b2_staticBody &&
+			(massData.mass != 0.0f ||
 			massData.center.x != 0.0f ||
 			massData.center.y != 0.0f ||
-		  massData.I != 0.0) {
+		    massData.I != 0.0)) {
 				printf("set mass data");
-				b2body->SetMassData(&massData);
+				(*pb2body)->SetMassData(&massData);
 	  }
 
 		return buf;
