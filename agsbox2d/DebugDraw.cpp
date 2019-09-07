@@ -71,10 +71,10 @@ Pixel32::Pixel32(int r, int g, int b, int alpha) {
 }
 
 Pixel32::Pixel32(b2Color color) {
-	Red = (int) color.r*255.0f;
-	Blue = (int) color.g*255.0f;
-	Green = (int) color.b*255.0f;
-	Alpha = (int) 255.0f;
+	Red = (int) 255.0 - color.r*255.0f;
+	Blue = (int)  255.0 -  color.g*255.0f;
+	Green = (int)  255.0 -  color.b*255.0f;
+	Alpha = (int)  color.a*255.0f;
 }
 
 int Pixel32::GetColorAsInt() {
@@ -148,16 +148,17 @@ void AgsDebugDraw::InitializeAgsDebugDraw(IAGSEngine* engine, int screenWidth, i
 	Engine = engine;
 	ScreenWidth = screenWidth;
 	ScreenHeight = screenHeight;
-	SetFlags(b2Draw::e_shapeBit || b2Draw::e_centerOfMassBit );
 }
 
 int AgsDebugDraw::GetDebugSprite() {
+	if(Engine == nullptr || SpriteId <= 0) return 0;
+
 	Engine->NotifySpriteUpdated(SpriteId);
 	return SpriteId;
 }
 
 void AgsDebugDraw::GetSurfaceForDebugDraw() {
-	if (SpriteId < 0)  SpriteId = Engine->CreateDynamicSprite(32, ScreenWidth, ScreenHeight);
+	if (Engine == nullptr || SpriteId <= 0)  SpriteId = Engine->CreateDynamicSprite(32, ScreenWidth, ScreenHeight);
 
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	unsigned char **charbuffer = Engine->GetRawBitmapSurface(engineSprite);
@@ -165,24 +166,28 @@ void AgsDebugDraw::GetSurfaceForDebugDraw() {
 }
 
 void AgsDebugDraw::ReleaseSurfaceForDebugDraw() {
+	if (Engine == nullptr || SpriteId <= 0) return;
+
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	Engine->ReleaseBitmapSurface(engineSprite);
 }
 
 
 void AgsDebugDraw::ClearSprite() {
-	if (SpriteId < 0) return;
+	if (Engine == nullptr || SpriteId <= 0) return;
 
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	unsigned char **charbuffer = Engine->GetRawBitmapSurface(engineSprite);
 	unsigned int **longbuffer = (unsigned int**)charbuffer;
 
+	int clearColor = makeacol32(0, 0, 0, 255);
+
 	int srcWidth, srcHeight;
 	Engine->GetBitmapDimensions(engineSprite, &srcWidth, &srcHeight, nullptr);
-	
+
 	for (int y = 0; y < srcHeight; y++) {
 		for (int x = 0; x < srcWidth; x++) {
-			_DrawPixel(longbuffer, x, y, 0, srcWidth, srcHeight);
+			_DrawPixel(longbuffer, x, y, clearColor, srcWidth, srcHeight);
 		}
 	}
 
@@ -191,8 +196,8 @@ void AgsDebugDraw::ClearSprite() {
 
 
 void AgsDebugDraw::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color) {
-	if (SpriteId < 0) return;
-	
+	if(Engine == nullptr || SpriteId <= 0) return;
+
 	Pixel32 pix = Pixel32(color);
 	int agscolor = pix.GetColorAsInt();
 
@@ -200,8 +205,8 @@ void AgsDebugDraw::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color
 }
 
 void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) {
-	if (SpriteId < 0) return;
-	
+	if(Engine == nullptr || SpriteId <= 0) return;
+
 	Pixel32 pix = Pixel32(color);
 	int agscolor = pix.GetColorAsInt();
 
@@ -210,7 +215,7 @@ void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
 			_DrawPixel(Longbuffer, vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(), agscolor, ScreenWidth, ScreenHeight);
 		}
 		else {
-			_DrawLine(Longbuffer, 
+			_DrawLine(Longbuffer,
 				vertices[i-1].x*Scale::GetMeter(), vertices[i-1].y*Scale::GetMeter(),
 				vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(),
 				agscolor, ScreenWidth, ScreenHeight);
@@ -220,13 +225,13 @@ void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
 }
 
 void AgsDebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) {
-	if (SpriteId < 0) return;
-	
+	if(Engine == nullptr || SpriteId <= 0) return;
+
 	DrawPolygon(vertices, vertexCount, color);
 }
 
 void AgsDebugDraw::DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color) {
-	if (SpriteId < 0) return;
+	if(Engine == nullptr || SpriteId <= 0) return;
 
 	Pixel32 pix = Pixel32(color);
 	int agscolor = pix.GetColorAsInt();
@@ -235,13 +240,13 @@ void AgsDebugDraw::DrawCircle(const b2Vec2& center, float32 radius, const b2Colo
 }
 
 void AgsDebugDraw::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color) {
-	if (SpriteId < 0) return;
+	if(Engine == nullptr || SpriteId <= 0) return;
 
 	DrawCircle(center, radius, color);
 }
 
 void AgsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) {
-	if (SpriteId < 0) return;
+	if(Engine == nullptr || SpriteId <= 0) return;
 
 	Pixel32 pix = Pixel32(color);
 	int agscolor = pix.GetColorAsInt();
@@ -253,6 +258,6 @@ void AgsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color
 }
 
 void AgsDebugDraw::DrawTransform(const b2Transform& xf) {
-	if (SpriteId < 0) return;
+	if(Engine == nullptr || SpriteId <= 0) return;
 
 }

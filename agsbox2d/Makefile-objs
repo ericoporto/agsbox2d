@@ -1,1 +1,1 @@
-OBJS = Box2D.o SerialHelper.o Book.o AgsBody.o AgsShapeCircle.o AgsWorld.o AgsShape.o AgsFixture.o  AgsShapeRect.o Scale.o agsbox2d.o
+OBJS = Box2D.o DebugDraw.o SerialHelper.o Book.o AgsBody.o AgsShapeCircle.o AgsWorld.o AgsShape.o AgsFixture.o  AgsShapeRect.o Scale.o agsbox2d.o

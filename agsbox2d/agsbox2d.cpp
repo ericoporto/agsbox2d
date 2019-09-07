@@ -324,7 +324,7 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 void agsbox2d_DestroyBody(AgsWorld* world, AgsBody* body) {
 	if (world == nullptr)
 		return;
-	
+
 	world->DestroyBody(body);
 }
 
@@ -710,11 +710,6 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	if (engine->version < MIN_ENGINE_VERSION)
 			engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
-	//initialize debug
-	int screenWidth, screenHeight, colDepth;
-	engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
-	debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
-
 	//register functions
 	engine->AddManagedObjectReader(AgsWorldInterface::name, &AgsWorld_Reader);
 	engine->AddManagedObjectReader(AgsBodyInterface::name, &AgsBody_Reader);
@@ -722,7 +717,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsShapeRectInterface::name, &AgsShapeRect_Reader);
 	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
-	
+
 	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
@@ -786,7 +781,9 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Fixture::get_Friction", (void*)AgsFixture_GetFriction);
 	engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
 	engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
-	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);				
+	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
+
+  engine->RequestEventHook(AGSE_PRESCREENDRAW);
 }
 
 //------------------------------------------------------------------------------
@@ -802,9 +799,16 @@ void AGS_EngineShutdown()
 
 int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
 {
+  if(event==AGSE_PRESCREENDRAW){
+  	//initialize debug
+    int screenWidth, screenHeight, colDepth;
+    engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
+    debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
+  }
+
+/*
 	switch (event)
 	{
-/*
     case AGSE_KEYPRESS:
     case AGSE_MOUSECLICK:
     case AGSE_POSTSCREENDRAW:
@@ -823,10 +827,10 @@ int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
     case AGSE_PRERENDER:
     case AGSE_PRESAVEGAME:
     case AGSE_POSTRESTOREGAME:
- */
 	default:
 			break;
 	}
+*/
 
 	// Return 1 to stop event from processing further (when needed)
 	return (0);
