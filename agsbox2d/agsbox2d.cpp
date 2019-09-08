@@ -462,7 +462,7 @@ int32 AgsBody_GetIntPositionX(AgsBody* self) {
 void AgsBody_SetIntPositionY(AgsBody* self, int32 y) {
 	float32 fy = (float32)y;
 
-	self->SetPosX(fy);
+	self->SetPosY(fy);
 }
 
 int32 AgsBody_GetIntPositionY(AgsBody* self) {
