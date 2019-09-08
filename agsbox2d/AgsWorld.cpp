@@ -70,7 +70,7 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 	ptr = b2Vec2ToChar(world->B2AgsWorld->GetGravity(), ptr, end);
 
-	int bodycount = Book::GetBodiesCount(world->ID);
+    int32 bodycount = Book::GetBodiesCount(world->ID);
 	ptr = IntToChar(bodycount, ptr, end);
 
 	if (bodycount > 0) {
@@ -111,7 +111,7 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 
 	world->B2AgsWorld->SetGravity(gravity);
 
-	int bodycount;
+    int32 bodycount;
 	ptr = CharToInt(bodycount, ptr);
 
 	

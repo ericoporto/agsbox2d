@@ -30,7 +30,7 @@ void Book::DisposeWorldIfNeeded(){
 		//
 		if(!(i()->ListB2Bodies.empty())){
 		
-			std::unordered_map<int, std::unordered_set<b2Body* >*>::iterator it;
+			std::unordered_map<int32, std::unordered_set<b2Body* >*>::iterator it;
 		
 		 	for (it=i()->ListB2Bodies.begin(); it != i()->ListB2Bodies.end(); ++it){
 		 		if(it->second != nullptr){
@@ -45,29 +45,31 @@ void Book::DisposeWorldIfNeeded(){
 
 // -- PUBLIC --
 
-void Book::NoteBodyAndWorld(b2Body* body, int world_id) {
+void Book::NoteBodyAndWorld(b2Body* body, int32 world_id) {
 	if (i()->ListB2Bodies.count(world_id) == 0) {
 		i()->ListB2Bodies[world_id] = new std::unordered_set<b2Body* >;
 	}
 
-	i()->ListB2Bodies[world_id]->insert(body);
+	if(body != nullptr && i()->ListB2Bodies[world_id] != nullptr) {
+        i()->ListB2Bodies[world_id]->insert(body);
+    }
 }
 
-std::unordered_set<b2Body* >::iterator  Book::GetBodiesSetBegin(int world_id){
+std::unordered_set<b2Body* >::iterator  Book::GetBodiesSetBegin(int32 world_id){
 	return i()->ListB2Bodies[world_id]->begin();
 }
 
-std::unordered_set<b2Body* >::iterator  Book::GetBodiesSetEnd(int world_id){
+std::unordered_set<b2Body* >::iterator  Book::GetBodiesSetEnd(int32 world_id){
 	return i()->ListB2Bodies[world_id]->end();
 }
 
-int Book::GetBodiesCount(int world_id){
+int32 Book::GetBodiesCount(int32 world_id){
 	if(i()->ListB2Bodies[world_id]==nullptr) return 0;
 
   return i()->ListB2Bodies[world_id]->size();
 }
 
-bool Book::GetBodiesEmpty(int world_id){
+bool Book::GetBodiesEmpty(int32 world_id){
 	if(i()->ListB2Bodies[world_id]==nullptr) return true;
 
   return i()->ListB2Bodies[world_id]->empty();
@@ -81,14 +83,14 @@ Book* Book::i()
 }
 
 // -- AgsWorld Bookkeeping --
-bool Book::isAgsWorldRegisteredByID(int id) {
+bool Book::isAgsWorldRegisteredByID(int32 id) {
 	if(i()->MapAgsWorld.count(id) == 0) {
 		return false;
 	}
 	return true;
 }
 
-bool Book::RegisterAgsWorld(int id, AgsWorld* world) {
+bool Book::RegisterAgsWorld(int32 id, AgsWorld* world) {
 	if (i()->MapAgsWorld.count(id) == 0) {
 		i()->MapAgsWorld[id] = world;
 		i()->ListB2World.push_back(world->B2AgsWorld);
@@ -97,7 +99,7 @@ bool Book::RegisterAgsWorld(int id, AgsWorld* world) {
 	return false;
 }
 
-bool Book::UnregisterAgsWorldByID(int id) {
+bool Book::UnregisterAgsWorldByID(int32 id) {
 	if (i()->MapAgsWorld.count(id) == 0) {
 		return false;
 	}
@@ -106,7 +108,7 @@ bool Book::UnregisterAgsWorldByID(int id) {
 	return true;
 }
 
-AgsWorld* Book::IDtoAgsWorld(int id) {
+AgsWorld* Book::IDtoAgsWorld(int32 id) {
 	if (i()->MapAgsWorld.count(id) == 0) {
 		return nullptr;
 	}
@@ -115,14 +117,14 @@ AgsWorld* Book::IDtoAgsWorld(int id) {
 // -- End of AgsWorld Bookkeeping --
 
 // -- AgsBody Bookkeeping --
-bool Book::isAgsBodyRegisteredByID(int id) {
+bool Book::isAgsBodyRegisteredByID(int32 id) {
 	if(i()->MapAgsBody.count(id) == 0) {
 		return false;
 	}
 	return true;
 }
 
-bool Book::RegisterAgsBody(int id, AgsBody* body) {
+bool Book::RegisterAgsBody(int32 id, AgsBody* body) {
 	if (i()->MapAgsBody.count(id) == 0) {
 		i()->MapAgsBody[id] = body;
 		return true;
@@ -130,7 +132,7 @@ bool Book::RegisterAgsBody(int id, AgsBody* body) {
 	return false;
 }
 
-bool Book::UnregisterAgsBodyByID(int id) {
+bool Book::UnregisterAgsBodyByID(int32 id) {
 	if (i()->MapAgsBody.count(id) == 0) {
 		return false;
 	}
@@ -144,7 +146,7 @@ bool Book::UnregisterAgsBodyByID(int id) {
 	return true;
 }
 
-AgsBody* Book::IDtoAgsBody(int id) {
+AgsBody* Book::IDtoAgsBody(int32 id) {
 	if (i()->MapAgsBody.count(id) == 0) {
 		return nullptr;
 	}
@@ -153,14 +155,14 @@ AgsBody* Book::IDtoAgsBody(int id) {
 // -- End of AgsBody Bookkeeping --
 
 // -- AgsShape Bookkeeping --
-bool Book::isAgsShapeRegisteredByID(int id) {
+bool Book::isAgsShapeRegisteredByID(int32 id) {
 	if (i()->MapAgsShape.count(id) == 0) {
 		return false;
 	}
 	return true;
 }
 
-bool Book::RegisterAgsShape(int id, AgsShape* shape) {
+bool Book::RegisterAgsShape(int32 id, AgsShape* shape) {
 	if (i()->MapAgsShape.count(id) == 0) {
 		i()->MapAgsShape[id] = shape;
 		return true;
@@ -168,7 +170,7 @@ bool Book::RegisterAgsShape(int id, AgsShape* shape) {
 	return false;
 }
 
-bool Book::UnregisterAgsShapeByID(int id) {
+bool Book::UnregisterAgsShapeByID(int32 id) {
 	if (i()->MapAgsShape.count(id) == 0) {
 		return false;
 	}
@@ -176,7 +178,7 @@ bool Book::UnregisterAgsShapeByID(int id) {
 	return true;
 }
 
-AgsShape* Book::IDtoAgsShape(int id) {
+AgsShape* Book::IDtoAgsShape(int32 id) {
 	if (i()->MapAgsShape.count(id) == 0) {
 		return nullptr;
 	}
@@ -185,14 +187,14 @@ AgsShape* Book::IDtoAgsShape(int id) {
 // -- End of AgsShape Bookkeeping --
 
 // -- AgsFixture Bookkeeping --
-bool Book::isAgsFixtureRegisteredByID(int id) {
+bool Book::isAgsFixtureRegisteredByID(int32 id) {
 	if(i()->MapAgsFixture.count(id) == 0) {
 		return false;
 	}
 	return true;
 }
 
-bool Book::RegisterAgsFixture(int id, AgsFixture* fixture) {
+bool Book::RegisterAgsFixture(int32 id, AgsFixture* fixture) {
 	if (i()->MapAgsFixture.count(id) == 0) {
 		i()->MapAgsFixture[id] = fixture;
 		return true;
@@ -200,7 +202,7 @@ bool Book::RegisterAgsFixture(int id, AgsFixture* fixture) {
 	return false;
 }
 
-bool Book::UnregisterAgsFixtureByID(int id) {
+bool Book::UnregisterAgsFixtureByID(int32 id) {
 	if (i()->MapAgsFixture.count(id) == 0) {
 		return false;
 	}
@@ -208,7 +210,7 @@ bool Book::UnregisterAgsFixtureByID(int id) {
 	return true;
 }
 
-AgsFixture* Book::IDtoAgsFixture(int id) {
+AgsFixture* Book::IDtoAgsFixture(int32 id) {
 	if (i()->MapAgsFixture.count(id) == 0) {
 		return nullptr;
 	}

@@ -178,6 +178,8 @@ int AgsBodyInterface::Dispose(const char* address, bool force)
 {
 	Book::UnregisterAgsBodyByID(((AgsBody*)address)->ID);
 	delete ((AgsBody*)address);
+	AgsBody* body = ((AgsBody*)address);
+    body = nullptr;
 	return (1);
 }
 
