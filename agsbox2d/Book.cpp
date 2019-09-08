@@ -15,6 +15,21 @@ Book::~Book()
 {
 }
 
+void Book::DisposeWorldIfNeeded(){
+	if (i()->MapAgsWorld.empty() &&
+			i()->MapAgsBody.empty() ) {
+
+		while (!i()->ListB2World.empty()) {
+			b2World* world = *i()->ListB2World.rbegin();
+
+			delete world;
+
+			i()->ListB2World.pop_back();
+		}
+
+	}
+}
+
 // -- PUBLIC --
 
 Book* Book::i()
@@ -35,6 +50,7 @@ bool Book::isAgsWorldRegisteredByID(int id) {
 bool Book::RegisterAgsWorld(int id, AgsWorld* world) {
 	if (i()->MapAgsWorld.count(id) == 0) {
 		i()->MapAgsWorld[id] = world;
+		i()->ListB2World.push_back(world->B2AgsWorld);
 		return true;
 	}
 	return false;
@@ -45,6 +61,7 @@ bool Book::UnregisterAgsWorldByID(int id) {
 		return false;
 	}
 	i()->MapAgsWorld.erase(id);
+	DisposeWorldIfNeeded();
 	return true;
 }
 
@@ -76,7 +93,8 @@ bool Book::UnregisterAgsBodyByID(int id) {
 	if (i()->MapAgsBody.count(id) == 0) {
 		return false;
 	}
-    i()->MapAgsBody.erase(id);
+  i()->MapAgsBody.erase(id);
+	DisposeWorldIfNeeded();
 	return true;
 }
 

@@ -3,6 +3,8 @@
 #ifndef AGSBOX2D_BOOK_H
 #define AGSBOX2D_BOOK_H
 
+#include "Box2D.h"
+#include <vector>
 #include <unordered_map>
 
 class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
@@ -15,10 +17,13 @@ class Book
 private:
 	Book();
 	~Book(void);
+	std::vector<b2World* > ListB2World;
 	std::unordered_map<int, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int, AgsBody*> MapAgsBody;
 	std::unordered_map<int, AgsFixture*> MapAgsFixture;
 	std::unordered_map<int, AgsShape*> MapAgsShape;
+
+	static void DisposeWorldIfNeeded();
 
 public:
 	static Book* i();
