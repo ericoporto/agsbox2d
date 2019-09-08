@@ -5,6 +5,7 @@
 
 #include "Box2D.h"
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 
 class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
@@ -18,14 +19,22 @@ private:
 	Book();
 	~Book(void);
 	std::vector<b2World* > ListB2World;
+	std::unordered_map<int, std::unordered_set<b2Body* >*> ListB2Bodies;
+
 	std::unordered_map<int, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int, AgsBody*> MapAgsBody;
 	std::unordered_map<int, AgsFixture*> MapAgsFixture;
 	std::unordered_map<int, AgsShape*> MapAgsShape;
 
+	static void NoteBodyAndWorld(b2Body* body, int world_id);
 	static void DisposeWorldIfNeeded();
 
 public:
+	static std::unordered_set<b2Body* >::iterator GetBodiesSetBegin(int world_id);
+	static std::unordered_set<b2Body* >::iterator GetBodiesSetEnd(int world_id);
+	static int GetBodiesCount(int world_id);
+	static bool GetBodiesEmpty(int world_id);
+
 	static Book* i();
 
 	static bool isAgsWorldRegisteredByID(int id);

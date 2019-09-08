@@ -69,6 +69,13 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 	ptr = FloatToChar(Scale::GetMeter(), ptr, end);
 
 	ptr = b2Vec2ToChar(world->B2AgsWorld->GetGravity(), ptr, end);
+	ptr = IntToChar(Book::GetBodiesCount(world->ID), ptr, end);
+
+	// for (std::unordered_set<b2Body*>::iterator itr = Book::GetBodiesSetBegin(world->ID);
+	//  		itr != Book::GetBodiesSetEnd(world->ID); ++itr) {
+	//
+	// 		ptr = b2BodyToChar(*itr, ptr, end);
+	// }
 
 	return (ptr - buffer);
 }
@@ -98,8 +105,10 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 		Book::RegisterAgsWorld(world_id, world);
 	}
 
-
 	world->B2AgsWorld->SetGravity(gravity);
+
+	int bodycount;
+	ptr = CharToInt(bodycount, ptr);
 
 	engine->RegisterUnserializedObject(key, world, &AgsWorld_Interface);
 }

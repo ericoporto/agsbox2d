@@ -15,6 +15,14 @@ Book::~Book()
 {
 }
 
+void Book::NoteBodyAndWorld(b2Body* body, int world_id){
+	// if(i()->ListB2Bodies.count(world_id) == 0){
+	// 	i()->ListB2Bodies[world_id] = new std::unordered_set<b2Body* >;
+	// }
+	//
+  // i()->ListB2Bodies[world_id]->insert(body);
+}
+
 void Book::DisposeWorldIfNeeded(){
 	if (i()->MapAgsWorld.empty() &&
 			i()->MapAgsBody.empty() ) {
@@ -26,11 +34,44 @@ void Book::DisposeWorldIfNeeded(){
 
 			i()->ListB2World.pop_back();
 		}
-
+		//
+		// if(!(i()->ListB2Bodies.empty())){
+		//
+		// 	std::unordered_map<int, std::unordered_set<b2Body* >*>::iterator it;
+		//
+		// 	for (it=i()->ListB2Bodies.begin(); it != i()->ListB2Bodies.end(); ++it){
+		// 		if(it->second != nullptr){
+		// 			delete it->second;
+		// 		}
+		// 	}
+		//
+		 	i()->ListB2Bodies.clear();
+		// }
 	}
 }
 
 // -- PUBLIC --
+
+
+std::unordered_set<b2Body* >::iterator  Book::GetBodiesSetBegin(int world_id){
+	return i()->ListB2Bodies[world_id]->begin();
+}
+
+std::unordered_set<b2Body* >::iterator  Book::GetBodiesSetEnd(int world_id){
+	return i()->ListB2Bodies[world_id]->end();
+}
+
+int Book::GetBodiesCount(int world_id){
+	if(i()->ListB2Bodies[world_id]==nullptr) return 0;
+
+  return i()->ListB2Bodies[world_id]->size();
+}
+
+bool Book::GetBodiesEmpty(int world_id){
+	if(i()->ListB2Bodies[world_id]==nullptr) return true;
+
+  return i()->ListB2Bodies[world_id]->empty();
+}
 
 Book* Book::i()
 {
@@ -93,7 +134,12 @@ bool Book::UnregisterAgsBodyByID(int id) {
 	if (i()->MapAgsBody.count(id) == 0) {
 		return false;
 	}
-  i()->MapAgsBody.erase(id);
+
+	if(!(i()->MapAgsBody[id]->GetIsDestroyed())) {
+		NoteBodyAndWorld( i()->MapAgsBody[id]->B2AgsBody,
+											i()->MapAgsBody[id]->World->ID );
+	}
+	i()->MapAgsBody.erase(id);
 	DisposeWorldIfNeeded();
 	return true;
 }
