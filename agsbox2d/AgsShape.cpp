@@ -49,7 +49,7 @@ using namespace SerialHelper;
 int AgsShapeInterface::Dispose(const char* address, bool force)
 {
 	Book::UnregisterAgsShapeByID(((AgsShape*)address)->ID);
-	((AgsShape*)address)->B2AgsShape->~b2Shape();
+	//((AgsShape*)address)->B2AgsShape->~b2Shape();
 	delete ((AgsShape*)address)->B2AgsShape;
 	delete ((AgsShape*)address);
 	return (1);
