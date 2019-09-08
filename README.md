@@ -31,108 +31,60 @@ well with AGS.
 
 ## Usage example
 
-Below we will do a very simple example that creates a ground, and adds two
-boxes and a ball. The ball is controlled by keyboard input.
-
-This example uses a room script and a gui named gDebugGui, with size 320x180 
-and border and color set to 0, used to print the example objects. These are not
-AGS Objects. This example mimics [Love physics tutorial](https://love2d.org/wiki/Tutorial:Physics).
+Below we will do a very simple example that creates a ground, and adds a
+ball and a box. The ball is controlled by keyboard arrows.
 
 ```AGS Script
-// example room script file
-DynamicSprite* dynspr;
-DrawingSurface* surf;
-
+// room script file
 World* world;
+Overlay* ov;
 
 struct Physical {
-Body* body;
-Shape* shape;
-Fixture* fixture;
+  Body* body;
+  Shape* shape;
+  Fixture* fixture;
 };
 
 Physical ground;
 Physical ball;
-Physical box1;
-Physical box2;
-
-void initPhysics(){
-  AgsBox2D.SetMeter(32.0);
-  world = AgsBox2D.CreateWorld(0.0, 9.8*AgsBox2D.GetMeter());
-  
-  ground.body = AgsBox2D.CreateBody(world, 160.0, 160.0, eBodyStatic);
-  ground.shape = AgsBox2D.CreateRectangleShape(320.0, 40.0);
-  ground.fixture = AgsBox2D.CreateFixture(ground.body, ground.shape);
-
-  ball.body = AgsBox2D.CreateBody(world, 160.0, 40.0, eBodyDynamic);
-  ball.shape = AgsBox2D.CreateCircleShape(20.0);
-  ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0);
-  
-  box1.body = AgsBox2D.CreateBody(world, 80.0, 60.0, eBodyDynamic);
-  box1.shape = AgsBox2D.CreateRectangleShape(30.0, 20.0);
-  box1.fixture = AgsBox2D.CreateFixture(box1.body, box1.shape, 5.0);
-  
-  box2.body = AgsBox2D.CreateBody(world, 80.0, 80.0, eBodyDynamic);
-  box2.shape = AgsBox2D.CreateRectangleShape(20.0, 20.0);
-  box2.fixture = AgsBox2D.CreateFixture(box2.body, box2.shape, 2.0);
-}
-
-int DebugDraw(){
-  if(dynspr!=null){
-    dynspr.Delete();
-    dynspr = null;
-  }
-  
-  dynspr = DynamicSprite.Create(320, 180, true);
-  surf = dynspr.GetDrawingSurface();
-  
-  surf.DrawingColor = 0; //BLACK
-  surf.DrawRectangle(0, 0, 320, 180);
-  
-  surf.DrawingColor = 4064; //GREEN
-  surf.DrawRectangle(ground.body.X-ground.shape.AsRectangle.Width/2, 
-                     ground.body.Y-ground.shape.AsRectangle.Height/2,
-                     ground.body.X+ground.shape.AsRectangle.Width/2, 
-                     ground.body.Y+ground.shape.AsRectangle.Height/2);
-  
-  surf.DrawingColor = 63808; //RED
-  surf.DrawCircle(ball.body.X, ball.body.Y, 20);
-  
-  surf.DrawingColor = 63808; //RED
-  surf.DrawRectangle(box1.body.X-15, box1.body.Y-10, box1.body.X+15, box1.body.Y+10);
-  
-  surf.DrawingColor = 63808; //RED
-  surf.DrawRectangle(box2.body.X-10, box2.body.Y-10, box2.body.X+10, box2.body.Y+10);
-  
-  surf.Release();
-  return dynspr.Graphic;
-}
 
 function room_Load()
 {
-  initPhysics();
+  if(world == null){
+    AgsBox2D.SetMeter(32.0);
+    world = AgsBox2D.CreateWorld(0.0, 9.8*AgsBox2D.GetMeter());
+    
+    ground.body = AgsBox2D.CreateBody(world, 160.0, 160.0, eBodyStatic);
+    ground.shape = AgsBox2D.CreateRectangleShape(320.0, 40.0);
+    ground.fixture = AgsBox2D.CreateFixture(ground.body, ground.shape);
+
+    ball.body = AgsBox2D.CreateBody(world, 160.0, 40.0, eBodyDynamic);
+    ball.shape = AgsBox2D.CreateCircleShape(20.0);
+    ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0); 
+    ball.fixture.Restitution = 0.5;
+    
+    AgsBox2D.CreateFixture(AgsBox2D.CreateBody(world, 80.0, 60.0, eBodyDynamic), 
+                           AgsBox2D.CreateRectangleShape(30.0, 20.0), 5.0);
+  }
 }
 
-function room_RepExec() {
-  gDebugGui.BackgroundGraphic = DebugDraw();
-  
-  if(IsKeyPressed(eKeyLeftArrow)){
-    ball.body.ApplyForce(-500.0, 0.0);
-  }
-  if(IsKeyPressed(eKeyRightArrow)){
-    ball.body.ApplyForce(500.0, 0.0);
-  }
-  if(IsKeyPressed(eKeyUpArrow)){
-    ball.body.ApplyForce(0.0, -5000.0);
+function room_RepExec()
+{
+  if(IsKeyPressed(eKeyLeftArrow)) ball.body.ApplyForce(-500.0, 0.0);
+  if(IsKeyPressed(eKeyRightArrow)) ball.body.ApplyForce(500.0, 0.0);
+  if(IsKeyPressed(eKeyUpArrow) && ball.body.IsTouching(ground.body)){
+    ball.body.ApplyForce(0.0, -6000.0);
     ball.body.SetLinearVelocity(0.0, 0.0);
   }
-  if(IsKeyPressed(eKeyDownArrow)){
-    ball.body.ApplyForce(0.0, 500.0);
-  }
+  
+  if(ov!=null && ov.Valid) ov.Remove();  
+  ov = Overlay.CreateGraphical(0, 0, world.GetDebugSprite(), true);
   
   world.Step(1.0/IntToFloat(GetGameSpeed()), 8, 3);
 }
 ```
+
+Check [agsbox2d_demo](https://github.com/ericoporto/agsbox2d/tree/master/agsbox2d_demo) AGS Game project by loading it on AGS!
 
 ## Script API
 

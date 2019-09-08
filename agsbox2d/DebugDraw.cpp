@@ -13,31 +13,31 @@
 #define DEFAULT_RGB_B_SHIFT_32  0
 #define DEFAULT_RGB_A_SHIFT_32  24
 
-int getr32(int c)
+int getr32(uint32 c)
 {
 	return ((c >> DEFAULT_RGB_R_SHIFT_32) & 0xFF);
 }
 
 
-int getg32(int c)
+int getg32(uint32 c)
 {
 	return ((c >> DEFAULT_RGB_G_SHIFT_32) & 0xFF);
 }
 
 
-int getb32(int c)
+int getb32(uint32 c)
 {
 	return ((c >> DEFAULT_RGB_B_SHIFT_32) & 0xFF);
 }
 
 
-int geta32(int c)
+int geta32(uint32 c)
 {
 	return ((c >> DEFAULT_RGB_A_SHIFT_32) & 0xFF);
 }
 
 
-int makeacol32(int r, int g, int b, int a)
+uint32 makeacol32(uint32 r, uint32 g, uint32 b, uint32 a)
 {
 	return ((r << DEFAULT_RGB_R_SHIFT_32) |
 		(g << DEFAULT_RGB_G_SHIFT_32) |
@@ -52,18 +52,18 @@ int makeacol32(int r, int g, int b, int a)
 struct Pixel32 {
 
 public:
-	Pixel32(int r = 0, int g = 0, int b = 0, int alpha = 0);
+	Pixel32(uint32 r = 0, uint32 g = 0, uint32 b = 0, uint32 alpha = 0);
 	Pixel32(b2Color color);
 	~Pixel32() = default;
-	int GetColorAsInt();
-	int Red;
-	int Green;
-	int Blue;
-	int Alpha;
+	uint32 GetColorAsInt();
+	uint32 Red;
+	uint32 Green;
+	uint32 Blue;
+	uint32 Alpha;
 
 };
 
-Pixel32::Pixel32(int r, int g, int b, int alpha) {
+Pixel32::Pixel32(uint32 r, uint32 g, uint32 b, uint32 alpha) {
 	Red = r;
 	Blue = g;
 	Green = b;
@@ -71,30 +71,30 @@ Pixel32::Pixel32(int r, int g, int b, int alpha) {
 }
 
 Pixel32::Pixel32(b2Color color) {
-	Red = (int) 255.0 - color.r*255.0f;
-	Blue = (int)  255.0 -  color.g*255.0f;
-	Green = (int)  255.0 -  color.b*255.0f;
-	Alpha = (int)  color.a*255.0f;
+	Red = (uint32) 255.0 - color.r*255.0f;
+	Blue = (uint32)  255.0 -  color.g*255.0f;
+	Green = (uint32)  255.0 -  color.b*255.0f;
+	Alpha = (uint32)  color.a*255.0f;
 }
 
-int Pixel32::GetColorAsInt() {
+uint32 Pixel32::GetColorAsInt() {
 	return makeacol32(Red, Green, Blue, Alpha);
 }
 
 #pragma endregion
 
-void _DrawPixel(unsigned int **longbufferBitmap, int x, int y, int agsColor, int width, int height) {
+void _DrawPixel(uint32 **longbufferBitmap, int x, int y, int agsColor, int width, int height) {
 	if (x >= 0 && x < width && y >= 0 && y < height) {
 		longbufferBitmap[y][x] = agsColor;
 	}
 }
 
 void _DrawCircle(
-	unsigned int **lbb,
+	uint32 **lbb,
 	unsigned int x0,
 	unsigned int y0,
 	unsigned int radius,
-	int agsColor, int width, int height)
+	uint32 agsColor, int width, int height)
 {
 	int f = 1 - radius;
 	int ddF_x = 0;
@@ -129,7 +129,7 @@ void _DrawCircle(
 	}
 }
 
-void _DrawLine(unsigned int **longbufferBitmap, int x0, int y0, int x1, int y1, int agsColor, int width, int height) {
+void _DrawLine(uint32 **longbufferBitmap, int x0, int y0, int x1, int y1, int agsColor, int width, int height) {
 
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
@@ -161,14 +161,15 @@ int AgsDebugDraw::GetDebugSprite() {
 }
 
 void AgsDebugDraw::GetSurfaceForDebugDraw(int camera_x, int camera_y) {
-	if (Engine == nullptr || SpriteId <= 0)  SpriteId = Engine->CreateDynamicSprite(32, ScreenWidth, ScreenHeight);
+	if (Engine == nullptr) return;
+	if (SpriteId <= 0)  SpriteId = Engine->CreateDynamicSprite(32, ScreenWidth, ScreenHeight);
 
 	CameraX = Scale::ScaleDown((float32) camera_x);
 	CameraY = Scale::ScaleDown((float32) camera_y);
 
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	unsigned char **charbuffer = Engine->GetRawBitmapSurface(engineSprite);
-	Longbuffer = (unsigned int**)charbuffer;
+	Longbuffer = (uint32**)charbuffer;
 }
 
 void AgsDebugDraw::ReleaseSurfaceForDebugDraw() {
@@ -176,6 +177,7 @@ void AgsDebugDraw::ReleaseSurfaceForDebugDraw() {
 
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	Engine->ReleaseBitmapSurface(engineSprite);
+	Engine->NotifySpriteUpdated(SpriteId);
 }
 
 
@@ -184,9 +186,9 @@ void AgsDebugDraw::ClearSprite() {
 
 	BITMAP *engineSprite = Engine->GetSpriteGraphic(SpriteId);
 	unsigned char **charbuffer = Engine->GetRawBitmapSurface(engineSprite);
-	unsigned int **longbuffer = (unsigned int**)charbuffer;
+	uint32 **longbuffer = (uint32**)charbuffer;
 
-	int clearColor = makeacol32(0, 0, 0, 255);
+	uint32 clearColor = makeacol32(0, 0, 0, 255);
 
 	int srcWidth, srcHeight;
 	Engine->GetBitmapDimensions(engineSprite, &srcWidth, &srcHeight, nullptr);

@@ -8,11 +8,11 @@
 
 class AgsDebugDraw : public b2Draw
 {
-	int SpriteId;
-	int ScreenWidth;
-	int ScreenHeight;
+	int32 SpriteId;
+	int32 ScreenWidth;
+	int32 ScreenHeight;
 	IAGSEngine * Engine;
-	unsigned int **Longbuffer;
+	uint32 **Longbuffer;
 	float32 CameraX;
 	float32 CameraY;
 
