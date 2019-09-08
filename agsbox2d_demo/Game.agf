@@ -646,11 +646,15 @@
         <SubFolders />
         <UnloadedRooms>
           <UnloadedRoom>
+            <Number>1</Number>
+            <Description IsNull="True" />
+          </UnloadedRoom>
+          <UnloadedRoom>
             <Number>2</Number>
             <Description IsNull="True" />
           </UnloadedRoom>
           <UnloadedRoom>
-            <Number>1</Number>
+            <Number>3</Number>
             <Description IsNull="True" />
           </UnloadedRoom>
         </UnloadedRooms>
@@ -2338,9 +2342,9 @@
             <IdleView>0</IdleView>
             <ThinkingView>0</ThinkingView>
             <BlinkingView>0</BlinkingView>
-            <StartingRoom>1</StartingRoom>
-            <StartX>127</StartX>
-            <StartY>142</StartY>
+            <StartingRoom>3</StartingRoom>
+            <StartX>104</StartX>
+            <StartY>111</StartY>
             <UniformMovementSpeed>True</UniformMovementSpeed>
             <MovementSpeed>4</MovementSpeed>
             <MovementSpeedX>3</MovementSpeedX>
@@ -4344,36 +4348,6 @@
           <ScriptAndHeader>
             <ScriptAndHeader_Header>
               <Script>
-                <FileName>KeyboardMovement.ash</FileName>
-                <Name>KeyboardMovement</Name>
-                <Description>Allows to move the player character using the keyboard.
-
-See KeyboardMovement.txt for details.
-</Description>
-                <Author>Rui "Brisby" Pires / strazer</Author>
-                <Version>1.02</Version>
-                <Key>160503183</Key>
-                <IsHeader>True</IsHeader>
-              </Script>
-            </ScriptAndHeader_Header>
-            <ScriptAndHeader_Script>
-              <Script>
-                <FileName>KeyboardMovement.asc</FileName>
-                <Name>KeyboardMovement</Name>
-                <Description>Allows to move the player character using the keyboard.
-
-See KeyboardMovement.txt for details.
-</Description>
-                <Author>Rui "Brisby" Pires / strazer / AGS Team</Author>
-                <Version>1.04</Version>
-                <Key>160503183</Key>
-                <IsHeader>False</IsHeader>
-              </Script>
-            </ScriptAndHeader_Script>
-          </ScriptAndHeader>
-          <ScriptAndHeader>
-            <ScriptAndHeader_Header>
-              <Script>
                 <FileName>GlobalScript.ash</FileName>
                 <Name />
                 <Description />
@@ -4444,16 +4418,16 @@ See KeyboardMovement.txt for details.
         <BackwardsCompatibilityType>True</BackwardsCompatibilityType>
       </AudioClipType>
       <AudioClipType>
-        <TypeID>2</TypeID>
         <Name>Music</Name>
+        <TypeID>2</TypeID>
         <MaxChannels>1</MaxChannels>
         <VolumeReductionWhileSpeechPlaying>30</VolumeReductionWhileSpeechPlaying>
         <CrossfadeClips>No</CrossfadeClips>
         <BackwardsCompatibilityType>True</BackwardsCompatibilityType>
       </AudioClipType>
       <AudioClipType>
-        <TypeID>3</TypeID>
         <Name>Sound</Name>
+        <TypeID>3</TypeID>
         <MaxChannels>0</MaxChannels>
         <VolumeReductionWhileSpeechPlaying>0</VolumeReductionWhileSpeechPlaying>
         <CrossfadeClips>No</CrossfadeClips>
@@ -4481,6 +4455,34 @@ See KeyboardMovement.txt for details.
   <Component Name="AudioNew" />
   <Component Name="GlobalVariables" />
   <Component Name="Scripts" />
+  <Component Name="SpeechCenter">
+    <SpeechCenter Version="2.1.0.0">
+      <Document Version="2.0.0.0">
+        <Settings>
+          <CustomFunctions />
+          <VoiceActorScripts NewParagraph="PER_FUNCTION">
+            <Format>
+              <Styles>
+                <CSSStyle CSSName="body" FontFamily="Cambria" Color="" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".currentCharacter" FontFamily="" Color="" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".otherCharacter" FontFamily="" Color="LightGray" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".lineNumber" FontFamily="" Color="Firebrick" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".duplicate" FontFamily="" Color="Thistle" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".speechCorrect" FontFamily="" Color="MediumBlue" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".speechIncorrect" FontFamily="" Color="Red" FontStyle="inherit" FontWeight="inherit" />
+                <CSSStyle CSSName=".filtered" FontFamily="" Color="LightSlateGray" FontStyle="italic" FontWeight="inherit" />
+              </Styles>
+            </Format>
+          </VoiceActorScripts>
+          <Translations EnableEditing="false" />
+          <Edit ShowWarning="true" ExitEditModeAfterSave="true" RefreshProjectAfterSave="Any" />
+          <DialogParsing ShowAllOoptionText="false" />
+        </Settings>
+        <SpeechLines />
+        <Translations />
+      </Document>
+    </SpeechCenter>
+  </Component>
   <Component Name="Plugins" />
   <Component Name="Rooms" />
   <Component Name="Translations" />
