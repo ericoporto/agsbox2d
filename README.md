@@ -369,4 +369,4 @@ AgsBox2D is made by Érico Vieira Porto provided with Z-Lib [LICENSE](LICENSE).
 
 Box2D itself is made by Erin Catto and is provided with a Z-Lib [LICENSE](Box2D/Box2D/LICENSE) too.
 
-Magic Cliffs is made by [ansimuz](https://opengameart.org/content/magic-cliffs-environment) and is available as CC-BY 3.0.
+Magic Cliffs background used on the demo is made by [ansimuz](https://opengameart.org/content/magic-cliffs-environment) and is available as CC-BY 3.0.
