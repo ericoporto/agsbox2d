@@ -229,7 +229,7 @@ void AgsDebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const 
 
 	for (int i = 0; i < vertexCount; i++) {
 		if (i == 0) {
-			_DrawPixel(Longbuffer, vertices[i].x*Scale::GetMeter(), vertices[i].y*Scale::GetMeter(), agscolor, ScreenWidth, ScreenHeight);
+			_DrawPixel(Longbuffer, Scale::ScaleUp(vertices[i].x-CameraX), Scale::ScaleUp(vertices[i].y-CameraY), agscolor, ScreenWidth, ScreenHeight);
 		}
 		else {
 			_DrawLine(Longbuffer,
