@@ -26,10 +26,10 @@ private:
 	std::unordered_map<int, AgsFixture*> MapAgsFixture;
 	std::unordered_map<int, AgsShape*> MapAgsShape;
 
-	static void NoteBodyAndWorld(b2Body* body, int world_id);
 	static void DisposeWorldIfNeeded();
 
 public:
+	static void NoteBodyAndWorld(b2Body* body, int world_id);
 	static std::unordered_set<b2Body* >::iterator GetBodiesSetBegin(int world_id);
 	static std::unordered_set<b2Body* >::iterator GetBodiesSetEnd(int world_id);
 	static int GetBodiesCount(int world_id);

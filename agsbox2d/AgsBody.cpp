@@ -176,26 +176,6 @@ using namespace SerialHelper;
 
 int AgsBodyInterface::Dispose(const char* address, bool force)
 {
-	//if (((AgsBody*)address)->World != NULL &&
-	//	((AgsBody*)address)->World->B2AgsWorld != NULL &&
-	//	((AgsBody*)address)->B2AgsBody != NULL &&
-	//	((AgsBody*)address)->World->B2AgsWorld->GetBodyCount() != 0) {
-
-	//	for (b2Body* body = ((AgsBody*)address)->World->B2AgsWorld->GetBodyList();
-	//		body;
-	//		body = body->GetNext())
-	//	{
-
-	//		if (body == ((AgsBody*)address)->B2AgsBody) {
-	//			((AgsBody*)address)->World->B2AgsWorld->DestroyBody(((AgsBody*)address)->B2AgsBody);
-	//			((AgsBody*)address)->B2AgsBody = NULL;
-	//			break;
-	//		}
-
-	//	}
-
-	//}
-
 	Book::UnregisterAgsBodyByID(((AgsBody*)address)->ID);
 	delete ((AgsBody*)address);
 	return (1);

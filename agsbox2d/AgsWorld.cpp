@@ -69,13 +69,17 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 	ptr = FloatToChar(Scale::GetMeter(), ptr, end);
 
 	ptr = b2Vec2ToChar(world->B2AgsWorld->GetGravity(), ptr, end);
-	ptr = IntToChar(Book::GetBodiesCount(world->ID), ptr, end);
 
-	// for (std::unordered_set<b2Body*>::iterator itr = Book::GetBodiesSetBegin(world->ID);
-	//  		itr != Book::GetBodiesSetEnd(world->ID); ++itr) {
-	//
-	// 		ptr = b2BodyToChar(*itr, ptr, end);
-	// }
+	int bodycount = Book::GetBodiesCount(world->ID);
+	ptr = IntToChar(bodycount, ptr, end);
+
+	if (bodycount > 0) {
+		for (std::unordered_set<b2Body*>::iterator itr = Book::GetBodiesSetBegin(world->ID);
+			itr != Book::GetBodiesSetEnd(world->ID); ++itr) {
+
+			ptr = b2BodyToChar(*itr, ptr, end);
+		}
+	}
 
 	return (ptr - buffer);
 }
@@ -109,6 +113,17 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 
 	int bodycount;
 	ptr = CharToInt(bodycount, ptr);
+
+	
+	if (bodycount > 0) {
+		for (int i = 0; i < bodycount; i++) {
+			b2Body * body;
+			b2BodyDef bodydef;
+
+			ptr = CharTob2Body(bodydef, &body, world->B2AgsWorld, ptr);
+			Book::NoteBodyAndWorld(body, world->ID);
+		}
+	}
 
 	engine->RegisterUnserializedObject(key, world, &AgsWorld_Interface);
 }
