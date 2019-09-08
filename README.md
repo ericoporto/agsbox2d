@@ -21,8 +21,9 @@ AgsBox2D is still in early development.
 
 ## In development warning
 
-AgsBox2D is in development and doesn't support many AGS features (you can't 
-save and load with regular AGS save methods yet using this plugin for now).
+AgsBox2D is in development and you can reach uncommon bugs, like unstable load
+from regular ags save. This plugin does support regulas AGS Save and Load, but
+I can have forgotten something, so if you hit this, just [open an issue here](https://github.com/ericoporto/agsbox2d/issues/new).
 
 Still, if you want to experiment with it and report your findings, this README
 should prove itself useful and I appreciate any help in making this plugin work
@@ -65,7 +66,7 @@ void initPhysics(){
 
   ball.body = AgsBox2D.CreateBody(world, 160.0, 40.0, eBodyDynamic);
   ball.shape = AgsBox2D.CreateCircleShape(20.0);
-  ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0);  
+  ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0);
   
   box1.body = AgsBox2D.CreateBody(world, 80.0, 60.0, eBodyDynamic);
   box1.shape = AgsBox2D.CreateRectangleShape(30.0, 20.0);
@@ -98,7 +99,7 @@ int DebugDraw(){
   surf.DrawCircle(ball.body.X, ball.body.Y, 20);
   
   surf.DrawingColor = 63808; //RED
-  surf.DrawRectangle(box1.body.X-15, box1.body.Y-10, box1.body.X+15, box1.body.Y+10);  
+  surf.DrawRectangle(box1.body.X-15, box1.body.Y-10, box1.body.X+15, box1.body.Y+10);
   
   surf.DrawingColor = 63808; //RED
   surf.DrawRectangle(box2.body.X-10, box2.body.Y-10, box2.body.X+10, box2.body.Y+10);
@@ -324,7 +325,7 @@ The world holds all the information needed for the physics simulation. Once a
 world is destroyed, the previous pointers (Bodies, Fixtures, ...) will be of no
 use and you will need to recreate any objects you need in the new world.
 
-#### `void World.Step(float dt, int velocityIteractions = 8, int positionIteractions = 3)`
+#### `void World.Step(float dt, int velocityIteractions=8, int positionIteractions=3)`
 
 Advances a step in the World physics simulation of `dt` seconds. 
 
@@ -333,7 +334,7 @@ Because AGS uses fixed game steps, a good value is  `dt = 1.0/IntToFloat(GetGame
 velocityIteractions and positionIteractions relates to how Box2D simulates the
 world, so for information on these values I recommend looking into Box2D own documentation.
 
-#### `int World.GetDebugSprite(int camera_x = 0, int camera_y = 0)`
+#### `int World.GetDebugSprite(int camera_x=0, int camera_y=0)`
 
 Returns a sprite of the size of the screen with the objects in the world drawn on it.
 
