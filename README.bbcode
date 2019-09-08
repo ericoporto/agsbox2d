@@ -1,0 +1,407 @@
+[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.1.0 [/b][/color]
+
+[url=https://dev.azure.com/ericoporto/agsbox2d/_build/latest?definitionId=11&branchName=master][img]https://dev.azure.com/ericoporto/agsbox2d/_apis/build/status/ericoporto.agsbox2d?branchName=master[/img][/url]
+
+AgsBox2D is a physics plugin for Adventure Game Studio that gives access to the Box2D library created by Erin Catto.
+Because I never used Box2D directly before, I tried to make the API similar to Love physics module.
+
+AgsBox2D is still in early development.
+
+[b][size=12pt]In development warning[/size][/b]
+
+AgsBox2D is in development and doesn't support many AGS features.
+
+Still, if you want to experiment with it and report your findings, this post should prove itself useful and I appreciate any help in making this plugin work well with AGS.
+
+[b][size=12pt]Usage example[/size][/b]
+
+Below we will do a very simple example that creates a ground, and adds two
+boxes and a ball. The ball is controlled by keyboard input.
+
+This example uses a room script and a gui named gDebugGui, with size 320x180 
+and border and color set to 0, used to print the example objects. These are not
+AGS Objects. This example mimics [url=https://love2d.org/wiki/Tutorial:Physics]Love physics tutorial[/url].
+
+[code]// example room script file
+DynamicSprite* dynspr;
+DrawingSurface* surf;
+
+World* world;
+
+struct Physical {
+Body* body;
+Shape* shape;
+Fixture* fixture;
+};
+
+Physical ground;
+Physical ball;
+Physical box1;
+Physical box2;
+
+void initPhysics(){
+  AgsBox2D.SetMeter(32.0);
+  world = AgsBox2D.CreateWorld(0.0, 9.8*AgsBox2D.GetMeter());
+  
+  ground.body = AgsBox2D.CreateBody(world, 160.0, 160.0, eBodyStatic);
+  ground.shape = AgsBox2D.CreateRectangleShape(320.0, 40.0);
+  ground.fixture = AgsBox2D.CreateFixture(ground.body, ground.shape);
+
+  ball.body = AgsBox2D.CreateBody(world, 160.0, 40.0, eBodyDynamic);
+  ball.shape = AgsBox2D.CreateCircleShape(20.0);
+  ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0);  
+  
+  box1.body = AgsBox2D.CreateBody(world, 80.0, 60.0, eBodyDynamic);
+  box1.shape = AgsBox2D.CreateRectangleShape(30.0, 20.0);
+  box1.fixture = AgsBox2D.CreateFixture(box1.body, box1.shape, 5.0);
+  
+  box2.body = AgsBox2D.CreateBody(world, 80.0, 80.0, eBodyDynamic);
+  box2.shape = AgsBox2D.CreateRectangleShape(20.0, 20.0);
+  box2.fixture = AgsBox2D.CreateFixture(box2.body, box2.shape, 2.0);
+}
+
+int DebugDraw(){
+  if(dynspr!=null){
+    dynspr.Delete();
+    dynspr = null;
+  }
+  
+  dynspr = DynamicSprite.Create(320, 180, true);
+  surf = dynspr.GetDrawingSurface();
+  
+  surf.DrawingColor = 0; //BLACK
+  surf.DrawRectangle(0, 0, 320, 180);
+  
+  surf.DrawingColor = 4064; //GREEN
+  surf.DrawRectangle(ground.body.X-ground.shape.AsRectangle.Width/2, 
+                     ground.body.Y-ground.shape.AsRectangle.Height/2,
+                     ground.body.X+ground.shape.AsRectangle.Width/2, 
+                     ground.body.Y+ground.shape.AsRectangle.Height/2);
+  
+  surf.DrawingColor = 63808; //RED
+  surf.DrawCircle(ball.body.X, ball.body.Y, 20);
+  
+  surf.DrawingColor = 63808; //RED
+  surf.DrawRectangle(box1.body.X-15, box1.body.Y-10, box1.body.X+15, box1.body.Y+10);  
+  
+  surf.DrawingColor = 63808; //RED
+  surf.DrawRectangle(box2.body.X-10, box2.body.Y-10, box2.body.X+10, box2.body.Y+10);
+  
+  surf.Release();
+  return dynspr.Graphic;
+}
+
+function room_Load()
+{
+  initPhysics();
+}
+
+function room_RepExec() {
+  gDebugGui.BackgroundGraphic = DebugDraw();
+  
+  if(IsKeyPressed(eKeyLeftArrow)){
+    ball.body.ApplyForce(-500.0, 0.0);
+  }
+  if(IsKeyPressed(eKeyRightArrow)){
+    ball.body.ApplyForce(500.0, 0.0);
+  }
+  if(IsKeyPressed(eKeyUpArrow)){
+    ball.body.ApplyForce(0.0, -5000.0);
+    ball.body.SetLinearVelocity(0.0, 0.0);
+  }
+  if(IsKeyPressed(eKeyDownArrow)){
+    ball.body.ApplyForce(0.0, 500.0);
+  }
+  
+  world.Step(1.0/IntToFloat(GetGameSpeed()), 8, 3);
+}[/code]
+
+[b][size=12pt]Script API[/size][/b]
+
+[i][b]AgsBox2D[/b][/i]
+
+[list]
+[li][b][tt]void AgsBox2D.SetMeter(float meter)[/tt][/b]
+Sets how many pixels equals to a meter. Default is 32 pixels per meter.
+
+[b][i]Do this only once, before using any other functions, it doesn't apply retroactively[/i][/b]
+
+You want the size of your moving objects roughly between 0.1 and 10 meters.
+
+For the default 32px this enables objects between 3 and 320 pixels, so this
+usually needs to scale along with your game resolution and character size.
+
+Internally, Box2D uses Meter, Kilograms and Seconds as it's main units.
+[/li]
+[li][b][tt]float AgsBox2D.GetMeter()[/tt][/b]
+Get's previously passed meter in pixels.
+
+[/li]
+[li][b][tt]World* AgsBox2D.CreateWorld(float gravityX, float gravityY)[/tt][/b]
+Creates a World object, this should be done before creating bodies. 
+
+A positive gravityY is directed to ground, and a negative gravityY is directed 
+upwards. 
+
+Similarly, a positive gravityX is directed to right and a negative gravityX is 
+directed to left.
+
+[/li]
+[li][b][tt]Body* AgsBox2D.CreateBody(World* world,  float x, float y, BodyType bodytype)[/tt][/b]
+Creates a body object in the world, at specified x and y positions. 
+These positions correspond to the center of the body. 
+
+The bodytype can be any of the types below:
+
+- [tt]eBodyStatic[/tt] : An object that does not move under simulation, usually the 
+ground in a platformer is a static body. It doesn't collide with other static
+or kinematic bodies. A static body has zero velocity. 
+
+- [tt]eBodyDynamic[/tt] : A fully simulated body, can collide with all body type,
+ this body moves according to forces. It always has finite non-zero mass.
+
+- [tt]eBodyKinematic[/tt] : A kinematic body moves according it's velocity, it doesn't
+move according to forces. A Kinematic body behaves as if it has infinite mass. 
+It doesn't collide with other Kinematic bodies or with static bodies.
+
+Any bodytype can be moved by user input, but you have to specific code the behavior
+in AGS.
+
+You don't need to keep the returned pointer if you aren't going to need to 
+access this body anymore, since the world will hold it, but you will be unable
+to destroy it unless the world is destroyed.
+
+The specifics on a body form and mass are defined by using a Shape and Fixture.
+
+[/li]
+[li][b][tt]void AgsBox2D.DestroyBody(World* world,  Body* body)[/tt][/b]
+Removes a body from the world, and marks it with the property IsDestroyed true.
+
+[/li]
+[li][b][tt]Shape* AgsBox2D.CreateRectangleShape(float w,  float h,  float x=0, float y=0)[/tt][/b]
+Creates a RectangleShape with Width w and Height h, and returns a Shape object. 
+
+You can also change it's relative center which will be mapped to the body center.
+An x of 0.0 and y of 0.0, which are defaults, maps to the shape center.
+
+[/li]
+[li][b][tt]Shape* AgsBox2D.CreateCircleShape(float radius,  float x=0, float y=0)[/tt][/b]
+Creates a Circle shape, and similar to RectangleShape, you can also translate
+it's center.
+
+[/li]
+[li][b][tt]Fixture* AgsBox2D.CreateFixture(Body* body, Shape* shape, float density=0)[/tt][/b]
+Creates a Fixture, and attachs a body a shape, and specifies a density. 
+
+You should always pass finite non-zero densities for dynamic bodies.
+
+You don't need to keep the pointer to the shape attached to a body through a 
+fixture, since the body will hold a copy of the shape. Similarly, you also
+don't need to keep a pointer to the fixture, because the body will hold it too.
+
+[/list]
+
+[i][b]Body[/b][/i]
+
+[list]
+[li][b][tt]int Body.X[/tt][/b]
+The X position property of a body as integer. 
+
+Avoid setting this property directly. Bodies coordinates are actually float 
+values in the simulation, this is provided as convenience.
+
+[/li]
+[li][b][tt]int Body.Y[/tt][/b]
+The Y position property of a body as integer. 
+
+Avoid setting this property directly. Bodies coordinates are actually float 
+values in the simulation, this is provided as convenience.
+
+[/li]
+[li][b][tt]float Body.fX[/tt][/b]
+The X position property of a body as float.
+
+[/li]
+[li][b][tt]float Body.fY[/tt][/b]
+The Y position property of a body as float. 
+
+[/li]
+[li][b][tt]float Body.Angle[/tt][/b]
+The Body Angle property. AGS can't easily rotate Sprites so avoid using angles
+with bodies that you expect to map directly in someway to screen sprites.
+
+[/li]
+[li][b][tt]bool Body.FixedRotation[/tt][/b]
+By default, bodies are created with FixedRotation set to true. 
+
+A body with FixedRotation set to true does not rotate, causing it's rotational 
+inertia and it's inverse to be set to zero.
+
+[/li]
+[li][b][tt]bool Body.Bullet[/tt][/b]
+By default, bodies are created with Bullet set to false. 
+
+Set bullet to true when the body has a small shape and moves really fast, 
+this will prevent the body from having wrong collisions with thin bodies.
+
+[/li]
+[li][b][tt]readonly bool Body.IsDestroyed[/tt][/b]
+Returns true if it's destroyed by [tt]AgsBox2D.DestroyBody()[/tt].
+
+[/li]
+[li][b][tt]float Body.LinearDamping[/tt][/b]
+The LinearDamping property of a body. Damping occurs independently from contact
+and is different than friction. Normally  the value for damping is between 
+[tt]0.0[/tt] and [tt]0.1[/tt].
+
+[/li]
+[li][b][tt]float Body.AngularDamping[/tt][/b]
+The AngularDamping property of a body, the angular drag, also happens 
+independently from contact.
+
+[/li]
+[li][b][tt]float Body.AngularVelocity[/tt][/b]
+The AngularVelocity property of a body.
+
+[/li]
+[li][b][tt]float Body.Inertia[/tt][/b]
+Rotational Inertia, body's resistance to changes in angular velocity.
+
+[/li]
+[li][b][tt]readonly float Body.LinearVelocityX[/tt][/b]
+Gets the X vector from the body's Linear Velocity.
+
+[/li]
+[li][b][tt]readonly float Body.LinearVelocityY[/tt][/b]
+Gets the Y vector from the body's Linear Velocity.
+
+[/li]
+[li][b][tt]void Body.SetLinearVelocity(float fx, float fy)[/tt][/b]
+Set's the body LinearVelocity vector.
+
+[/li]
+[li][b][tt]void Body.ApplyForce(float fx, float fy)[/tt][/b]
+Applies a force on a body from it's center [tt]0.0, 0.0[/tt] to the specified [tt]fx, fy[/tt]
+direction.
+
+[/li]
+[li][b][tt]void Body.ApplyAngularImpulse(float impulseIntensity)[/tt][/b]
+Applies an angular impulse on the body.
+
+[/li]
+[li][b][tt]void Body.ApplyLinearImpulse(float intensity_x, float intensity_y)[/tt][/b]
+Applies an impulse from the body center with the specified vector.
+
+[/li]
+[li][b][tt]void Body.ApplyTorque(float torque)[/tt][/b]
+Applies a torque on the body. Positive values are counter clockwise.
+
+[/li]
+[li][b][tt]bool Body.IsTouching(Body* otherBody)[/tt][/b]
+Returns true when a body is in contact (being touched) by other body.
+This function only evaluates at the current time, so prefer using it for
+resting states.
+[/li]
+[/list]
+
+[i][b]World[/b][/i]
+
+The world holds all the information needed for the physics simulation. Once a
+world is destroyed, the previous pointers (Bodies, Fixtures, ...) will be of no
+use and you will need to recreate any objects you need in the new world.
+
+[list]
+[li][b][tt]void World.Step(float dt, int velocityIteractions = 8, int positionIteractions = 3)[/tt][/b]
+Advances a step in the World physics simulation of [tt]dt[/tt] seconds. 
+
+Because AGS uses fixed game steps, a good value is  [tt]dt = 1.0/IntToFloat(GetGameSpeed())[/tt].
+
+velocityIteractions and positionIteractions relates to how Box2D simulates the
+world, so for information on these values I recommend looking into Box2D own documentation.
+
+[/li]
+[li][b][tt]int World.GetDebugSprite(int camera_x = 0, int camera_y = 0)[/tt][/b]
+Returns a sprite of the size of the screen with the objects in the world drawn on it.
+
+A common usage is to create a GUI of the size of the screen and set the background
+graphic of it with the sprite this function outputs.
+
+You can pass a camera x and y value to scroll the camera on the world.
+[/li]
+[/list]
+
+[i][b]Shape[/b][/i]
+
+[list]
+
+[li][b][tt]ShapeRectangle* Shape.AsRectangle[/tt][/b]
+If the shape is a ShapeRectangle, it returns it. Otherwise, it returns [tt]null[/tt].
+You should not hold pointers to it, and instead access it directly like 
+[tt]myshape.AsRectangle.Width[/tt] as needed.
+
+[/li]
+[li][b][tt]ShapeCircle* Shape.AsCircle[/tt][/b]
+If the shape is a ShapeCircle, it returns it. Otherwise, it returns [tt]null[/tt].
+You should not hold pointers to it, and instead access it directly like 
+[tt]myshape.AsCircle.Radius[/tt] as needed.
+
+[/li]
+[/list]
+
+[i][b]Fixture[/b][/i]
+Fixtures are used when linking a shape to an object and assigning it's density.
+
+[list]
+
+[li][b][tt]float Fixture.Density[/tt][/b]
+Density is used to compute the mass of the linked body. It's preferable to use
+similar densities to all your fixtures, because this will improve the 
+simulation.
+
+[/li]
+[li][b][tt]float Fixture.Friction[/tt][/b]
+Friction is used to make objects slide along each other realistically.
+
+It's usually a value between [tt]0.0[/tt] and [tt]1.0[/tt], but can be any non-negative value.
+
+Box2D uses the square root of the multiplication of two contacting fixtures to 
+calculate the contact friction. This means if one fixture has [tt]0.0[/tt] friction, 
+the contact will have no friction.
+
+[/li]
+[li][b][tt]float Fixture.Restitution[/tt][/b]
+Restitution is used to make objects bounce, and is usually a value between 
+[tt]0.0[/tt] and [tt]1.0[/tt]. A value of [tt]0.0[/tt] means the object won't bounce, and a value
+of [tt]1.0[/tt] means the object velocity will be exactly reflected.
+
+[/li]
+[/list]
+
+[b][size=12pt]Download AgsBox2D[/size][/b]
+
+This plugin is available as [tt]agsbox2d.dll[/tt] under [url=https://github.com/ericoporto/agsbox2d/releases/latest/]assets, in the latest release[/url],
+for usage with Windows and the AGS Editor. You can also find it there built 
+for Linux as [tt]libagsbox2d.so[/tt] and for MacOS as [tt]libagsbox2d.dylib[/tt].
+
+[b][size=12pt]Building agsbox2d[/size][/b]
+
+AgsBox2D both Makefile and the VS Solution file, expects to find [url=https://github.com/adventuregamestudio/ags]Adventure Game Studio source code[/url]
+in a folder [tt]../ags/[/tt]. After you do this, you need to clone this source code.
+
+[code]  ~/git/ags/
+  ~/git/agsbox2d/[/code]
+Navigate then to the directory where you cloned this repository.
+
+On Windows, you can load the solution on the root of it's directory and load 
+it on Visual Studio. It should work with VS 2015, 2017 and 2019. You will need
+v140 tools (VS should promptly warn you to install if you don't have it).
+The dll provided by Release Win32 builds is the one you should build to use
+with an AGS Game at the time of this writing.
+
+On Linux and MacOS, navigate to [tt]agsbox2d/[/tt] inside the directory and type [tt]make[/tt].
+
+[b][size=12pt]License and Author[/size][/b]
+
+AgsBox2D is made by Érico Vieira Porto provided with Z-Lib [url=LICENSE]LICENSE[/url].
+
+Box2D itself is made by Erin Catto and is provided with a Z-Lib [url=Box2D/Box2D/LICENSE]LICENSE[/url] too.
