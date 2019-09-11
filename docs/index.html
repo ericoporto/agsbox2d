@@ -1,3 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <title>AgsBox2D Hacky Editor</title>	
+				<meta name="theme-color" content="#000000">
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />	
+        <meta charset="UTF-8"/>
+  </head>
+<body>
+
 <p>Drag the corners to resize
   <button id="btn_newrect">
     +rect
@@ -5,19 +17,46 @@
     <button id="btn_reset">
     reset
     </button>
+    <button id="btn_generatecode">
+    generate code
+    </button>
     <img style="display: none;" id="hidden_img"/>
 </p>
 
-<canvas id="canvas" width=500 height=500></canvas>
+<div id="container_div" style="position: relative;">
+ <canvas id="layer1" width=500 height=500 
+   style="position: relative; image-rendering: optimize-contrast; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: -moz-crisp-edges; left: 0; top: 0; z-index: 0; border: 5px solid blue;"></canvas>
+ <canvas id="layer2" width=500 height=500 
+   style="position: absolute; left: 0; top: 0; z-index: 1; border: 5px solid blue;"></canvas>
+</div>
+
+<div id="code_div" style="position: relative;">
+<p><textarea id="text_code" rows="8" cols="50">
+
+</textarea>
+</p>
+</div>
 
 <script>
-  var canvas = document.getElementById('canvas'),
+function setpixelated(context){
+    context['imageSmoothingEnabled'] = false;       /* standard */
+    context['mozImageSmoothingEnabled'] = false;    /* Firefox */
+    context['oImageSmoothingEnabled'] = false;      /* Opera */
+    context['webkitImageSmoothingEnabled'] = false; /* Safari */
+    context['msImageSmoothingEnabled'] = false;     /* IE */
+}
+
+  var canvas = document.getElementById('layer2'),
+    bgcanvas = document.getElementById('layer1'),
+    code_text = document.getElementById('text_code'),
+    cdiv = document.getElementById('container_div'),
     ctx = canvas.getContext('2d'),
+    bgctx = bgcanvas.getContext('2d'),
     drag = false,
     mouseX,
     mouseY,
     rects = [],
-    zoom = 4,
+    zoom = 2,
     closeEnough = 7;
 
 
@@ -41,11 +80,14 @@
   }
 
   function init() {
+    setpixelated(ctx)
+    setpixelated(bgctx)
     canvas.addEventListener('mousedown', mouseDown, false);
     canvas.addEventListener('mouseup', mouseUp, false);
     canvas.addEventListener('mousemove', mouseMove, false);
     document.getElementById("btn_newrect").addEventListener("click", newRect);
     document.getElementById("btn_reset").addEventListener("click", resetCanvas);
+    document.getElementById("btn_generatecode").addEventListener("click", generateCode);
     canvas.ondragover = canvas.ondrag = canvas.ondragout = function(e) {
         e.preventDefault();
     }
@@ -56,9 +98,23 @@
             var img = document.getElementById('hidden_img');
             img.src = src;
             img.title = '[' + type + '] ' + title;
-            canvas.width = img.width*zoom;
-            canvas.height = img.height*zoom;
-            draw();
+            img.onload = function(e){
+              setpixelated(bgctx)
+              var img = document.getElementById('hidden_img')
+              canvas.width = img.width*zoom;
+              canvas.height = img.height*zoom;
+
+              bgcanvas.width = img.width*zoom;
+              bgcanvas.height = img.height*zoom;
+
+              if(img.src.length > 0){
+                bgctx.drawImage(img,0,0,img.width,img.height,0,0,img.width*zoom,img.height*zoom)
+              }
+              draw();
+              img.onload = function(){}
+              setpixelated(bgctx)
+            }
+
         }
 
         var files = e.dataTransfer.files;
@@ -71,6 +127,8 @@
                 doImage(this.result, file.name, 'FileReader');
             };
             filereader.readAsDataURL(file);
+
+            doImage(URL.createObjectURL(file), file.name, 'createObjectURL');
         }
 
         return false;
@@ -78,7 +136,26 @@
 
   }
 
+  function generateCode() {
+    s = "Body* setWalls(World* wrld) { \n"
+    s = s + "  Body* _w = new Body[" + (rects.length+1) +"]; \n"
 
+    for (var i=0; i<rects.length; i++){
+      var rect = rects[i];
+      var center_x = rect.startX + rect.w/2;
+      var center_y = rect.startY + rect.h/2;
+      s = s + "  _w["+i+"] = AgsBox2D.CreateBody(wrld, " + center_x.toFixed(1) + ", " + center_y.toFixed(1) + ", eBodyStatic); \n"
+      s = s + "  AgsBox2D.CreateFixture(_w["+i+"], AgsBox2D.CreateRectangleShape("+rect.w.toFixed(1)+", "+rect.h.toFixed(1)+")); \n"
+    }
+    s = s + "  _w["+i+"] = null; \n"
+    s = s + "  return _w; \n"
+    s = s + "} \n"
+
+    console.log(s)
+    code_text.value = s;
+    
+
+  }
 
 
   function resetCanvas() {
@@ -102,8 +179,9 @@
   }
 
   function mouseDown(e) {
-    mouseX = e.pageX - this.offsetLeft;
-    mouseY = e.pageY - this.offsetTop;
+    mouseX = e.pageX - this.offsetLeft - cdiv.offsetLeft-5;
+    mouseY = e.pageY - this.offsetTop - cdiv.offsetTop-5;
+    console.log("x= " , mouseX, " ;y= ", mouseY)
     for (let rect of rects) {
 
       rect.initMouseX = -1 ;
@@ -191,8 +269,8 @@
   }
 
   function mouseMove(e) {
-    mouseX = e.pageX - this.offsetLeft;
-    mouseY = e.pageY - this.offsetTop;
+    mouseX = e.pageX - this.offsetLeft - cdiv.offsetLeft-5;
+    mouseY = e.pageY - this.offsetTop - cdiv.offsetTop-5;
 
     for (let rect of rects) {
       if (AnyDrag(rect) > 0) {
@@ -228,12 +306,6 @@
   }
 
   function draw() {
-    var img = document.getElementById('hidden_img')
-    if(img.src.length > 0){
-      ctx.drawImage(img,0,0,img.width*zoom,img.height*zoom)
-    }
-
-
     for (let rect of rects) {
       ctx.strokeStyle = "#222222";
       ctx.lineWidth = 4;
@@ -259,5 +331,10 @@
     drawCircle(rect.startX, rect.startY + rect.h, closeEnough);
   }
 
+  
+
   init();
 </script>
+
+	</body>
+</html>
