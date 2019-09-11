@@ -7,10 +7,11 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />	
         <meta charset="UTF-8"/>
+        <!-- <link rel="stylesheet" href="milligram.css"> -->
   </head>
 <body>
 
-<p>Drag the corners to resize
+<p>Drop an image on the canvas to use as background.
   <button id="btn_newrect">
     +rect
   </button>
@@ -31,7 +32,7 @@
 </div>
 
 <div id="code_div" style="position: relative;">
-<p><textarea id="text_code" rows="8" cols="50">
+<p><textarea class="code" id="text_code" rows="8" cols="50">
 
 </textarea>
 </p>
@@ -85,6 +86,9 @@ function setpixelated(context){
     canvas.addEventListener('mousedown', mouseDown, false);
     canvas.addEventListener('mouseup', mouseUp, false);
     canvas.addEventListener('mousemove', mouseMove, false);
+    canvas.addEventListener('touchdown', ontouchstart, false);
+    canvas.addEventListener('touchup', ontouchend, false);
+    canvas.addEventListener('touchmove', touchmove, false);
     document.getElementById("btn_newrect").addEventListener("click", newRect);
     document.getElementById("btn_reset").addEventListener("click", resetCanvas);
     document.getElementById("btn_generatecode").addEventListener("click", generateCode);
@@ -176,6 +180,31 @@ function setpixelated(context){
       return 5;
     }
     return 0;
+  }
+
+  function ontouchstart(e){
+    var touch = e.touches[0];
+  
+    var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
+
+    mouseDown(fake_e);
+  }
+
+  function touchmove(e){
+    var touch = e.touches[0];
+  
+    var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
+
+    mouseMove(fake_e);
+  }
+
+
+  function ontouchend(e){
+    var touch = e.touches[0];
+  
+    var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
+
+    mouseUp(fake_e);
   }
 
   function mouseDown(e) {
