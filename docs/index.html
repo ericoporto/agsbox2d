@@ -184,32 +184,28 @@ function setpixelated(context){
 
   function ontouchstart(e){
     var touch = e.touches[0];
-  
-    var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
-
-    mouseDown(fake_e);
+    e.touches = [];
+    mouseDown(touch);
   }
 
   function ontouchmove(e){
     var touch = e.touches[0];
-  
-    var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
-
-    mouseMove(fake_e);
+    e.touches = [];
+    mouseMove(touch);
   }
 
 
   function ontouchend(e){
     var touch = e.touches[0];
-  
-    var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
-
-    mouseUp(fake_e);
+    e.touches = [];
+    mouseUp(touch);
   }
 
   function mouseDown(e) {
-    mouseX = e.pageX - this.offsetLeft - cdiv.offsetLeft-5;
-    mouseY = e.pageY - this.offsetTop - cdiv.offsetTop-5;
+    console.log(e)
+
+    mouseX = e.pageX - canvas.offsetLeft - cdiv.offsetLeft-5;
+    mouseY = e.pageY - canvas.offsetTop - cdiv.offsetTop-5;
     console.log("x= " , mouseX, " ;y= ", mouseY)
     for (let rect of rects) {
 
@@ -298,8 +294,8 @@ function setpixelated(context){
   }
 
   function mouseMove(e) {
-    mouseX = e.pageX - this.offsetLeft - cdiv.offsetLeft-5;
-    mouseY = e.pageY - this.offsetTop - cdiv.offsetTop-5;
+    mouseX = e.pageX - canvas.offsetLeft - cdiv.offsetLeft-5;
+    mouseY = e.pageY - canvas.offsetTop - cdiv.offsetTop-5;
 
     for (let rect of rects) {
       if (AnyDrag(rect) > 0) {
