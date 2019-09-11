@@ -1,0 +1,263 @@
+<p>Drag the corners to resize
+  <button id="btn_newrect">
+    +rect
+  </button>
+    <button id="btn_reset">
+    reset
+    </button>
+    <img style="display: none;" id="hidden_img"/>
+</p>
+
+<canvas id="canvas" width=500 height=500></canvas>
+
+<script>
+  var canvas = document.getElementById('canvas'),
+    ctx = canvas.getContext('2d'),
+    drag = false,
+    mouseX,
+    mouseY,
+    rects = [],
+    zoom = 4,
+    closeEnough = 7;
+
+
+  function newRect() {
+    rects.unshift({
+      startX: 100,
+      startY: 200,
+      w: 300,
+      h: 200,
+      dragTL: false,
+      dragBL: false,
+      dragTR: false,
+      dragBR: false,
+      dragMove: false,
+      initMouseX: -1,
+      initMouseY: -1,
+      originalStartX: 100,
+      originalStartY: 200,
+    });
+    draw();
+  }
+
+  function init() {
+    canvas.addEventListener('mousedown', mouseDown, false);
+    canvas.addEventListener('mouseup', mouseUp, false);
+    canvas.addEventListener('mousemove', mouseMove, false);
+    document.getElementById("btn_newrect").addEventListener("click", newRect);
+    document.getElementById("btn_reset").addEventListener("click", resetCanvas);
+    canvas.ondragover = canvas.ondrag = canvas.ondragout = function(e) {
+        e.preventDefault();
+    }
+    canvas.ondrop = function(e) {
+        e.preventDefault();
+
+        function doImage(src, title, type) {
+            var img = document.getElementById('hidden_img');
+            img.src = src;
+            img.title = '[' + type + '] ' + title;
+            canvas.width = img.width*zoom;
+            canvas.height = img.height*zoom;
+            draw();
+        }
+
+        var files = e.dataTransfer.files;
+        console.log(files);
+        for ( var i=0, L=files.length; i<L; i++ ) {
+            var file = files[i];
+
+            var filereader = new FileReader();
+            filereader.onload = function(e) {
+                doImage(this.result, file.name, 'FileReader');
+            };
+            filereader.readAsDataURL(file);
+        }
+
+        return false;
+    }
+
+  }
+
+
+
+
+  function resetCanvas() {
+
+  }
+
+
+  function AnyDrag(rect) {
+    if (rect.dragTL) {
+      return 1;
+    } else if (rect.dragBL) {
+      return 2;
+    } else if (rect.dragTR) {
+      return 3;
+    } else if (rect.dragBR) {
+      return 4;
+    } else if (rect.dragMove) {
+      return 5;
+    }
+    return 0;
+  }
+
+  function mouseDown(e) {
+    mouseX = e.pageX - this.offsetLeft;
+    mouseY = e.pageY - this.offsetTop;
+    for (let rect of rects) {
+
+      rect.initMouseX = -1 ;
+      rect.initMouseY = -1 ;
+      rect.originalStartX = rect.startX;
+      rect.originalStartY = rect.startY;
+
+      // if there is, check which corner
+      //   (if any) was clicked
+      //
+      // 4 cases:
+      // 1. top left
+      if (checkCloseEnough(mouseX, rect.startX) && checkCloseEnough(mouseY, rect.startY)) {
+        rect.dragTL = true;
+        rect.initMouseX = mouseX ;
+        rect.initMouseY = mouseY ;
+        break;
+      }
+      // 2. top right
+      else if (checkCloseEnough(mouseX, rect.startX + rect.w) && checkCloseEnough(mouseY, rect.startY)) {
+        rect.dragTR = true;
+        rect.initMouseX = mouseX ;
+        rect.initMouseY = mouseY ;
+        break;
+
+      }
+      // 3. bottom left
+      else if (checkCloseEnough(mouseX, rect.startX) && checkCloseEnough(mouseY, rect.startY + rect.h)) {
+        rect.dragBL = true;
+        rect.initMouseX = mouseX ;
+        rect.initMouseY = mouseY ;
+        break;
+      }
+      // 4. bottom right
+      else if (checkCloseEnough(mouseX, rect.startX + rect.w) && checkCloseEnough(mouseY, rect.startY + rect.h)) {
+        rect.dragBR = true;
+        rect.initMouseX = mouseX ;
+        rect.initMouseY = mouseY ;
+        break;
+      }
+      // 5. middle
+      else if (checkDragMove(mouseX, mouseY, rect)) {
+        rect.dragMove = true;
+        rect.initMouseX = mouseX ;
+        rect.initMouseY = mouseY ;
+        break;
+      }
+      // (5.) none of them
+      else {
+        // handle not resizing
+      }
+
+
+    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw();
+
+  }
+
+  function checkDragMove(x, y, rect) {
+    if (rect === undefined) {
+      return false;
+    }
+
+    if (x > rect.startX + closeEnough &&
+      x < rect.startX + closeEnough + rect.w &&
+      y > rect.startY + closeEnough &&
+      y < rect.startY + closeEnough + rect.h) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function checkCloseEnough(p1, p2) {
+    return Math.abs(p1 - p2) < closeEnough;
+  }
+
+  function mouseUp() {
+    for (let rect of rects) {
+      if (AnyDrag(rect) > 0) {
+        rect.dragTL = rect.dragTR = rect.dragBL = rect.dragBR = rect.dragMove = false;
+      }
+    }
+  }
+
+  function mouseMove(e) {
+    mouseX = e.pageX - this.offsetLeft;
+    mouseY = e.pageY - this.offsetTop;
+
+    for (let rect of rects) {
+      if (AnyDrag(rect) > 0) {
+        if (rect.dragTL) {
+          rect.w += rect.startX - mouseX;
+          rect.h += rect.startY - mouseY;
+          rect.startX = mouseX;
+          rect.startY = mouseY;
+        } else if (rect.dragTR) {
+          rect.w = Math.abs(rect.startX - mouseX);
+          rect.h += rect.startY - mouseY;
+          rect.startY = mouseY;
+        } else if (rect.dragBL) {
+          rect.w += rect.startX - mouseX;
+          rect.h = Math.abs(rect.startY - mouseY);
+          rect.startX = mouseX;
+        } else if (rect.dragBR) {
+          rect.w = Math.abs(rect.startX - mouseX);
+          rect.h = Math.abs(rect.startY - mouseY);
+        } else if (rect.dragMove) {
+          var deltX = rect.initMouseX - mouseX;
+          var deltY = rect.initMouseY - mouseY;
+
+          rect.startX = Math.abs(rect.originalStartX - deltX);
+          rect.startY = Math.abs(rect.originalStartY - deltY);
+        }
+      }
+    }
+
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw();
+  }
+
+  function draw() {
+    var img = document.getElementById('hidden_img')
+    if(img.src.length > 0){
+      ctx.drawImage(img,0,0,img.width*zoom,img.height*zoom)
+    }
+
+
+    for (let rect of rects) {
+      ctx.strokeStyle = "#222222";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+      ctx.strokeStyle = "#DADA00";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+      drawHandles(rect);
+    }
+  }
+
+  function drawCircle(x, y, radius) {
+    ctx.fillStyle = "#DD0052";
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  function drawHandles(rect) {
+    drawCircle(rect.startX, rect.startY, closeEnough);
+    drawCircle(rect.startX + rect.w, rect.startY, closeEnough);
+    drawCircle(rect.startX + rect.w, rect.startY + rect.h, closeEnough);
+    drawCircle(rect.startX, rect.startY + rect.h, closeEnough);
+  }
+
+  init();
+</script>
