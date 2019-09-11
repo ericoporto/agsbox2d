@@ -86,9 +86,9 @@ function setpixelated(context){
     canvas.addEventListener('mousedown', mouseDown, false);
     canvas.addEventListener('mouseup', mouseUp, false);
     canvas.addEventListener('mousemove', mouseMove, false);
-    canvas.addEventListener('touchdown', ontouchstart, false);
+    canvas.addEventListener('touchstart', ontouchstart, false);
     canvas.addEventListener('touchup', ontouchend, false);
-    canvas.addEventListener('touchmove', touchmove, false);
+    canvas.addEventListener('touchmove', ontouchmove, false);
     document.getElementById("btn_newrect").addEventListener("click", newRect);
     document.getElementById("btn_reset").addEventListener("click", resetCanvas);
     document.getElementById("btn_generatecode").addEventListener("click", generateCode);
@@ -190,7 +190,7 @@ function setpixelated(context){
     mouseDown(fake_e);
   }
 
-  function touchmove(e){
+  function ontouchmove(e){
     var touch = e.touches[0];
   
     var fake_e = {pageX: touch.pageX, pageY: touch.pageY};
