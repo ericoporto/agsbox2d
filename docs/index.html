@@ -111,6 +111,10 @@ function setpixelated(context){
       w: 200,
       h: 100,
       angle: 0,
+      vx: [],
+      vy: [],
+      aHandleX: 208,
+      aHandleY: 0,
       dragTL: false,
       dragBL: false,
       dragTR: false,
@@ -389,11 +393,23 @@ function setpixelated(context){
     if (rect === undefined) {
       return false;
     }
+  
+    var c_x = rect.startX+rect.w/2;
+    var c_y = rect.startY+rect.h/2;
+    var a = rect.angle;
 
-    if (x > rect.startX + closeEnough &&
-      x < rect.startX + closeEnough + rect.w &&
-      y > rect.startY + closeEnough &&
-      y < rect.startY + closeEnough + rect.h) {
+    var trans_x = x - c_x
+    var trans_y = y - c_y
+
+    var t_x;
+    var t_y;
+
+    [t_x, t_y] = rotatePoint(-a,trans_x,trans_y,c_x,c_y);   
+
+    if (t_x > rect.startX + closeEnough &&
+      t_x < rect.startX + closeEnough + rect.w &&
+      t_y > rect.startY + closeEnough &&
+      t_y < rect.startY + closeEnough + rect.h) {
       return true;
     }
 
@@ -469,6 +485,9 @@ function setpixelated(context){
       [rect.vx[1], rect.vy[1]] = rotatePoint(a,rect.w/2,-rect.h/2,c_x,c_y);
       [rect.vx[2], rect.vy[2]] = rotatePoint(a,rect.w/2,rect.h/2,c_x,c_y);
       [rect.vx[3], rect.vy[3]] = rotatePoint(a,-rect.w/2,rect.h/2,c_x,c_y);
+
+
+      [rect.aHandleX, rect.aHandleY] = rotatePoint(a, rect.w/2+16,0, c_x,c_y);
     }
   }
 
@@ -499,8 +518,12 @@ function setpixelated(context){
     }
   }
 
-  function drawCircle(x, y, radius) {
-    ctx.fillStyle = "#DD0052";
+  function drawCircle(x, y, radius, ahandle) {
+    if(ahandle==true){
+      ctx.fillStyle = "#00DD52";
+    } else {
+      ctx.fillStyle = "#DD0052";
+    }
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.fill();
@@ -511,6 +534,7 @@ function setpixelated(context){
     drawCircle(rect.vx[1], rect.vy[1], closeEnough);
     drawCircle(rect.vx[2], rect.vy[2], closeEnough);
     drawCircle(rect.vx[3], rect.vy[3], closeEnough);
+    drawCircle(rect.aHandleX, rect.aHandleY, closeEnough, true);
   }
 
   
