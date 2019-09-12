@@ -7,36 +7,76 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />	
         <meta charset="UTF-8"/>
-        <!-- <link rel="stylesheet" href="milligram.css"> -->
+            <link rel="stylesheet" href="css/layouts/marketing.css">
+            <link rel="stylesheet" href="css/micromodal.css">
+            <link rel="stylesheet" href="css/pure-min.css">
+            <script src="js/micromodal.js"></script>
   </head>
 <body>
 
-<p>Drop an image on the canvas to use as background.
-  <button id="btn_newrect">
+
+<div class="header" style="float:left;">
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+  <a class="pure-menu-heading" href="">Rectangles Editor</a>
+
+  <button class="pure-button pure-button-primary" id="btn_newrect">
     +rect
   </button>
-    <button id="btn_reset">
-    reset
-    </button>
-    <button id="btn_generatecode">
+    <button class="pure-button" id="btn_generatecode">
     generate code
     </button>
-    <img style="display: none;" id="hidden_img"/>
-</p>
+      <button  class="pure-button" id="btn_zoom1x">
+      1x
+      </button>
+      <button  class="pure-button" id="btn_zoom2x">
+      2x
+      </button>
+      <button  class="pure-button" id="btn_zoom3x">
+      3x
+      </button>
+    <button class="pure-button-warning pure-button" id="btn_reset">
+    reset
+    </button>
+    </div>
+</div>
 
-<div id="container_div" style="position: relative;">
- <canvas id="layer1" width=500 height=500 
-   style="position: relative; image-rendering: optimize-contrast; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: -moz-crisp-edges; left: 0; top: 0; z-index: 0; border: 5px solid blue;"></canvas>
- <canvas id="layer2" width=500 height=500 
+
+  <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+        <header class="modal__header">
+          <h2 class="modal__title" id="modal-1-title">
+            AgsBox2D Wall Code
+          </h2>
+          <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+        </header>
+        <main class="modal__content" id="modal-1-content">
+          <p>
+           <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="uk-textarea" id="text_code" rows="8" cols="50">
+
+           </textarea>
+          </p>
+        </main>
+        <footer class="modal__footer">
+          <button id="copy_text_area" class="pure-button pure-button-primary">Copy</button>
+          <button class="pure-button" data-micromodal-close aria-label="Close this dialog window">Close</button>
+        </footer>
+      </div>
+    </div>
+  </div>
+       
+
+
+    <img style="display: none;" id="hidden_img"/>
+
+
+<div id="container_div" style="position: absolute; left: 0; top: 60px;">
+ <canvas id="layer1" width=500 height=500   
+   style="position: relative; left: 0; top: 0; z-index: 0; border: 5px solid blue;"></canvas>
+ <canvas id="layer2" width=500 height=500   
    style="position: absolute; left: 0; top: 0; z-index: 1; border: 5px solid blue;"></canvas>
 </div>
 
-<div id="code_div" style="position: relative;">
-<p><textarea class="code" id="text_code" rows="8" cols="50">
-
-</textarea>
-</p>
-</div>
 
 <script>
 function setpixelated(context){
@@ -53,6 +93,9 @@ function setpixelated(context){
     cdiv = document.getElementById('container_div'),
     ctx = canvas.getContext('2d'),
     bgctx = bgcanvas.getContext('2d'),
+    btn_zoom1x = document.getElementById("btn_zoom1x"),
+    btn_zoom2x = document.getElementById("btn_zoom2x"),
+    btn_zoom3x = document.getElementById("btn_zoom3x"),
     drag = false,
     mouseX,
     mouseY,
@@ -63,10 +106,11 @@ function setpixelated(context){
 
   function newRect() {
     rects.unshift({
-      startX: 100,
-      startY: 200,
-      w: 300,
-      h: 200,
+      startX: 50,
+      startY: 60,
+      w: 200,
+      h: 100,
+      angle: 0,
       dragTL: false,
       dragBL: false,
       dragTR: false,
@@ -81,6 +125,7 @@ function setpixelated(context){
   }
 
   function init() {
+    btn_zoom2x.disabled = true;
     setpixelated(ctx)
     setpixelated(bgctx)
     canvas.addEventListener('mousedown', mouseDown, false);
@@ -92,6 +137,10 @@ function setpixelated(context){
     document.getElementById("btn_newrect").addEventListener("click", newRect);
     document.getElementById("btn_reset").addEventListener("click", resetCanvas);
     document.getElementById("btn_generatecode").addEventListener("click", generateCode);
+    document.getElementById("btn_zoom1x").addEventListener("click", setZoom1x);
+    document.getElementById("btn_zoom2x").addEventListener("click", setZoom2x);
+    document.getElementById("btn_zoom3x").addEventListener("click", setZoom3x);
+    document.getElementById("copy_text_area").addEventListener("click", copyCode);
     canvas.ondragover = canvas.ondrag = canvas.ondragout = function(e) {
         e.preventDefault();
     }
@@ -140,16 +189,82 @@ function setpixelated(context){
 
   }
 
+  function setZoom(newZoom){
+    if(newZoom == zoom){
+      return;
+    }
+
+    if(newZoom == 1){
+      btn_zoom1x.disabled = true;
+      btn_zoom2x.disabled = false;
+      btn_zoom3x.disabled = false;
+    } else if(newZoom == 2){
+      btn_zoom1x.disabled = false;
+      btn_zoom2x.disabled = true;
+      btn_zoom3x.disabled = false;
+    } else if(newZoom == 3){
+      btn_zoom1x.disabled = false;
+      btn_zoom2x.disabled = false;
+      btn_zoom3x.disabled = true;
+    }
+
+    var img = document.getElementById('hidden_img');
+    for (let rect of rects) {
+      rect.startX = rect.startX*newZoom/zoom;
+      rect.startY = rect.startY*newZoom/zoom;
+      rect.w = rect.w*newZoom/zoom;
+      rect.h = rect.h*newZoom/zoom;
+    }
+
+    if(img.src.length>0){
+      canvas.width = img.width*newZoom;
+      canvas.height = img.height*newZoom;
+
+      bgcanvas.width = img.width*newZoom;
+      bgcanvas.height = img.height*newZoom;
+      bgctx.drawImage(img,0,0,img.width,img.height,0,0,img.width*newZoom,img.height*newZoom)
+    } else {
+      canvas.width = canvas.width*newZoom/zoom;
+      canvas.height = canvas.height*newZoom/zoom;
+
+      bgcanvas.width = bgcanvas.width*newZoom/zoom;
+      bgcanvas.height = bgcanvas.height*newZoom/zoom;
+    }
+
+    zoom = newZoom;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    draw()
+  }
+
+  function setZoom1x(){
+    setZoom(1);
+  }
+
+  function setZoom2x(){
+    setZoom(2);
+  }
+
+  function setZoom3x(){
+    setZoom(3);
+  }
+
+  function copyCode() {
+    code_text.select();
+    document.execCommand("copy");
+  }
+
   function generateCode() {
     s = "Body* setWalls(World* wrld) { \n"
     s = s + "  Body* _w = new Body[" + (rects.length+1) +"]; \n"
 
     for (var i=0; i<rects.length; i++){
       var rect = rects[i];
-      var center_x = rect.startX + rect.w/2;
-      var center_y = rect.startY + rect.h/2;
+      var center_x = (rect.startX + rect.w/2)/zoom;
+      var center_y = (rect.startY + rect.h/2)/zoom;
+      var rect_w = rect.w/zoom;
+      var rect_h = rect.h/zoom;
       s = s + "  _w["+i+"] = AgsBox2D.CreateBody(wrld, " + center_x.toFixed(1) + ", " + center_y.toFixed(1) + ", eBodyStatic); \n"
-      s = s + "  AgsBox2D.CreateFixture(_w["+i+"], AgsBox2D.CreateRectangleShape("+rect.w.toFixed(1)+", "+rect.h.toFixed(1)+")); \n"
+      s = s + "  AgsBox2D.CreateFixture(_w["+i+"], AgsBox2D.CreateRectangleShape("+rect_w.toFixed(1)+", "+rect_h.toFixed(1)+")); \n"
     }
     s = s + "  _w["+i+"] = null; \n"
     s = s + "  return _w; \n"
@@ -158,7 +273,7 @@ function setpixelated(context){
     console.log(s)
     code_text.value = s;
     
-
+    MicroModal.show('modal-1');
   }
 
 
@@ -219,30 +334,34 @@ function setpixelated(context){
       //
       // 4 cases:
       // 1. top left
-      if (checkCloseEnough(mouseX, rect.startX) && checkCloseEnough(mouseY, rect.startY)) {
+      if (checkCloseEnough(mouseX, rect.vx[0]) && checkCloseEnough(mouseY, rect.vy[0])) {
         rect.dragTL = true;
+        console.log("top left v0")
         rect.initMouseX = mouseX ;
         rect.initMouseY = mouseY ;
         break;
       }
       // 2. top right
-      else if (checkCloseEnough(mouseX, rect.startX + rect.w) && checkCloseEnough(mouseY, rect.startY)) {
+      else if (checkCloseEnough(mouseX, rect.vx[1]) && checkCloseEnough(mouseY, rect.vy[1])) {
         rect.dragTR = true;
+        console.log("top right v1")
         rect.initMouseX = mouseX ;
         rect.initMouseY = mouseY ;
         break;
 
       }
       // 3. bottom left
-      else if (checkCloseEnough(mouseX, rect.startX) && checkCloseEnough(mouseY, rect.startY + rect.h)) {
+      else if (checkCloseEnough(mouseX, rect.vx[3]) && checkCloseEnough(mouseY, rect.vy[3])) {
         rect.dragBL = true;
+        console.log("bottom left v3")
         rect.initMouseX = mouseX ;
         rect.initMouseY = mouseY ;
         break;
       }
       // 4. bottom right
-      else if (checkCloseEnough(mouseX, rect.startX + rect.w) && checkCloseEnough(mouseY, rect.startY + rect.h)) {
+      else if (checkCloseEnough(mouseX, rect.vx[2]) && checkCloseEnough(mouseY, rect.vy[2])) {
         rect.dragBR = true;
+        console.log("bottom right v2")
         rect.initMouseX = mouseX ;
         rect.initMouseY = mouseY ;
         break;
@@ -330,14 +449,52 @@ function setpixelated(context){
     draw();
   }
 
+  function rotatePoint(a,x,y,offx,offy){
+     return [x*Math.cos(a) - y*Math.sin(a) + offx, x*Math.sin(a) + y*Math.cos(a) + offy];
+  }
+
+
+  function updateVectors(){
+    for (let rect of rects) {
+      var c_x = rect.startX+rect.w/2;
+      var c_y = rect.startY+rect.h/2;
+      var a = rect.angle;
+      var tmpx;
+      var tmpy;
+
+      rect.vx = [];
+      rect.vy = [];
+
+      [rect.vx[0], rect.vy[0]] = rotatePoint(a,-rect.w/2,-rect.h/2,c_x,c_y);
+      [rect.vx[1], rect.vy[1]] = rotatePoint(a,rect.w/2,-rect.h/2,c_x,c_y);
+      [rect.vx[2], rect.vy[2]] = rotatePoint(a,rect.w/2,rect.h/2,c_x,c_y);
+      [rect.vx[3], rect.vy[3]] = rotatePoint(a,-rect.w/2,rect.h/2,c_x,c_y);
+    }
+  }
+
+
   function draw() {
+    updateVectors();
+
     for (let rect of rects) {
       ctx.strokeStyle = "#222222";
+      ctx.beginPath()
       ctx.lineWidth = 4;
-      ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+      ctx.moveTo(rect.vx[0], rect.vy[0])
+      ctx.lineTo(rect.vx[1], rect.vy[1])
+      ctx.lineTo(rect.vx[2], rect.vy[2])
+      ctx.lineTo(rect.vx[3], rect.vy[3])
+      ctx.lineTo(rect.vx[0], rect.vy[0])
+      ctx.stroke();
       ctx.strokeStyle = "#DADA00";
+      ctx.beginPath()
       ctx.lineWidth = 1;
-      ctx.strokeRect(rect.startX, rect.startY, rect.w, rect.h);
+      ctx.moveTo(rect.vx[0], rect.vy[0])
+      ctx.lineTo(rect.vx[1], rect.vy[1])
+      ctx.lineTo(rect.vx[2], rect.vy[2])
+      ctx.lineTo(rect.vx[3], rect.vy[3])
+      ctx.lineTo(rect.vx[0], rect.vy[0])
+      ctx.stroke();
       drawHandles(rect);
     }
   }
@@ -350,15 +507,17 @@ function setpixelated(context){
   }
 
   function drawHandles(rect) {
-    drawCircle(rect.startX, rect.startY, closeEnough);
-    drawCircle(rect.startX + rect.w, rect.startY, closeEnough);
-    drawCircle(rect.startX + rect.w, rect.startY + rect.h, closeEnough);
-    drawCircle(rect.startX, rect.startY + rect.h, closeEnough);
+    drawCircle(rect.vx[0], rect.vy[0], closeEnough);
+    drawCircle(rect.vx[1], rect.vy[1], closeEnough);
+    drawCircle(rect.vx[2], rect.vy[2], closeEnough);
+    drawCircle(rect.vx[3], rect.vy[3], closeEnough);
   }
 
   
 
   init();
+
+  MicroModal.init();
 </script>
 
 	</body>
