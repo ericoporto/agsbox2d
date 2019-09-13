@@ -530,8 +530,8 @@ function setpixelated(context){
           var deltX = rect.initMouseX - mouseX;
           var deltY = rect.initMouseY - mouseY;
 
-          rect.startX = Math.abs(rect.originalStartX - deltX);
-          rect.startY = Math.abs(rect.originalStartY - deltY);
+          rect.startX = rect.originalStartX - deltX;
+          rect.startY = rect.originalStartY - deltY;
         }
       }
     }
