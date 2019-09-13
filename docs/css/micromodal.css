@@ -4,6 +4,7 @@
 
 .modal {
   font-family: -apple-system,BlinkMacSystemFont,avenir next,avenir,helvetica neue,helvetica,ubuntu,roboto,noto,segoe ui,arial,sans-serif;
+ z-index: 2000;
 }
 
 .modal__overlay {
@@ -16,6 +17,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2000;
 }
 
 .modal__container {
@@ -26,6 +28,7 @@
   border-radius: 4px;
   overflow-y: auto;
   box-sizing: border-box;
+  z-index: 2000;
 }
 
 .modal__header {

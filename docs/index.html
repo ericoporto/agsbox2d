@@ -7,9 +7,9 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />	
         <meta charset="UTF-8"/>
-            <link rel="stylesheet" href="css/layouts/marketing.css">
-            <link rel="stylesheet" href="css/micromodal.css">
             <link rel="stylesheet" href="css/pure-min.css">
+            <link rel="stylesheet" href="css/layouts/side-menu.css">
+            <link rel="stylesheet" href="css/micromodal.css">
             <script src="js/micromodal.js"></script>
             <style> 
 canvas{touch-action:pan-down}
@@ -18,69 +18,99 @@ canvas{touch-action:pan-down}
 <body>
 
 
-<div class="header" style="float:left;">
-    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
-  <a class="pure-menu-heading" href="">Rectangles Editor</a>
-
-  <button class="pure-button pure-button-primary" id="btn_newrect">
-    +rect
-  </button>
-    <button class="pure-button" id="btn_generatecode">
-    generate code
-    </button>
-      <button  class="pure-button" id="btn_zoom1x">
-      1x
-      </button>
-      <button  class="pure-button" id="btn_zoom2x">
-      2x
-      </button>
-      <button  class="pure-button" id="btn_zoom3x">
-      3x
-      </button>
-    <button class="pure-button-warning pure-button" id="btn_reset">
-    reset
-    </button>
-    </div>
-</div>
 
 
-  <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
-    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
-        <header class="modal__header">
-          <h2 class="modal__title" id="modal-1-title">
-            AgsBox2D Wall Code
-          </h2>
-          <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
-        </header>
-        <main class="modal__content" id="modal-1-content">
-          <p>
-           <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="uk-textarea" id="text_code" rows="8" cols="50">
+<div id="layout">
+    <!-- Menu toggle -->
+    <a href="#menu" id="menuLink" class="menu-link">
+        <!-- Hamburger icon -->
+        <span></span>
+    </a>
 
-           </textarea>
-          </p>
-        </main>
-        <footer class="modal__footer">
-          <button id="copy_text_area" class="pure-button pure-button-primary">Copy</button>
-          <button class="pure-button" data-micromodal-close aria-label="Close this dialog window">Close</button>
-        </footer>
+    <div id="menu">
+      <div class="pure-menu">
+        <a class="pure-menu-heading" href="">Rect Editor</a>
+        <ul class="pure-menu-list">
+          <li class="pure-menu-item pure-menu-selected">
+            <button class="pure-button pure-button-primary" id="btn_newrect">
+              +rect
+            </button>
+          </li>
+          <li class="pure-menu-item">
+                <button  class="pure-button" id="btn_zoom1x">
+                1x
+                </button>
+          </li>
+          <li class="pure-menu-item">
+                <button  class="pure-button" id="btn_zoom2x">
+                2x
+                </button>
+          </li>
+          <li class="pure-menu-item">
+                <button  class="pure-button" id="btn_zoom3x">
+                3x
+                </button>
+          </li>
+          <li class="pure-menu-item">
+              <button class="pure-button" id="btn_generatecode">
+              Generate Code...
+              </button>
+          </li>
+          <li class="pure-menu-item">
+              <button class="pure-button-warning pure-button" id="btn_reset">
+              Reset
+              </button>
+          </li>
+        </ul>
       </div>
     </div>
-  </div>
-       
 
+    <div id="main">
 
-    <img style="display: none;" id="hidden_img"/>
+      <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+        <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+          <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+            <header class="modal__header">
+              <h2 class="modal__title" id="modal-1-title">
+                AgsBox2D Wall Code
+              </h2>
+              <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+            </header>
+            <main class="modal__content" id="modal-1-content">
+              <p>
+               <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="uk-textarea" id="text_code" rows="8" cols="50">
 
+               </textarea>
+              </p>
+            </main>
+            <footer class="modal__footer">
+              <button id="copy_text_area" class="pure-button pure-button-primary">Copy</button>
+              <button class="pure-button" data-micromodal-close aria-label="Close this dialog window">Close</button>
+            </footer>
+          </div>
+        </div>
+      </div>
+      <img style="display: none;" id="hidden_img"/>
 
-<div id="container_div" style="position: absolute; left: 0; top: 60px;">
- <canvas id="layer1" width=500 height=500   
-   style="position: relative; left: 0; top: 0; z-index: 0; border: 5px solid blue;"></canvas>
- <canvas id="layer2" width=500 height=500   
-   style="position: absolute; left: 0; top: 0; z-index: 1; border: 5px solid blue;"></canvas>
+      <div class="content" id="content">
+         <p>
+          <div id="container_div" style="position: relative;">
+           <canvas id="layer1" width=500 height=500   
+             style="position: relative; left: 0; top: 0; z-index: 0; border: 5px solid blue;"></canvas>
+           <canvas id="layer2" width=500 height=500   
+             style="position: absolute; left: 0; top: 0; z-index: 1; border: 5px solid blue;"></canvas>
+          </div>
+        </p>  
+
+        <input type="file" class="pure-button" onchange="updateImageFromFile()">
+          Set Background Image
+        </input>
+      </div>
+    </div>
 </div>
 
 
+<script src="js/ui.js"></script>
 <script>
 function setpixelated(context){
     context['imageSmoothingEnabled'] = false;       /* standard */
@@ -94,6 +124,8 @@ function setpixelated(context){
     bgcanvas = document.getElementById('layer1'),
     code_text = document.getElementById('text_code'),
     cdiv = document.getElementById('container_div'),
+    contentdiv = document.getElementById('content'),
+    layoutdiv = document.getElementById('layout'),
     ctx = canvas.getContext('2d'),
     bgctx = bgcanvas.getContext('2d'),
     btn_zoom1x = document.getElementById("btn_zoom1x"),
@@ -104,7 +136,8 @@ function setpixelated(context){
     mouseY,
     rects = [],
     zoom = 2,
-    closeEnough = 7;
+    closeEnough = 7,
+    updatedDrawing = false;
 
 
   function newRect() {
@@ -122,14 +155,65 @@ function setpixelated(context){
       dragBL: false,
       dragTR: false,
       dragBR: false,
+      dragRot: false,
       dragMove: false,
       initMouseX: -1,
       initMouseY: -1,
       originalStartX: 100,
       originalStartY: 200,
     });
+    updateVectors();
     draw();
   }
+
+  function updateImageFromFile(e) {
+        if(e !== undefined){
+          e.preventDefault();
+        }
+
+        function doImage(src, title, type) {
+            var img = document.getElementById('hidden_img');
+            img.src = src;
+            img.title = '[' + type + '] ' + title;
+            img.onload = function(e){
+              setpixelated(bgctx)
+              var img = document.getElementById('hidden_img')
+              canvas.width = img.width*zoom;
+              canvas.height = img.height*zoom;
+
+              bgcanvas.width = img.width*zoom;
+              bgcanvas.height = img.height*zoom;
+
+              if(img.src.length > 0){
+                bgctx.drawImage(img,0,0,img.width,img.height,0,0,img.width*zoom,img.height*zoom)
+              }
+              updateVectors();
+              draw();
+              img.onload = function(){}
+              setpixelated(bgctx)
+            }
+
+        }
+
+        var file
+ 
+        if(e !== undefined){
+          file = e.dataTransfer.files[0];
+        } else {
+          file = document.querySelector('input[type=file]').files[0];
+        }
+
+        var filereader = new FileReader();
+        filereader.onload = function(e) {
+            doImage(this.result, file.name, 'FileReader');
+        };
+        filereader.readAsDataURL(file);
+
+        doImage(URL.createObjectURL(file), file.name, 'createObjectURL');
+
+        return false;
+    }
+
 
   function init() {
     btn_zoom2x.disabled = true;
@@ -151,49 +235,8 @@ function setpixelated(context){
     canvas.ondragover = canvas.ondrag = canvas.ondragout = function(e) {
         e.preventDefault();
     }
-    canvas.ondrop = function(e) {
-        e.preventDefault();
-
-        function doImage(src, title, type) {
-            var img = document.getElementById('hidden_img');
-            img.src = src;
-            img.title = '[' + type + '] ' + title;
-            img.onload = function(e){
-              setpixelated(bgctx)
-              var img = document.getElementById('hidden_img')
-              canvas.width = img.width*zoom;
-              canvas.height = img.height*zoom;
-
-              bgcanvas.width = img.width*zoom;
-              bgcanvas.height = img.height*zoom;
-
-              if(img.src.length > 0){
-                bgctx.drawImage(img,0,0,img.width,img.height,0,0,img.width*zoom,img.height*zoom)
-              }
-              draw();
-              img.onload = function(){}
-              setpixelated(bgctx)
-            }
-
-        }
-
-        var files = e.dataTransfer.files;
-        console.log(files);
-        for ( var i=0, L=files.length; i<L; i++ ) {
-            var file = files[i];
-
-            var filereader = new FileReader();
-            filereader.onload = function(e) {
-                doImage(this.result, file.name, 'FileReader');
-            };
-            filereader.readAsDataURL(file);
-
-            doImage(URL.createObjectURL(file), file.name, 'createObjectURL');
-        }
-
-        return false;
-    }
-
+    canvas.ondrop = updateImageFromFile;
+    animateCanvas();
   }
 
   function setZoom(newZoom){
@@ -240,6 +283,7 @@ function setpixelated(context){
 
     zoom = newZoom;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateVectors();
     draw()
   }
 
@@ -272,6 +316,7 @@ function setpixelated(context){
       var rect_h = rect.h/zoom;
       s = s + "  _w["+i+"] = AgsBox2D.CreateBody(wrld, " + center_x.toFixed(1) + ", " + center_y.toFixed(1) + ", eBodyStatic); \n"
       s = s + "  AgsBox2D.CreateFixture(_w["+i+"], AgsBox2D.CreateRectangleShape("+rect_w.toFixed(1)+", "+rect_h.toFixed(1)+")); \n"
+      s = s + "  _w["+i+"].angle ="+ rect.angle.toFixed(4)+ " ; \n";
     }
     s = s + "  _w["+i+"] = null; \n"
     s = s + "  return _w; \n"
@@ -298,10 +343,19 @@ function setpixelated(context){
       return 3;
     } else if (rect.dragBR) {
       return 4;
-    } else if (rect.dragMove) {
+    } else if (rect.dragRot) {
       return 5;
+    } else if (rect.dragMove) {
+      return 6;
     }
     return 0;
+  }
+
+  function getRealMouse(e){
+    var mX = e.pageX - canvas.offsetLeft - cdiv.offsetLeft-5;
+    var mY = e.pageY - canvas.offsetTop - cdiv.offsetTop - contentdiv.offsetTop - layoutdiv.offsetTop-5;
+
+    return [mX, mY];
   }
 
   function ontouchstart(e){
@@ -316,7 +370,6 @@ function setpixelated(context){
     mouseMove(touch);
   }
 
-
   function ontouchend(e){
     var touch = e.touches[0];
     e.touches = [];
@@ -324,10 +377,7 @@ function setpixelated(context){
   }
 
   function mouseDown(e) {
-    console.log(e)
-
-    mouseX = e.pageX - canvas.offsetLeft - cdiv.offsetLeft-5;
-    mouseY = e.pageY - canvas.offsetTop - cdiv.offsetTop-5;
+    [mouseX, mouseY] = getRealMouse(e);
     console.log("x= " , mouseX, " ;y= ", mouseY)
     for (let rect of rects) {
 
@@ -373,7 +423,14 @@ function setpixelated(context){
         rect.initMouseY = mouseY ;
         break;
       }
-      // 5. middle
+      // 5. rotation
+      else if (checkCloseEnough(mouseX, rect.aHandleX) && checkCloseEnough(mouseY, rect.aHandleY)) {
+        rect.dragRot = true;
+        rect.initMouseX = mouseX ;
+        rect.initMouseY = mouseY ;
+        break;
+      } 
+      // 6. middle
       else if (checkDragMove(mouseX, mouseY, rect)) {
         rect.dragMove = true;
         rect.initMouseX = mouseX ;
@@ -388,6 +445,7 @@ function setpixelated(context){
 
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateVectors();
     draw();
 
   }
@@ -426,14 +484,13 @@ function setpixelated(context){
   function mouseUp() {
     for (let rect of rects) {
       if (AnyDrag(rect) > 0) {
-        rect.dragTL = rect.dragTR = rect.dragBL = rect.dragBR = rect.dragMove = false;
+        rect.dragTL = rect.dragTR = rect.dragBL = rect.dragBR = rect.dragRot = rect.dragMove = false;
       }
     }
   }
 
   function mouseMove(e) {
-    mouseX = e.pageX - canvas.offsetLeft - cdiv.offsetLeft-5;
-    mouseY = e.pageY - canvas.offsetTop - cdiv.offsetTop-5;
+    [mouseX, mouseY] = getRealMouse(e);
 
     for (let rect of rects) {
       if (AnyDrag(rect) > 0) {
@@ -453,6 +510,22 @@ function setpixelated(context){
         } else if (rect.dragBR) {
           rect.w = Math.abs(rect.startX - mouseX);
           rect.h = Math.abs(rect.startY - mouseY);
+        } else if (rect.dragRot) {
+          var c_x = rect.startX+rect.w/2;
+          var c_y = rect.startY+rect.h/2;
+        
+          v0 = {};
+          v0.x = rect.initMouseX-c_x;
+          v0.y = rect.initMouseY-c_y;
+
+          v1 = {};
+          v1.x = mouseX-c_x;
+          v1.y = mouseY-c_y;
+
+          var a =  Math.atan2(v1.y,v1.x) - Math.atan2(v0.y,v0.x);
+
+          rect.angle =  a;
+
         } else if (rect.dragMove) {
           var deltX = rect.initMouseX - mouseX;
           var deltY = rect.initMouseY - mouseY;
@@ -465,6 +538,7 @@ function setpixelated(context){
 
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateVectors();
     draw();
   }
 
@@ -494,9 +568,32 @@ function setpixelated(context){
     }
   }
 
+  // requestAnimFrame shim layer by Paul Irish
+  var requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(callback, element){
+                  window.setTimeout(callback, 1000 / 60);
+              };
+  })();
 
-  function draw() {
-    updateVectors();
+  var animateCanvas = function(time) {
+      requestAnimFrame(animateCanvas);
+      
+      if(updatedDrawing){
+        updatedDrawing = false;
+        _draw();        
+      }
+  };
+  
+  function draw(){
+    updatedDrawing = true;
+  }
+
+  function _draw() {
 
     for (let rect of rects) {
       ctx.strokeStyle = "#222222";
