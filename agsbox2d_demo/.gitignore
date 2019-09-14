@@ -1,3 +1,6 @@
+# prevent a Mac user to commit Mac Stuff
+.DS_Store
+
 # Built things
 _Debug/
 Compiled/
