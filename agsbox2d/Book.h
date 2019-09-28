@@ -28,7 +28,7 @@ private:
 	Book();
 	~Book(void);
 	std::vector<b2World* > ListB2World;
-	std::unordered_map<int32, std::unordered_set<b2Body* >*> ListB2Bodies;
+	std::unordered_map<int32, std::unordered_map<int32, b2Body* >*> ListB2Bodies;
 
 	std::unordered_map<int32, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
@@ -38,9 +38,10 @@ private:
 	static void DisposeWorldIfNeeded();
 
 public:
-	static void NoteBodyAndWorld(b2Body* body, int32 world_id);
-	static std::unordered_set<b2Body* >::iterator GetBodiesSetBegin(int32 world_id);
-	static std::unordered_set<b2Body* >::iterator GetBodiesSetEnd(int32 world_id);
+	static void RegisterBodyFromWorld(b2Body* body, int32 body_id, int32 world_id);
+    static bool UnregisterBodyFromWorldByID(int32 body_id, int32 world_id);
+    static std::unordered_map<int32, b2Body* >::iterator GetBodiesBegin(int32 world_id);
+	static std::unordered_map<int32, b2Body* >::iterator GetBodiesEnd(int32 world_id);
 	static int32 GetBodiesCount(int32 world_id);
 	static bool GetBodiesEmpty(int32 world_id);
 

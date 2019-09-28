@@ -83,10 +83,10 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 	ptr = IntToChar(bodycount, ptr, end);
 
 	if (bodycount > 0) {
-		for (std::unordered_set<b2Body*>::iterator itr = Book::GetBodiesSetBegin(world->ID);
-			itr != Book::GetBodiesSetEnd(world->ID); ++itr) {
-
-			ptr = b2BodyToChar(*itr, ptr, end);
+		for (std::unordered_map<int32, b2Body* >::iterator itr = Book::GetBodiesBegin(world->ID);
+			itr != Book::GetBodiesEnd(world->ID); ++itr) {
+            ptr = IntToChar(itr->first, ptr, end);
+			ptr = b2BodyToChar(itr->second, ptr, end);
 		}
 	}
 
@@ -128,9 +128,11 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 		for (int i = 0; i < bodycount; i++) {
 			b2Body * body;
 			b2BodyDef bodydef;
+			int32 body_id;
+            ptr = CharToInt(body_id, ptr);
 
 			ptr = CharTob2Body(bodydef, &body, world->B2AgsWorld, ptr);
-			Book::NoteBodyAndWorld(body, world->ID);
+			Book::RegisterBodyFromWorld(body, body_id, world->ID);
 		}
 	}
 
