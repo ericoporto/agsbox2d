@@ -305,8 +305,9 @@ function setpixelated(context){
   }
 
   function generateCode() {
-    s = "Body* setWalls(World* wrld) { \n"
-    s = s + "  Body* _w = new Body[" + (rects.length+1) +"]; \n"
+    s = "Body*[] setWalls(World* wrld) { \n"
+    s = s + "  Body* _w[]; \n"
+    s = s + "  _w = new Body[" + (rects.length+1) +"]; \n"
 
     for (var i=0; i<rects.length; i++){
       var rect = rects[i];
