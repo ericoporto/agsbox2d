@@ -317,7 +317,7 @@ function setpixelated(context){
       var rect_h = rect.h/zoom;
       s = s + "  _w["+i+"] = AgsBox2D.CreateBody(wrld, " + center_x.toFixed(1) + ", " + center_y.toFixed(1) + ", eBodyStatic); \n"
       s = s + "  AgsBox2D.CreateFixture(_w["+i+"], AgsBox2D.CreateRectangleShape("+rect_w.toFixed(1)+", "+rect_h.toFixed(1)+")); \n"
-      s = s + "  _w["+i+"].angle ="+ rect.angle.toFixed(4)+ " ; \n";
+      s = s + "  _w["+i+"].Angle ="+ rect.angle.toFixed(4)+ " ; \n";
     }
     s = s + "  _w["+i+"] = null; \n"
     s = s + "  return _w; \n"
