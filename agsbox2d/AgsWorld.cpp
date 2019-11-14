@@ -28,8 +28,8 @@ void AgsWorld::DestroyBody(AgsBody* body) {
 		return;
 	}
 
-    Book::UnregisterBodyFromWorldByID(Book::b2BodyToID(this->ID,body->B2AgsBody),this->ID);
-	B2AgsWorld->DestroyBody(body->B2AgsBody);
+    Book::UnregisterBodyFromWorldByID(Book::b2BodyToID(this->ID,body->GetB2AgsBody()),this->ID);
+	B2AgsWorld->DestroyBody(body->GetB2AgsBody());
 
 	body->SetIsDestroyed();
 }

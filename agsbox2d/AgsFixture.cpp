@@ -24,7 +24,7 @@ AgsFixture::AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density) {
 		B2AgsFixtureDef.shape = agsShape->B2AgsShape;
 	}
 
-	B2AgsFixture = Body->B2AgsBody->CreateFixture(&B2AgsFixtureDef);
+	B2AgsFixture = Body->GetB2AgsBody()->CreateFixture(&B2AgsFixtureDef);
 }
 
 

@@ -29,6 +29,11 @@ void AgsBody::InitializeIfNeeded(){
     if(B2AgsBody == nullptr) B2AgsBody = Book::IDtoB2Body(World->ID,B2BodyID);
 }
 
+b2Body* AgsBody::GetB2AgsBody(){
+    InitializeIfNeeded();
+    return B2AgsBody;
+}
+
 bool AgsBody::IsTouching(AgsBody* body) {
     InitializeIfNeeded();
 
@@ -240,7 +245,7 @@ int AgsBodyInterface::Serialize(const char* address, char* buffer, int bufsize)
 	}
 	ptr = BoolToChar(false, ptr, end);
 	ptr = IntToChar(body->World->ID, ptr, end);
-    ptr = IntToChar(Book::b2BodyToID(body->World->ID, body->B2AgsBody), ptr, end);
+    ptr = IntToChar(Book::b2BodyToID(body->World->ID, body->GetB2AgsBody()), ptr, end);
 
 	return (ptr - buffer);
 }

@@ -327,7 +327,7 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 	Book::RegisterAgsBody(body->ID, body);
 
 	int b2body_id = Book::GetNewBodyID(world->ID);
-	Book::RegisterBodyFromWorld(body->B2AgsBody, b2body_id, world->ID);
+	Book::RegisterBodyFromWorld(body->GetB2AgsBody(), b2body_id, world->ID);
 
 	return body;
 }
