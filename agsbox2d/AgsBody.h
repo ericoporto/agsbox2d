@@ -28,6 +28,8 @@ public:
 	b2Body* B2AgsBody;
 	b2BodyDef B2AgsBodyDef;
 
+	void InitializeIfNeeded();
+
 	bool IsTouching(AgsBody* body);
 
 	bool GetIsDestroyed();
@@ -70,6 +72,7 @@ public:
 	void ApplyTorque(float32 torque);
 
 	int32 ID;
+	int32 B2BodyID;
 };
 
 
