@@ -18,7 +18,7 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 	B2AgsBodyDef.type = bodytype;
 	B2AgsBodyDef.fixedRotation = true;
 	B2AgsBody = world->B2AgsWorld->CreateBody(&B2AgsBodyDef);
-	World = world;
+    World = world;
 }
 
 AgsBody::AgsBody(bool destroyed) {

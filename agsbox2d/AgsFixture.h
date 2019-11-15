@@ -21,10 +21,12 @@ class AgsFixture
 {
 public:
 	AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density);
-	~AgsFixture(void);
-	AgsBody* Body;
+    AgsFixture(int32 world_id, int32 b2body_id, int32 fixture_id);
+    ~AgsFixture(void);
 	b2Fixture* B2AgsFixture;
 	b2FixtureDef B2AgsFixtureDef;
+
+    void InitializeIfNeeded();
 
 	float32 GetDensity();
 	void SetDensity(float32 density);
@@ -36,6 +38,9 @@ public:
 	void SetRestitution(float32 restitution);
 
 	int32 ID;
+    int32 WorldID;
+    int32 b2BodyID;
+    int32 b2FixtureID;
 };
 
 

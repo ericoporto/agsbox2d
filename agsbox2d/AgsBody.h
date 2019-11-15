@@ -28,10 +28,8 @@ public:
 	AgsWorld* World;
 	b2BodyDef B2AgsBodyDef;
 
-
+    void InitializeIfNeeded();
     b2Body* GetB2AgsBody();
-
-	void InitializeIfNeeded();
 
 	bool IsTouching(AgsBody* body);
 
