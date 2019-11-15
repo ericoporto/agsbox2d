@@ -28,19 +28,26 @@ private:
 	Book();
 	~Book(void);
 	std::vector<b2World* > ListB2World;
-	std::unordered_map<int32, std::unordered_set<b2Body* >*> ListB2Bodies;
+    std::unordered_map<int32, std::unordered_map<int32, b2Body* >*> B2BodiesByID;
+    std::unordered_map<int32, std::unordered_map<b2Body*, int32 >*> B2BodiesByPointer;
 
 	std::unordered_map<int32, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
 	std::unordered_map<int32, AgsFixture*> MapAgsFixture;
 	std::unordered_map<int32, AgsShape*> MapAgsShape;
 
+	uint32 BodyIDCount;
+
 	static void DisposeWorldIfNeeded();
 
 public:
-	static void NoteBodyAndWorld(b2Body* body, int32 world_id);
-	static std::unordered_set<b2Body* >::iterator GetBodiesSetBegin(int32 world_id);
-	static std::unordered_set<b2Body* >::iterator GetBodiesSetEnd(int32 world_id);
+    static int32 GetNewBodyID(int32 world_id);
+	static bool RegisterBodyFromWorld(b2Body* body, int32 body_id, int32 world_id);
+    static bool UnregisterBodyFromWorldByID(int32 body_id, int32 world_id);
+    static int32 b2BodyToID(int32 world_id, b2Body* body);
+    static b2Body* IDtoB2Body(int32 world_id, int32 body_id);
+    static std::unordered_map<int32, b2Body* >::iterator GetBodiesBegin(int32 world_id);
+	static std::unordered_map<int32, b2Body* >::iterator GetBodiesEnd(int32 world_id);
 	static int32 GetBodiesCount(int32 world_id);
 	static bool GetBodiesEmpty(int32 world_id);
 

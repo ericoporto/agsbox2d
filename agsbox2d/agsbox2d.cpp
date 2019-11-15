@@ -326,6 +326,9 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 	body->ID = engine->RegisterManagedObject(body, &AgsBody_Interface);
 	Book::RegisterAgsBody(body->ID, body);
 
+	int b2body_id = Book::GetNewBodyID(world->ID);
+	Book::RegisterBodyFromWorld(body->GetB2AgsBody(), b2body_id, world->ID);
+
 	return body;
 }
 
@@ -573,7 +576,7 @@ void AgsBody_ApplyLinearImpulse(AgsBody* self, uint32_t intensity_x, uint32_t in
 	float32 f_intensity_x = ToNormalFloat(intensity_x);
 	float32 f_intensity_y = ToNormalFloat(intensity_y);
 
-	self->ApplyForce(f_intensity_x, f_intensity_y);
+	self->ApplyLinearImpulse(f_intensity_x, f_intensity_y);
 }
 
 void AgsBody_ApplyTorque(AgsBody* self, uint32_t torque) {
