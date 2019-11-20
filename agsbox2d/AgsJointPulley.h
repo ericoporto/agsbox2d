@@ -23,10 +23,18 @@ private:
     int32 B2bodyA_ID;
     int32 B2bodyB_ID;
 public:
-    AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
+    AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                   float32 ground_anchor_a_x, float32 ground_anchor_a_y, float32 ground_anchor_b_x, float32 ground_anchor_b_y,
+                   float32 anchor_a_x, float32 anchor_a_y, float32 anchor_b_x, float32 anchor_b_y,
+                   float32 ratio, bool collide_connected
+    );
     AgsJointPulley(b2PulleyJoint* Pulleyjoint);
     ~AgsJointPulley(void);
     b2PulleyJoint* B2AgsJointPulley;
+
+    float32 GetLengthA();
+    float32 GetLengthB();
+    float32 GetRatio();
 
     AgsBody* GetBodyA();
     AgsBody* GetBodyB();

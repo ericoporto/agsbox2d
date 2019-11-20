@@ -13,11 +13,30 @@
 #include "AgsWorld.h"
 #include "AgsJoint.h"
 
-AgsJointPulley::AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b) {
+AgsJointPulley::AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+        float32 ground_anchor_a_x, float32 ground_anchor_a_y, float32 ground_anchor_b_x, float32 ground_anchor_b_y,
+        float32 anchor_a_x, float32 anchor_a_y, float32 anchor_b_x, float32 anchor_b_y,
+        float32 ratio, bool collide_connected
+    ) {
 
+    b2Vec2 groundAnchorA = b2Vec2(ground_anchor_a_x, ground_anchor_a_y);
+    b2Vec2 groundAnchorB = b2Vec2(ground_anchor_b_x, ground_anchor_b_y);
+    b2Vec2 anchorA = b2Vec2(anchor_a_x, anchor_a_y);
+    b2Vec2 anchorB = b2Vec2(anchor_b_x, anchor_b_y);
+
+    b2PulleyJointDef def;
+    def.Initialize(agsbody_a->GetB2AgsBody() , agsbody_b->GetB2AgsBody(),
+        Scale::ScaleDown(groundAnchorA), Scale::ScaleDown(groundAnchorB),
+        Scale::ScaleDown(anchorA),  Scale::ScaleDown(anchorB),
+        ratio);
+    def.collideConnected = collide_connected;
+
+    B2AgsJointPulley = dynamic_cast<b2PulleyJoint *>(agsworld->B2AgsWorld->CreateJoint(&def));
     WorldID = agsworld->ID;
     B2bodyA_ID = agsbody_a->B2BodyID;
     B2bodyB_ID = agsbody_b->B2BodyID;
+
+
 }
 
 AgsJointPulley::AgsJointPulley(b2PulleyJoint* Pulleyjoint){
@@ -28,6 +47,21 @@ AgsJointPulley::AgsJointPulley(b2PulleyJoint* Pulleyjoint){
 
 AgsJointPulley::~AgsJointPulley(void)
 {
+}
+
+float32 AgsJointPulley::GetLengthA()
+{
+    return Scale::ScaleUp(B2AgsJointPulley->GetLengthA());
+}
+
+float32 AgsJointPulley::GetLengthB()
+{
+    return Scale::ScaleUp(B2AgsJointPulley->GetLengthB());
+}
+
+float32 AgsJointPulley::GetRatio()
+{
+    return B2AgsJointPulley->GetRatio();
 }
 
 AgsBody* AgsJointPulley::GetBodyA() {
