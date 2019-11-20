@@ -21,6 +21,7 @@ class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
 class AgsBody; // forward declaration, we need AgsBody.h on the cpp
 class AgsFixture; // forward declaration, we need AgsFixture.h on the cpp
 class AgsShape; // forward declaration, we need AgsShape.h on the cpp
+class AgsJoint; // forward declaration, we need AgsShape.h on the cpp
 
 class Book
 {
@@ -35,6 +36,7 @@ private:
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
 	std::unordered_map<int32, AgsFixture*> MapAgsFixture;
 	std::unordered_map<int32, AgsShape*> MapAgsShape;
+    std::unordered_map<int32, AgsJoint*> MapAgsJoint;
 
 	uint32 BodyIDCount;
 
@@ -73,6 +75,11 @@ public:
 	static bool RegisterAgsFixture(int32 id, AgsFixture* fixture);
 	static bool UnregisterAgsFixtureByID(int32 id);
 	static AgsFixture* IDtoAgsFixture(int32 id);
+
+    static bool isAgsJointRegisteredByID(int32 id);
+    static bool RegisterAgsJoint(int32 id, AgsJoint* joint);
+    static bool UnregisterAgsJointByID(int32 id);
+    static AgsJoint* IDtoAgsJoint(int32 id);
 };
 
 

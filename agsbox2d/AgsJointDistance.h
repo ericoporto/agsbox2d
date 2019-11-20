@@ -19,10 +19,19 @@
 class AgsJointDistance
 {
 public:
-    AgsJointDistance(AgsBody* agsbody_a, AgsBody* agsbody_b);
+    AgsJointDistance(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 x1, float32 y1, float32 x2, float32 y2, bool collideConnected);
     AgsJointDistance(b2DistanceJoint* distancejoint);
     ~AgsJointDistance(void);
     b2DistanceJoint* B2AgsJointDistance;
+
+    void SetLength(float32 length);
+    float32  GetLength();
+
+    void SetFrequency(float32 hz);
+    float32  GetFrequency();
+
+    void SetDampingRation(float32 dratio);
+    float32  GetDampingRatio();
 };
 
 

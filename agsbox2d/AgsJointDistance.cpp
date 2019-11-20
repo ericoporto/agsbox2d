@@ -9,9 +9,17 @@
 
 #include "AgsJointDistance.h"
 #include "Scale.h"
+#include "AgsWorld.h"
 
-AgsJointDistance::AgsJointDistance(AgsBody* agsbody_a, AgsBody* agsbody_b) {
-
+AgsJointDistance::AgsJointDistance(AgsWorld* agsworld,
+        AgsBody* agsbody_a, AgsBody* agsbody_b,
+        float32 x1, float32 y1, float32 x2, float32 y2,
+        bool collide_connected) {
+    b2DistanceJointDef def;
+    def.Initialize(agsbody_a->GetB2AgsBody(), agsbody_b->GetB2AgsBody(),
+            Scale::ScaleDown(b2Vec2(x1,y1)), Scale::ScaleDown(b2Vec2(x2,y2)));
+    def.collideConnected = collide_connected;
+    B2AgsJointDistance = dynamic_cast<b2DistanceJoint *>(agsworld->B2AgsWorld->CreateJoint(&def));
 }
 
 AgsJointDistance::AgsJointDistance(b2DistanceJoint* distancejoint){
@@ -19,8 +27,28 @@ AgsJointDistance::AgsJointDistance(b2DistanceJoint* distancejoint){
 }
 
 
-AgsJointDistance::~AgsJointDistance(void)
-{
+void AgsJointDistance::SetLength(float32 length) {
+    B2AgsJointDistance->SetLength(Scale::ScaleDown(length));
+}
+
+float32 AgsJointDistance::GetLength(){
+    return  Scale::ScaleUp( B2AgsJointDistance->GetLength());
+}
+
+void AgsJointDistance::SetFrequency(float32 hz) {
+    B2AgsJointDistance->SetFrequency(hz);
+}
+
+float32 AgsJointDistance::GetFrequency(){
+    return B2AgsJointDistance->GetFrequency();
+}
+
+void AgsJointDistance::SetDampingRation(float32 dratio) {
+    B2AgsJointDistance->SetDampingRatio(dratio);
+}
+
+float32 AgsJointDistance::GetDampingRatio(){
+    return   B2AgsJointDistance->GetDampingRatio();
 }
 
 

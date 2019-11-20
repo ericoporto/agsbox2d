@@ -13,6 +13,7 @@
 #include "AgsBody.h"
 #include "AgsShape.h"
 #include "AgsFixture.h"
+#include "AgsJoint.h"
 
 // -- PRIVATE --
 
@@ -282,3 +283,32 @@ AgsFixture* Book::IDtoAgsFixture(int32 id) {
 	return i()->MapAgsFixture[id];
 }
 // -- End of AgsFixture Bookkeeping --
+
+// -- AgsJoint Bookkeeping --
+bool Book::isAgsJointRegisteredByID(int32 id) {
+    return i()->MapAgsJoint.count(id) != 0;
+}
+
+bool Book::RegisterAgsJoint(int32 id, AgsJoint* joint) {
+    if (i()->MapAgsJoint.count(id) == 0) {
+        i()->MapAgsJoint[id] = joint;
+        return true;
+    }
+    return false;
+}
+
+bool Book::UnregisterAgsJointByID(int32 id) {
+    if (i()->MapAgsJoint.count(id) == 0) {
+        return false;
+    }
+    i()->MapAgsJoint.erase(id);
+    return true;
+}
+
+AgsJoint* Book::IDtoAgsJoint(int32 id) {
+    if (i()->MapAgsJoint.count(id) == 0) {
+        return nullptr;
+    }
+    return i()->MapAgsJoint[id];
+}
+// -- End of AgsJoint Bookkeeping --
