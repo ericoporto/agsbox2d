@@ -19,10 +19,27 @@
 class AgsJointMotor
 {
 public:
-    AgsJointMotor(AgsBody* agsbody_a, AgsBody* agsbody_b);
+    AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 correction_factor, bool collide_connected);
+    AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
     AgsJointMotor(b2MotorJoint* Motorjoint);
     ~AgsJointMotor(void);
     b2MotorJoint* B2AgsJointMotor;
+
+    void SetLinearOffset(float x, float y);
+    float32 GetLinearOffsetX();
+    float32 GetLinearOffsetY();
+
+    void SetAngularOffset(float angularOffset);
+    float32 GetAngularOffset();
+
+    void SetMaxForce(float force);
+    float32 GetMaxForce();
+
+    void SetMaxTorque(float torque);
+    float32 GetMaxTorque();
+
+    void SetCorrectionFactor(float factor);
+    float32 GetCorrectionFactor();
 };
 
 
