@@ -162,6 +162,11 @@
     <ClCompile Include="AgsBody.cpp" />
     <ClCompile Include="agsbox2d.cpp" />
     <ClCompile Include="AgsFixture.cpp" />
+    <ClCompile Include="AgsJoint.cpp" />
+    <ClCompile Include="AgsJointDistance.cpp" />
+    <ClCompile Include="AgsJointMotor.cpp" />
+    <ClCompile Include="AgsJointMouse.cpp" />
+    <ClCompile Include="AgsJointPulley.cpp" />
     <ClCompile Include="AgsShape.cpp" />
     <ClCompile Include="AgsShapeCircle.cpp" />
     <ClCompile Include="AgsShapeRect.cpp" />
@@ -176,6 +181,11 @@
     <ClInclude Include="AgsBody.h" />
     <ClInclude Include="agsbox2d.h" />
     <ClInclude Include="AgsFixture.h" />
+    <ClInclude Include="AgsJoint.h" />
+    <ClInclude Include="AgsJointDistance.h" />
+    <ClInclude Include="AgsJointMotor.h" />
+    <ClInclude Include="AgsJointMouse.h" />
+    <ClInclude Include="AgsJointPulley.h" />
     <ClInclude Include="AgsShape.h" />
     <ClInclude Include="AgsShapeCircle.h" />
     <ClInclude Include="AgsShapeRect.h" />
