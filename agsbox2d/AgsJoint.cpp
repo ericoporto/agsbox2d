@@ -16,23 +16,52 @@ AgsJoint::AgsJoint(b2Joint* b2joint) {
 
 }
 
-AgsJoint::AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a){
-    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld )
-        return;
+AgsJoint::AgsJoint(AgsJointDistance* ags_joint_distance) {
+    JointDistance = ags_joint_distance;
+    JointMotor = nullptr;
+    JointMouse = nullptr;
+    JointPulley = nullptr;
+    WorldID = ags_joint_distance->WorldID;
+    B2bodyA_ID = ags_joint_distance->B2bodyA_ID;
+    B2bodyB_ID = ags_joint_distance->B2bodyB_ID;
 
-    WorldID = agsworld->ID;
-    B2bodyA_ID = agsbody_a->B2BodyID;
-    B2bodyB_ID = -1;
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_distance->B2AgsJointDistance);
 }
 
-AgsJoint::AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b){
-    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld ||
-        agsbody_b->World->B2AgsWorld != agsworld->B2AgsWorld)
-        return;
+AgsJoint::AgsJoint(AgsJointMotor* ags_joint_motor) {
+    JointMotor = ags_joint_motor;
+    JointDistance = nullptr;
+    JointMouse = nullptr;
+    JointPulley = nullptr;
+    WorldID = ags_joint_motor->WorldID;
+    B2bodyA_ID = ags_joint_motor->B2bodyA_ID;
+    B2bodyB_ID = ags_joint_motor->B2bodyB_ID;
 
-    WorldID = agsworld->ID;
-    B2bodyA_ID = agsbody_a->B2BodyID;
-    B2bodyB_ID = agsbody_b->B2BodyID;
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_motor->B2AgsJointMotor);
+}
+
+AgsJoint::AgsJoint(AgsJointMouse* ags_joint_mouse) {
+    JointMouse = ags_joint_mouse;
+    JointDistance = nullptr;
+    JointMotor = nullptr;
+    JointPulley = nullptr;
+    WorldID = ags_joint_mouse->WorldID;
+    B2bodyA_ID = ags_joint_mouse->B2bodyA_ID;
+    B2bodyB_ID = ags_joint_mouse->B2bodyB_ID;
+
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_mouse->B2AgsJointMouse);
+}
+
+AgsJoint::AgsJoint(AgsJointPulley* ags_joint_pulley) {
+    JointPulley = ags_joint_pulley;
+    JointDistance = nullptr;
+    JointMotor = nullptr;
+    JointMouse = nullptr;
+    WorldID = ags_joint_pulley->WorldID;
+    B2bodyA_ID = ags_joint_pulley->B2bodyA_ID;
+    B2bodyB_ID = ags_joint_pulley->B2bodyB_ID;
+
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_pulley->B2AgsJointPulley);
 }
 
 AgsJoint::~AgsJoint(void)

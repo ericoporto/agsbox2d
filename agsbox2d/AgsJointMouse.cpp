@@ -14,8 +14,12 @@
 #include "AgsJoint.h"
 
 AgsJointMouse::AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float32 x, float32 y) {
+    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld )
+        return;
+
     if (agsbody_a->GetB2AgsBody()->GetType() == b2BodyType::b2_kinematicBody)
         throw std::invalid_argument("Cannot attach a MouseJoint to a kinematic body");
+
 
     WorldID = agsworld->ID;
     B2bodyA_ID = agsbody_a->B2BodyID;

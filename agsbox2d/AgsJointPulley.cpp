@@ -19,6 +19,10 @@ AgsJointPulley::AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* 
         float32 ratio, bool collide_connected
     ) {
 
+    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld ||
+        agsbody_b->World->B2AgsWorld != agsworld->B2AgsWorld)
+        return;
+
     b2Vec2 groundAnchorA = b2Vec2(ground_anchor_a_x, ground_anchor_a_y);
     b2Vec2 groundAnchorB = b2Vec2(ground_anchor_b_x, ground_anchor_b_y);
     b2Vec2 anchorA = b2Vec2(anchor_a_x, anchor_a_y);

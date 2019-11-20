@@ -18,10 +18,6 @@
 
 class AgsJointMotor
 {
-private:
-    int32 WorldID;
-    int32 B2bodyA_ID;
-    int32 B2bodyB_ID;
 public:
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 correction_factor, bool collide_connected);
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
@@ -47,6 +43,12 @@ public:
 
     AgsBody* GetBodyA();
     AgsBody* GetBodyB();
+
+    int32 ID;
+
+    int32 WorldID;
+    int32 B2bodyA_ID;
+    int32 B2bodyB_ID;
 };
 
 

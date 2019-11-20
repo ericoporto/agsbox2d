@@ -18,10 +18,6 @@
 
 class AgsJointPulley
 {
-private:
-    int32 WorldID;
-    int32 B2bodyA_ID;
-    int32 B2bodyB_ID;
 public:
     AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
                    float32 ground_anchor_a_x, float32 ground_anchor_a_y, float32 ground_anchor_b_x, float32 ground_anchor_b_y,
@@ -38,6 +34,12 @@ public:
 
     AgsBody* GetBodyA();
     AgsBody* GetBodyB();
+
+    int32 ID;
+
+    int32 WorldID;
+    int32 B2bodyA_ID;
+    int32 B2bodyB_ID;
 };
 
 

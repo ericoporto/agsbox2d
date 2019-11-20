@@ -18,10 +18,6 @@
 
 class AgsJointMouse
 {
-private:
-    int32 WorldID;
-    int32 B2bodyA_ID;
-    int32 B2bodyB_ID;
 public:
     AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float x, float y);
     AgsJointMouse(b2MouseJoint* Mousejoint);
@@ -45,6 +41,10 @@ public:
     float32 GetDampingRatio();
 
     int32 ID;
+
+    int32 WorldID;
+    int32 B2bodyA_ID;
+    int32 B2bodyB_ID;
 };
 
 

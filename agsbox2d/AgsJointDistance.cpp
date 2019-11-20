@@ -17,6 +17,10 @@ AgsJointDistance::AgsJointDistance(AgsWorld* agsworld,
         AgsBody* agsbody_a, AgsBody* agsbody_b,
         float32 x1, float32 y1, float32 x2, float32 y2,
         bool collide_connected) {
+    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld ||
+        agsbody_b->World->B2AgsWorld != agsworld->B2AgsWorld)
+        return;
+
     b2DistanceJointDef def;
     def.Initialize(agsbody_a->GetB2AgsBody(), agsbody_b->GetB2AgsBody(),
             Scale::ScaleDown(b2Vec2(x1,y1)), Scale::ScaleDown(b2Vec2(x2,y2)));

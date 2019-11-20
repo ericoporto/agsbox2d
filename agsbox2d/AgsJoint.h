@@ -44,10 +44,20 @@ public:
     static AgsBody*  GetBody(int world_id, b2Body* body);
 
     AgsJoint(b2Joint* b2joint);
-    AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a);
-    AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
+
+    AgsJoint(AgsJointDistance* ags_joint_distance);
+    AgsJoint(AgsJointMotor* ags_joint_motor);
+    AgsJoint(AgsJointMouse* ags_joint_mouse);
+    AgsJoint(AgsJointPulley* ags_joint_pulley);
+
     ~AgsJoint(void);
     b2Joint* B2AgsJoint;
+
+    AgsJointDistance* JointDistance;
+    AgsJointMotor* JointMotor;
+    AgsJointMouse* JointMouse;
+    AgsJointPulley* JointPulley;
+
     int32 ID;
 
     int32 GetType();
