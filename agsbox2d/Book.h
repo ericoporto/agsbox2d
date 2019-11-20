@@ -62,6 +62,7 @@ public:
 	static bool RegisterAgsBody(int32 id, AgsBody* body);
 	static bool UnregisterAgsBodyByID(int32 id);
 	static AgsBody* IDtoAgsBody(int32 id);
+	static AgsBody* b2bodyIDtoAgsBody(int32 body_id, int32 world_id);
 
 	static bool isAgsShapeRegisteredByID(int32 id);
 	static bool RegisterAgsShape(int32 id, AgsShape* shape);

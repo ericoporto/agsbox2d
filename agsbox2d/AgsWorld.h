@@ -25,6 +25,7 @@ public:
 	~AgsWorld(void);
 	b2World* B2AgsWorld;
 	AgsBody* NewBody(float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
+    AgsBody* findObject(b2Body* b2body);
 	void DestroyBody(AgsBody* body);
 	void Step(float32 dt, int velocityIterations, int positionIterations);
 	int32 ID;

@@ -16,15 +16,30 @@
 #include "plugin/agsplugin.h"
 #include "AgsBody.h"
 
+enum AgsJointType {
+    eJointUnknown = 0,
+    eJointRevolute = 1,
+    eJointPrismatic = 2,
+    eJointDistance = 3,
+    eJointPulley = 4,
+    eJointMouse = 5,
+    eJointGear = 6,
+    eJointWheel = 7,
+    eJointWeld = 8,
+    eJointFriction = 9,
+    eJointRope = 10,
+    eJointMotor = 11,
+};
+
 class AgsJoint
 {
     int32 WorldID;
-    int32 b2bodyA_ID;
-    int32 b2bodyB_ID;
+    int32 B2bodyA_ID;
+    int32 B2bodyB_ID;
 public:
     AgsJoint(b2Joint* b2joint);
-    AgsJoint(AgsBody* agsbody_a);
-    AgsJoint(AgsBody* agsbody_a, AgsBody* agsbody_b);
+    AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a);
+    AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
     ~AgsJoint(void);
     b2Joint* B2AgsJoint;
     int32 ID;
@@ -36,7 +51,6 @@ public:
     AgsBody* GetBodyA();
     AgsBody* GetBodyB();
 };
-
 
 
 

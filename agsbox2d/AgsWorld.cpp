@@ -39,6 +39,14 @@ void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIteratio
 	//printf("step of world id %d of dt %f and v %d and p %d\n", ID, dt, velocityIterations, positionIterations );
 }
 
+AgsBody* AgsWorld::findObject(b2Body* b2body){
+    AgsBody* agsbody = Book::b2bodyIDtoAgsBody(Book::b2BodyToID(ID,b2body), ID);
+    if(agsbody != nullptr)
+        return agsbody;
+
+    return nullptr;
+}
+
 AgsWorld::~AgsWorld(void)
 {
 }

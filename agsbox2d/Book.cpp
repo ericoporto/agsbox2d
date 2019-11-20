@@ -207,6 +207,22 @@ AgsBody* Book::IDtoAgsBody(int32 id) {
 	}
 	return i()->MapAgsBody[id];
 }
+
+AgsBody* Book::b2bodyIDtoAgsBody(int32 body_id, int32 world_id){
+    b2Body* b2body = Book::IDtoB2Body(world_id, body_id);
+
+    if (i()->MapAgsBody.empty())
+        return nullptr;
+
+    std::unordered_map<int32, AgsBody*>::iterator it;
+
+    for (it=i()->MapAgsBody.begin(); it != i()->MapAgsBody.end(); ++it){
+        if(it->second->GetB2AgsBody() == b2body){
+            return it->second;
+        }
+    }
+    return nullptr;
+}
 // -- End of AgsBody Bookkeeping --
 
 // -- AgsShape Bookkeeping --

@@ -9,18 +9,30 @@
 
 #include "AgsJoint.h"
 #include "Book.h"
+#include "AgsWorld.h"
 
 
 AgsJoint::AgsJoint(b2Joint* b2joint) {
 
 }
 
-AgsJoint::AgsJoint(AgsBody* agsbody_a){
+AgsJoint::AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a){
+    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld )
+        return;
 
+    WorldID = agsworld->ID;
+    B2bodyA_ID = agsbody_a->B2BodyID;
+    B2bodyB_ID = -1;
 }
 
-AgsJoint::AgsJoint(AgsBody* agsbody_a, AgsBody* agsbody_b){
+AgsJoint::AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b){
+    if (agsbody_a->World->B2AgsWorld != agsworld->B2AgsWorld ||
+        agsbody_b->World->B2AgsWorld != agsworld->B2AgsWorld)
+        return;
 
+    WorldID = agsworld->ID;
+    B2bodyA_ID = agsbody_a->B2BodyID;
+    B2bodyB_ID = agsbody_b->B2BodyID;
 }
 
 AgsJoint::~AgsJoint(void)
@@ -28,7 +40,42 @@ AgsJoint::~AgsJoint(void)
 }
 
 int32 AgsJoint::GetType() {
-    return  B2AgsJoint->GetType();
+    if(B2AgsJoint->GetType() == e_unknownJoint) {
+        return eJointUnknown;
+    }
+    if(B2AgsJoint->GetType() == e_revoluteJoint) {
+        return eJointRevolute;
+    }
+    if(B2AgsJoint->GetType() == e_prismaticJoint) {
+        return eJointPrismatic;
+    }
+    if(B2AgsJoint->GetType() == e_distanceJoint) {
+        return eJointDistance;
+    }
+    if(B2AgsJoint->GetType() == e_pulleyJoint) {
+        return eJointPulley;
+    }
+    if(B2AgsJoint->GetType() == e_mouseJoint) {
+        return eJointMouse;
+    }
+    if(B2AgsJoint->GetType() == e_gearJoint) {
+        return eJointGear;
+    }
+    if(B2AgsJoint->GetType() == e_wheelJoint) {
+        return eJointWheel;
+    }
+    if(B2AgsJoint->GetType() == e_weldJoint) {
+        return eJointWeld;
+    }
+    if(B2AgsJoint->GetType() == e_frictionJoint) {
+        return eJointFriction;
+    }
+    if(B2AgsJoint->GetType() == e_ropeJoint) {
+        return eJointRope;
+    }
+    if(B2AgsJoint->GetType() == e_motorJoint) {
+        return eJointMotor;
+    }
 }
 
 bool AgsJoint::isValid(){
@@ -44,9 +91,42 @@ AgsBody* AgsJoint::GetBodyA() {
     if (b2body == nullptr)
         return nullptr;
 
+    AgsWorld* agsworld = Book::IDtoAgsWorld(WorldID);
+    AgsBody* agsbody = agsworld->findObject(b2body);
 
+    if(agsbody!= nullptr)
+        return  agsbody;
+
+
+    agsbody = new AgsBody(false);
+
+    agsbody->B2BodyID = Book::b2BodyToID(WorldID, b2body);
+    agsbody->World = agsworld;
+    agsbody->ID = -1;
+
+    return  agsbody;
 }
 
+AgsBody* AgsJoint::GetBodyB() {
+    b2Body *b2body = B2AgsJoint->GetBodyB();
+    if (b2body == nullptr)
+        return nullptr;
+
+    AgsWorld* agsworld = Book::IDtoAgsWorld(WorldID);
+    AgsBody* agsbody = agsworld->findObject(b2body);
+
+    if(agsbody!= nullptr)
+        return  agsbody;
+
+
+    agsbody = new AgsBody(false);
+
+    agsbody->B2BodyID = Book::b2BodyToID(WorldID, b2body);
+    agsbody->World = agsworld;
+    agsbody->ID = -1;
+
+    return  agsbody;
+}
 
 //------------------------------------------------------------------------------
 
