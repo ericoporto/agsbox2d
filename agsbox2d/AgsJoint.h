@@ -14,17 +14,29 @@
 
 #include "Box2D.h"
 #include "plugin/agsplugin.h"
-#include "AgsShapeCircle.h"
-#include "AgsShapeRect.h"
+#include "AgsBody.h"
 
 class AgsJoint
 {
+    int32 WorldID;
+    int32 b2bodyA_ID;
+    int32 b2bodyB_ID;
 public:
     AgsJoint(b2Joint* b2joint);
+    AgsJoint(AgsBody* agsbody_a);
+    AgsJoint(AgsBody* agsbody_a, AgsBody* agsbody_b);
     ~AgsJoint(void);
     b2Joint* B2AgsJoint;
     int32 ID;
+
+    int32 GetType();
+    bool isValid();
+    bool isActive();
+
+    AgsBody* GetBodyA();
+    AgsBody* GetBodyB();
 };
+
 
 
 

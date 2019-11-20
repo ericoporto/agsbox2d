@@ -15,8 +15,36 @@ AgsJoint::AgsJoint(b2Joint* b2joint) {
 
 }
 
+AgsJoint::AgsJoint(AgsBody* agsbody_a){
+
+}
+
+AgsJoint::AgsJoint(AgsBody* agsbody_a, AgsBody* agsbody_b){
+
+}
+
 AgsJoint::~AgsJoint(void)
 {
+}
+
+int32 AgsJoint::GetType() {
+    return  B2AgsJoint->GetType();
+}
+
+bool AgsJoint::isValid(){
+    return  B2AgsJoint!=nullptr;
+}
+
+bool AgsJoint::isActive(){
+    return  B2AgsJoint->IsActive();
+}
+
+AgsBody* AgsJoint::GetBodyA() {
+    b2Body *b2body = B2AgsJoint->GetBodyA();
+    if (b2body == nullptr)
+        return nullptr;
+
+
 }
 
 
