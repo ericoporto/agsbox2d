@@ -15,6 +15,10 @@
 #include "Box2D.h"
 #include "plugin/agsplugin.h"
 #include "AgsBody.h"
+#include "AgsJointDistance.h"
+#include "AgsJointMotor.h"
+#include "AgsJointMouse.h"
+#include "AgsJointPulley.h"
 
 enum AgsJointType {
     eJointUnknown = 0,
@@ -37,6 +41,8 @@ class AgsJoint
     int32 B2bodyA_ID;
     int32 B2bodyB_ID;
 public:
+    static AgsBody*  GetBody(int world_id, b2Body* body);
+
     AgsJoint(b2Joint* b2joint);
     AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a);
     AgsJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);

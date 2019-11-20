@@ -8,14 +8,21 @@
  */
 
 #include "AgsJointPulley.h"
+#include "Book.h"
 #include "Scale.h"
+#include "AgsWorld.h"
+#include "AgsJoint.h"
 
-AgsJointPulley::AgsJointPulley(AgsBody* agsbody_a, AgsBody* agsbody_b) {
+AgsJointPulley::AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b) {
 
+    WorldID = agsworld->ID;
+    B2bodyA_ID = agsbody_a->B2BodyID;
+    B2bodyB_ID = agsbody_b->B2BodyID;
 }
 
 AgsJointPulley::AgsJointPulley(b2PulleyJoint* Pulleyjoint){
     B2AgsJointPulley = Pulleyjoint;
+
 }
 
 
@@ -23,6 +30,13 @@ AgsJointPulley::~AgsJointPulley(void)
 {
 }
 
+AgsBody* AgsJointPulley::GetBodyA() {
+    return AgsJoint::GetBody(WorldID, B2AgsJointPulley->GetBodyA());
+}
+
+AgsBody* AgsJointPulley::GetBodyB() {
+    return AgsJoint::GetBody(WorldID, B2AgsJointPulley->GetBodyB());
+}
 
 //------------------------------------------------------------------------------
 

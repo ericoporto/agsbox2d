@@ -14,6 +14,8 @@
 
 AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 	B2AgsWorld = new b2World(Scale::ScaleDown(b2Vec2(gravityX, gravityY)));
+    b2BodyDef def;
+    B2GroundBody = B2AgsWorld->CreateBody(&def);
 }
 
 
@@ -21,6 +23,10 @@ AgsBody* AgsWorld::NewBody(float32 x, float32 y, b2BodyType bodytype) {
 	AgsBody* body = new AgsBody(this, x, y, bodytype);
 	//AgsBodyList.push_back(body);
 	return body;
+}
+
+b2Body* AgsWorld::GetGroundB2Body(){
+    return B2GroundBody;
 }
 
 void AgsWorld::DestroyBody(AgsBody* body) {

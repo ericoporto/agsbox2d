@@ -8,8 +8,10 @@
  */
 
 #include "AgsJointDistance.h"
+#include "Book.h"
 #include "Scale.h"
 #include "AgsWorld.h"
+#include "AgsJoint.h"
 
 AgsJointDistance::AgsJointDistance(AgsWorld* agsworld,
         AgsBody* agsbody_a, AgsBody* agsbody_b,
@@ -20,6 +22,9 @@ AgsJointDistance::AgsJointDistance(AgsWorld* agsworld,
             Scale::ScaleDown(b2Vec2(x1,y1)), Scale::ScaleDown(b2Vec2(x2,y2)));
     def.collideConnected = collide_connected;
     B2AgsJointDistance = dynamic_cast<b2DistanceJoint *>(agsworld->B2AgsWorld->CreateJoint(&def));
+    WorldID = agsworld->ID;
+    B2bodyA_ID = agsbody_a->B2BodyID;
+    B2bodyB_ID = agsbody_b->B2BodyID;
 }
 
 AgsJointDistance::AgsJointDistance(b2DistanceJoint* distancejoint){
@@ -51,6 +56,13 @@ float32 AgsJointDistance::GetDampingRatio(){
     return   B2AgsJointDistance->GetDampingRatio();
 }
 
+AgsBody* AgsJointDistance::GetBodyA() {
+    return AgsJoint::GetBody(WorldID, B2AgsJointDistance->GetBodyA());
+}
+
+AgsBody* AgsJointDistance::GetBodyB() {
+    return AgsJoint::GetBody(WorldID, B2AgsJointDistance->GetBodyB());
+}
 
 //------------------------------------------------------------------------------
 

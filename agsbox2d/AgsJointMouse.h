@@ -18,11 +18,33 @@
 
 class AgsJointMouse
 {
+private:
+    int32 WorldID;
+    int32 B2bodyA_ID;
+    int32 B2bodyB_ID;
 public:
-    AgsJointMouse(AgsBody* agsbody_a, AgsBody* agsbody_b);
+    AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float x, float y);
     AgsJointMouse(b2MouseJoint* Mousejoint);
     ~AgsJointMouse(void);
     b2MouseJoint* B2AgsJointMouse;
+
+    AgsBody* GetBodyA();
+    AgsBody* GetBodyB();
+
+    void SetTarget(float32 x, float32 y);
+    float32 GetTargetX();
+    float32 GetTargetY();
+
+    void SetMaxForce(float32 force);
+    float32 GetMaxForce();
+
+    void SetFrequency(float32 hz);
+    float32 GetFrequency();
+
+    void SetDampingRatio(float32 d);
+    float32 GetDampingRatio();
+
+    int32 ID;
 };
 
 

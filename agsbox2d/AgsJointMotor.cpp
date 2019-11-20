@@ -8,8 +8,10 @@
  */
 
 #include "AgsJointMotor.h"
+#include "Book.h"
 #include "Scale.h"
 #include "AgsWorld.h"
+#include "AgsJoint.h"
 
 AgsJointMotor::AgsJointMotor(AgsWorld* agsworld,
         AgsBody* agsbody_a, AgsBody* agsbody_b) {
@@ -19,6 +21,9 @@ AgsJointMotor::AgsJointMotor(AgsWorld* agsworld,
     def.Initialize(agsbody_a->GetB2AgsBody(), agsbody_b->GetB2AgsBody());
 
     B2AgsJointMotor = dynamic_cast<b2MotorJoint *>(agsworld->B2AgsWorld->CreateJoint(&def));
+    WorldID = agsworld->ID;
+    B2bodyA_ID = agsbody_a->B2BodyID;
+    B2bodyB_ID = agsbody_b->B2BodyID;
 }
 
 AgsJointMotor::AgsJointMotor(AgsWorld* agsworld,
@@ -32,6 +37,10 @@ AgsJointMotor::AgsJointMotor(AgsWorld* agsworld,
     def.collideConnected = collide_connected;
 
     B2AgsJointMotor = dynamic_cast<b2MotorJoint *>(agsworld->B2AgsWorld->CreateJoint(&def));
+    WorldID = agsworld->ID;
+    B2bodyA_ID = agsbody_a->B2BodyID;
+    B2bodyB_ID = agsbody_b->B2BodyID;
+
 }
 
 AgsJointMotor::AgsJointMotor(b2MotorJoint* Motorjoint){
@@ -96,6 +105,14 @@ void AgsJointMotor::SetCorrectionFactor(float32 factor)
 float32 AgsJointMotor::GetCorrectionFactor()
 {
     return B2AgsJointMotor->GetCorrectionFactor();
+}
+
+AgsBody* AgsJointMotor::GetBodyA() {
+    return AgsJoint::GetBody(WorldID, B2AgsJointMotor->GetBodyA());
+}
+
+AgsBody* AgsJointMotor::GetBodyB() {
+    return AgsJoint::GetBody(WorldID, B2AgsJointMotor->GetBodyB());
 }
 
 //------------------------------------------------------------------------------
