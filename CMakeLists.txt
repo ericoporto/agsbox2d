@@ -32,5 +32,15 @@ add_library(agsbox2d SHARED
         agsbox2d/DebugDraw.h
         agsbox2d/Scale.cpp
         agsbox2d/Scale.h
+        agsbox2d/AgsJoint.h
+        agsbox2d/AgsJoint.cpp
+        agsbox2d/AgsJointDistance.h
+        agsbox2d/AgsJointDistance.cpp
+        agsbox2d/AgsJointMouse.h
+        agsbox2d/AgsJointMouse.cpp
+        agsbox2d/AgsJointMotor.h
+        agsbox2d/AgsJointMotor.cpp
+        agsbox2d/AgsJointPulley.h
+        agsbox2d/AgsJointPulley.cpp
         agsbox2d/SerialHelper.cpp
         agsbox2d/SerialHelper.h)
