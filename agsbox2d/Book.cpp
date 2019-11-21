@@ -141,6 +141,82 @@ bool Book::GetBodiesEmpty(int32 world_id){
   return i()->B2BodiesByID[world_id]->empty();
 }
 
+// Joint related functions
+
+int32 Book::b2JointToID(int32 world_id, b2Joint* joint){
+    if (i()->B2JointByPointer[world_id]->count(joint) == 0) {
+        return -1;
+    }
+
+    return (*i()->B2JointByPointer[world_id])[joint];
+}
+
+b2Joint* Book::IDtoB2Joint(int32 world_id, int32 joint_id){
+    if (i()->B2JointByID[world_id]->count(joint_id) == 0) {
+        return nullptr;
+    }
+
+    return (*i()->B2JointByID[world_id])[joint_id];
+}
+
+int32 Book::GetNewJointID(int32 world_id){
+    if (i()->B2JointByID.count(world_id) == 0) {
+        i()->B2JointByID[world_id] = new std::unordered_map<int32, b2Joint* >;
+        i()->B2JointByPointer[world_id] = new std::unordered_map<b2Joint*, int32 >;
+    }
+
+    if(i()->B2JointByID[world_id] != nullptr) {
+        while( (*i()->B2JointByID[world_id]).count(i()->JointIDCount) != 0){
+            i()->JointIDCount++;
+        }
+    }
+
+    return i()->JointIDCount;
+}
+
+bool Book::RegisterJointFromWorld(b2Joint* joint, int32 joint_id, int32 world_id) {
+    if (i()->B2JointByID.count(world_id) == 0) {
+        i()->B2JointByID[world_id] = new std::unordered_map<int32, b2Joint* >;
+        i()->B2JointByPointer[world_id] = new std::unordered_map<b2Joint*, int32 >;
+    }
+
+    if(joint != nullptr && i()->B2BodiesByID[world_id] != nullptr) {
+        if (i()->B2JointByPointer[world_id]->count(joint) == 0 &&
+            i()->B2JointByID[world_id]->count(joint_id) == 0) {
+
+            (*i()->B2JointByID[world_id])[joint_id] = joint;
+            (*i()->B2JointByPointer[world_id])[joint] = joint_id;
+
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Book::UnregisterJointFromWorldByID(int32 joint_id, int32 world_id) {
+    if (i()->B2JointByID[world_id]->count(joint_id) == 0) {
+        return false;
+    }
+
+    i()->B2JointByPointer[world_id]->erase((*i()->B2JointByID[world_id])[joint_id]);
+    i()->B2JointByID[world_id]->erase(joint_id);
+    return true;
+}
+
+std::unordered_map<int32, b2Joint* >::iterator  Book::GetJointBegin(int32 world_id){
+    return i()->B2JointByID[world_id]->begin();
+}
+
+std::unordered_map<int32, b2Joint* >::iterator  Book::GetJointEnd(int32 world_id){
+    return i()->B2JointByID[world_id]->end();
+}
+
+int32 Book::GetJointCount(int32 world_id){
+    if(i()->B2JointByID[world_id]==nullptr) return 0;
+
+    return i()->B2JointByID[world_id]->size();
+}
+
 Book* Book::i()
 {
 	static Book instance;

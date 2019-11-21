@@ -32,6 +32,9 @@ private:
     std::unordered_map<int32, std::unordered_map<int32, b2Body* >*> B2BodiesByID;
     std::unordered_map<int32, std::unordered_map<b2Body*, int32 >*> B2BodiesByPointer;
 
+    std::unordered_map<int32, std::unordered_map<int32, b2Joint* >*> B2JointByID;
+    std::unordered_map<int32, std::unordered_map<b2Joint*, int32 >*> B2JointByPointer;
+
 	std::unordered_map<int32, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
 	std::unordered_map<int32, AgsFixture*> MapAgsFixture;
@@ -39,6 +42,7 @@ private:
     std::unordered_map<int32, AgsJoint*> MapAgsJoint;
 
 	uint32 BodyIDCount;
+    uint32 JointIDCount;
 
 	static void DisposeWorldIfNeeded();
 
@@ -52,6 +56,15 @@ public:
 	static std::unordered_map<int32, b2Body* >::iterator GetBodiesEnd(int32 world_id);
 	static int32 GetBodiesCount(int32 world_id);
 	static bool GetBodiesEmpty(int32 world_id);
+
+    static int32 GetNewJointID(int32 world_id);
+    static bool RegisterJointFromWorld(b2Joint* joint, int32 joint_id, int32 world_id);
+    static bool UnregisterJointFromWorldByID(int32 joint_id, int32 world_id);
+    static int32 b2JointToID(int32 world_id, b2Joint* joint);
+    static b2Joint* IDtoB2Joint(int32 world_id, int32 joint_id);
+    static std::unordered_map<int32, b2Joint* >::iterator GetJointBegin(int32 world_id);
+    static std::unordered_map<int32, b2Joint* >::iterator GetJointEnd(int32 world_id);
+    static int32 GetJointCount(int32 world_id);
 
 	static Book* i();
 
