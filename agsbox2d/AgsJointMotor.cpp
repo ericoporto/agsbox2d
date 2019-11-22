@@ -62,6 +62,16 @@ void AgsJointMotor::SetLinearOffset(float32 x, float32 y)
     B2AgsJointMotor->SetLinearOffset(Scale::ScaleDown(b2Vec2(x, y)));
 }
 
+void AgsJointMotor::SetLinearOffsetX(float32 x)
+{
+    B2AgsJointMotor->SetLinearOffset(b2Vec2(Scale::ScaleDown(x), B2AgsJointMotor->GetLinearOffset().y));
+}
+
+void AgsJointMotor::SetLinearOffsetY(float32 y)
+{
+    B2AgsJointMotor->SetLinearOffset(b2Vec2( B2AgsJointMotor->GetLinearOffset().x, Scale::ScaleDown(y)));
+}
+
 float32 AgsJointMotor::GetLinearOffsetX()
 {
     return Scale::ScaleUp(B2AgsJointMotor->GetLinearOffset().x);

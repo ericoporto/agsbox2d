@@ -26,6 +26,9 @@ public:
     b2MotorJoint* B2AgsJointMotor;
 
     void SetLinearOffset(float x, float y);
+
+    void SetLinearOffsetX(float32 x);
+    void SetLinearOffsetY(float32 y);
     float32 GetLinearOffsetX();
     float32 GetLinearOffsetY();
 
