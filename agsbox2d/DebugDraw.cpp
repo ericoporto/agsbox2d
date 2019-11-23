@@ -74,15 +74,15 @@ public:
 
 Pixel32::Pixel32(uint32 r, uint32 g, uint32 b, uint32 alpha) {
 	Red = r;
-	Blue = g;
-	Green = b;
+	Blue = b;
+	Green = g;
 	Alpha = alpha;
 }
 
 Pixel32::Pixel32(b2Color color) {
 	Red = (uint32) 255.0 - color.r*255.0f;
-	Blue = (uint32)  255.0 -  color.g*255.0f;
-	Green = (uint32)  255.0 -  color.b*255.0f;
+	Blue = (uint32)  255.0 -  color.b*255.0f;
+	Green = (uint32)  255.0 -  color.g*255.0f;
 	Alpha = (uint32)  color.a*255.0f;
 }
 
@@ -264,25 +264,40 @@ void AgsDebugDraw::DrawCircle(const b2Vec2& center, float32 radius, const b2Colo
 		Scale::ScaleUp(radius), agscolor, ScreenWidth, ScreenHeight);
 }
 
+void AgsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) {
+    if(Engine == nullptr || SpriteId <= 0) return;
+
+    Pixel32 pix = Pixel32(color);
+    int agscolor = pix.GetColorAsInt();
+
+    _DrawLine(Longbuffer,
+              Scale::ScaleUp(p1.x-CameraX), Scale::ScaleUp(p1.y-CameraY),
+              Scale::ScaleUp(p2.x-CameraX), Scale::ScaleUp(p2.y-CameraY),
+              agscolor, ScreenWidth, ScreenHeight);
+}
+
 void AgsDebugDraw::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color) {
 	if(Engine == nullptr || SpriteId <= 0) return;
 
 	DrawCircle(center, radius, color);
+
+    b2Vec2 p = center + radius * axis;
+    AgsDebugDraw::DrawSegment(center, p, color);
 }
 
-void AgsDebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) {
-	if(Engine == nullptr || SpriteId <= 0) return;
 
-	Pixel32 pix = Pixel32(color);
-	int agscolor = pix.GetColorAsInt();
-
-	_DrawLine(Longbuffer,
-		Scale::ScaleUp(p1.x-CameraX), Scale::ScaleUp(p1.y-CameraY),
-		Scale::ScaleUp(p2.x-CameraX), Scale::ScaleUp(p2.y-CameraY),
-		agscolor, ScreenWidth, ScreenHeight);
-}
 
 void AgsDebugDraw::DrawTransform(const b2Transform& xf) {
 	if(Engine == nullptr || SpriteId <= 0) return;
 
+    const float32 k_axisScale = 0.3f;
+    b2Color red(1.0f, 0.0f, 0.0f);
+    b2Color green(0.0f, 1.0f, 0.0f);
+    b2Vec2 p1 = xf.p, p2;
+
+    p2 = p1 + k_axisScale * xf.q.GetXAxis();
+    AgsDebugDraw::DrawSegment(p1, p2, red);
+
+    p2 = p1 + k_axisScale * xf.q.GetYAxis();
+    AgsDebugDraw::DrawSegment(p1, p2, green);
 }

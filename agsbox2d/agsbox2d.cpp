@@ -680,7 +680,7 @@ void AgsWorld_Step(AgsWorld* self, uint32_t dt, int32 velocityIterations, int32 
 int32 AgsWorld_GetDebugSprite(AgsWorld* self, int32 camera_x, int32 camera_y) {
 	debugDraw.ClearSprite();
 	debugDraw.GetSurfaceForDebugDraw(camera_x, camera_y);
-	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit);
+	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit | b2Draw::e_jointBit | b2Draw::e_pairBit);
 	self->B2AgsWorld->SetDebugDraw(&debugDraw);
 	self->B2AgsWorld->DrawDebugData();
 	debugDraw.ReleaseSurfaceForDebugDraw();
