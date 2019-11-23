@@ -18,11 +18,15 @@
 
 class AgsJointMouse
 {
+private:
+    b2MouseJoint* B2AgsJointMouse;
 public:
     AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float x, float y);
     AgsJointMouse(b2MouseJoint* Mousejoint);
     ~AgsJointMouse(void);
-    b2MouseJoint* B2AgsJointMouse;
+
+    void InitializeIfNeeded();
+    b2MouseJoint* GetB2AgsJointMouse();
 
     b2Body* GetBodyA();
     b2Body* GetBodyB();
@@ -41,6 +45,7 @@ public:
     float32 GetDampingRatio();
 
     int32 ID;
+    int32 b2Joint_ID;
 
     int32 WorldID;
     int32 B2bodyA_ID;

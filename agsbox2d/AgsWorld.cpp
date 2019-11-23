@@ -139,6 +139,7 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 
 	ptr = b2Vec2ToChar(world->B2AgsWorld->GetGravity(), ptr, end);
 
+	// Serialize the b2bodies
     int32 bodycount = Book::GetBodiesCount(world->ID);
 	ptr = IntToChar(bodycount, ptr, end);
 
@@ -150,6 +151,7 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 		}
 	}
 
+    // Serialize the b2fixtures
 	int32 fixturecount = Book::GetFixtureCount(world->ID);
     ptr = IntToChar(fixturecount, ptr, end);
 
@@ -159,6 +161,24 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
             ptr = IntToChar(itr->first, ptr, end);
             int b2body_id = Book::b2BodyToID(world->ID, itr->second->GetBody());
             ptr = IntToChar(b2body_id, ptr, end);
+        }
+    }
+
+    // Serialize the b2joints
+    int32 jointcount = Book::GetJointCount(world->ID);
+    ptr = IntToChar(jointcount, ptr, end);
+
+    if (jointcount > 0) {
+        for (std::unordered_map<int32, b2Joint* >::iterator itr = Book::GetJointBegin(world->ID);
+             itr != Book::GetJointEnd(world->ID); ++itr) {
+            int joint_id = itr->first;
+            b2Joint* b2joint =  itr->second;
+            int body_a_id = Book::b2BodyToID(world->ID, b2joint->GetBodyA());
+            int body_b_id = Book::b2BodyToID(world->ID, b2joint->GetBodyB());
+            ptr = IntToChar(joint_id, ptr, end);
+            ptr = IntToChar(body_a_id, ptr, end);
+            ptr = IntToChar(body_b_id, ptr, end);
+            ptr = b2JointToChar(b2joint, ptr, end);
         }
     }
 
@@ -227,6 +247,27 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 
             temp_prev_body_id = body_id;
             temp_f->GetNext();
+        }
+    }
+
+    int32 jointcount;
+    ptr = CharToInt(jointcount, ptr);
+    if (jointcount > 0) {
+        for (int i = 0; i < jointcount; i++) {
+            int joint_id;
+            int body_a_id;
+            int body_b_id;
+            ptr = CharToInt(joint_id, ptr);
+            ptr = CharToInt(body_a_id, ptr);
+            ptr = CharToInt(body_b_id, ptr);
+            b2JointDef* b2jointdef;
+            ptr = CharTob2JointDef(b2jointdef, ptr);
+            b2jointdef->bodyA = Book::IDtoB2Body(world->ID, body_a_id);
+            b2jointdef->bodyB = Book::IDtoB2Body(world->ID, body_b_id);
+
+            b2Joint* b2joint = world->B2AgsWorld->CreateJoint(b2jointdef);
+
+            Book::RegisterJointFromWorld(b2joint, joint_id, world->ID);
         }
     }
 

@@ -57,76 +57,102 @@ AgsJointMotor::~AgsJointMotor(void)
 {
 }
 
+void AgsJointMotor::InitializeIfNeeded(){
+    if(B2AgsJointMotor == nullptr) {
+        B2AgsJointMotor = dynamic_cast<b2MotorJoint *>(Book::IDtoB2Joint(WorldID, b2Joint_ID));
+    }
+}
+
+b2MotorJoint* AgsJointMotor::GetB2AgsJointMotor(){
+    InitializeIfNeeded();
+    return  B2AgsJointMotor;
+}
+
 void AgsJointMotor::SetLinearOffset(float32 x, float32 y)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetLinearOffset(Scale::ScaleDown(b2Vec2(x, y)));
 }
 
 void AgsJointMotor::SetLinearOffsetX(float32 x)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetLinearOffset(b2Vec2(Scale::ScaleDown(x), B2AgsJointMotor->GetLinearOffset().y));
 }
 
 void AgsJointMotor::SetLinearOffsetY(float32 y)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetLinearOffset(b2Vec2( B2AgsJointMotor->GetLinearOffset().x, Scale::ScaleDown(y)));
 }
 
 float32 AgsJointMotor::GetLinearOffsetX()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointMotor->GetLinearOffset().x);
 }
 
 float32 AgsJointMotor::GetLinearOffsetY()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointMotor->GetLinearOffset().y);
 }
 
 void AgsJointMotor::SetAngularOffset(float32 angularOffset)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetAngularOffset(angularOffset);
 }
 
 float32 AgsJointMotor::GetAngularOffset()
 {
+    InitializeIfNeeded();
     return B2AgsJointMotor->GetAngularOffset();
 }
 
 void AgsJointMotor::SetMaxForce(float32 force)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetMaxForce(Scale::ScaleDown(force));
 }
 
 float32 AgsJointMotor::GetMaxForce()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointMotor->GetMaxForce());
 }
 
 void AgsJointMotor::SetMaxTorque(float32 torque)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetMaxTorque(Scale::ScaleDown(Scale::ScaleDown(torque)));
 }
 
 float32 AgsJointMotor::GetMaxTorque()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(Scale::ScaleUp(B2AgsJointMotor->GetMaxTorque()));
 }
 
 void AgsJointMotor::SetCorrectionFactor(float32 factor)
 {
+    InitializeIfNeeded();
     B2AgsJointMotor->SetCorrectionFactor(factor);
 }
 
 float32 AgsJointMotor::GetCorrectionFactor()
 {
+    InitializeIfNeeded();
     return B2AgsJointMotor->GetCorrectionFactor();
 }
 
 b2Body* AgsJointMotor::GetBodyA() {
+    InitializeIfNeeded();
     return B2AgsJointMotor->GetBodyB();
 }
 
 b2Body* AgsJointMotor::GetBodyB() {
+    InitializeIfNeeded();
     return B2AgsJointMotor->GetBodyB();
 }
 

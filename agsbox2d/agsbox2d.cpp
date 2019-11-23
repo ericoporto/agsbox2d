@@ -609,6 +609,8 @@ AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody
     Book::RegisterAgsJoint(joint->ID, joint);
 
     int b2joint_id = Book::GetNewJointID(world->ID);
+    joint->b2Joint_ID = b2joint_id;
+    agsJointDistance->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -630,6 +632,8 @@ AgsJoint* agsbox2d_newMotorJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* a
     Book::RegisterAgsJoint(joint->ID, joint);
 
     int b2joint_id = Book::GetNewJointID(world->ID);
+    joint->b2Joint_ID = b2joint_id;
+    agsJointMotor->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -649,6 +653,8 @@ AgsJoint* agsbox2d_newMouseJoint(AgsWorld* world, AgsBody* agsbody_a,
     Book::RegisterAgsJoint(joint->ID, joint);
 
     int b2joint_id = Book::GetNewJointID(world->ID);
+    joint->b2Joint_ID = b2joint_id;
+    agsJointMouse->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -681,6 +687,8 @@ AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* 
     Book::RegisterAgsJoint(joint->ID, joint);
 
     int b2joint_id = Book::GetNewJointID(world->ID);
+    joint->b2Joint_ID = b2joint_id;
+    agsJointPulley->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -1203,7 +1211,7 @@ int32 AgsJoint_GetIsActive (AgsJoint* self) {
 AgsBody* AgsJoint_GetBodyA (AgsJoint* self) {
     b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
     int32 world_id = self->GetAgsWorld()->ID;
-    if(self->B2AgsJoint->GetType() == e_mouseJoint)
+    if(self->GetB2AgsJoint()->GetType() == e_mouseJoint)
         return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());
 
     return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyA());
@@ -1212,7 +1220,7 @@ AgsBody* AgsJoint_GetBodyA (AgsJoint* self) {
 AgsBody* AgsJoint_GetBodyB (AgsJoint* self) {
     b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
     int32 world_id = self->GetAgsWorld()->ID;
-    if(self->B2AgsJoint->GetType() == e_mouseJoint)
+    if(self->GetB2AgsJoint()->GetType() == e_mouseJoint)
         return nullptr;
 
     return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());

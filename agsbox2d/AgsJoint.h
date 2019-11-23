@@ -40,6 +40,7 @@ class AgsJoint
     int32 WorldID;
     int32 B2bodyA_ID;
     int32 B2bodyB_ID;
+    b2Joint* B2AgsJoint;
 public:
 
     AgsJoint(b2Joint* b2joint);
@@ -50,7 +51,7 @@ public:
     AgsJoint(AgsJointPulley* ags_joint_pulley);
 
     ~AgsJoint(void);
-    b2Joint* B2AgsJoint;
+    void InitializeIfNeeded();
 
     b2Joint* GetB2AgsJoint();
 
@@ -60,6 +61,7 @@ public:
     AgsJointPulley* JointPulley;
 
     int32 ID;
+    int32 b2Joint_ID;
 
     int32 GetType();
     bool isValid();

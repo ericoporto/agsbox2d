@@ -44,33 +44,50 @@ AgsJointMouse::~AgsJointMouse(void)
 {
 }
 
+void AgsJointMouse::InitializeIfNeeded(){
+    if(B2AgsJointMouse == nullptr) {
+        B2AgsJointMouse = dynamic_cast<b2MouseJoint *>(Book::IDtoB2Joint(WorldID, b2Joint_ID));
+    }
+}
+
+b2MouseJoint* AgsJointMouse::GetB2AgsJointMouse(){
+    InitializeIfNeeded();
+    return  B2AgsJointMouse;
+}
+
 void AgsJointMouse::SetTarget(float32 x, float32 y)
 {
+    InitializeIfNeeded();
     B2AgsJointMouse->SetTarget(Scale::ScaleDown(b2Vec2(x, y)));
 }
 
 float32 AgsJointMouse::GetTargetX()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointMouse->GetTarget().x);
 }
 
 float32 AgsJointMouse::GetTargetY()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointMouse->GetTarget().x);
 }
 
 void AgsJointMouse::SetMaxForce(float32 force)
 {
+    InitializeIfNeeded();
     B2AgsJointMouse->SetMaxForce(Scale::ScaleDown(force));
 }
 
 float32 AgsJointMouse::GetMaxForce()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointMouse->GetMaxForce());
 }
 
 void AgsJointMouse::SetFrequency(float32 hz)
 {
+    InitializeIfNeeded();
     // This is kind of a crappy check. The frequency is used in an internal
     // box2d calculation whose result must be > FLT_EPSILON, but other variables
     // go into that calculation...
@@ -82,25 +99,30 @@ void AgsJointMouse::SetFrequency(float32 hz)
 
 float32 AgsJointMouse::GetFrequency()
 {
+    InitializeIfNeeded();
     return B2AgsJointMouse->GetFrequency();
 }
 
 void AgsJointMouse::SetDampingRatio(float32 d)
 {
+    InitializeIfNeeded();
     B2AgsJointMouse->SetDampingRatio(d);
 }
 
 float32 AgsJointMouse::GetDampingRatio()
 {
+    InitializeIfNeeded();
     return B2AgsJointMouse->GetDampingRatio();
 }
 
 b2Body* AgsJointMouse::GetBodyA() {
+    InitializeIfNeeded();
     return  B2AgsJointMouse->GetBodyB();
 }
 
 b2Body *AgsJointMouse::GetBodyB()
 {
+    InitializeIfNeeded();
     return nullptr;
 }
 

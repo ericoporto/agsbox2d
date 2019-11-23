@@ -39,35 +39,54 @@ AgsJointDistance::~AgsJointDistance(void)
 {
 }
 
+void AgsJointDistance::InitializeIfNeeded(){
+    if(B2AgsJointDistance == nullptr) {
+        B2AgsJointDistance = dynamic_cast<b2DistanceJoint *>(Book::IDtoB2Joint(WorldID, b2Joint_ID));
+    }
+}
+
+b2DistanceJoint* AgsJointDistance::GetB2AgsJointDistance(){
+    InitializeIfNeeded();
+    return  B2AgsJointDistance;
+}
+
 void AgsJointDistance::SetLength(float32 length) {
+    InitializeIfNeeded();
     B2AgsJointDistance->SetLength(Scale::ScaleDown(length));
 }
 
 float32 AgsJointDistance::GetLength(){
+    InitializeIfNeeded();
     return  Scale::ScaleUp( B2AgsJointDistance->GetLength());
 }
 
 void AgsJointDistance::SetFrequency(float32 hz) {
+    InitializeIfNeeded();
     B2AgsJointDistance->SetFrequency(hz);
 }
 
 float32 AgsJointDistance::GetFrequency(){
+    InitializeIfNeeded();
     return B2AgsJointDistance->GetFrequency();
 }
 
 void AgsJointDistance::SetDampingRatio(float32 dratio) {
+    InitializeIfNeeded();
     B2AgsJointDistance->SetDampingRatio(dratio);
 }
 
 float32 AgsJointDistance::GetDampingRatio(){
+    InitializeIfNeeded();
     return   B2AgsJointDistance->GetDampingRatio();
 }
 
 b2Body* AgsJointDistance::GetBodyA() {
+    InitializeIfNeeded();
     return B2AgsJointDistance->GetBodyB();
 }
 
 b2Body* AgsJointDistance::GetBodyB() {
+    InitializeIfNeeded();
     return B2AgsJointDistance->GetBodyB();
 }
 

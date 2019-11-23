@@ -18,11 +18,15 @@
 
 class AgsJointDistance
 {
+private:
+    b2DistanceJoint* B2AgsJointDistance;
 public:
     AgsJointDistance(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 x1, float32 y1, float32 x2, float32 y2, bool collideConnected);
     AgsJointDistance(b2DistanceJoint* distancejoint);
     ~AgsJointDistance(void);
-    b2DistanceJoint* B2AgsJointDistance;
+
+    void InitializeIfNeeded();
+    b2DistanceJoint* GetB2AgsJointDistance();
 
     void SetLength(float32 length);
     float32  GetLength();
@@ -38,6 +42,7 @@ public:
     b2Body* GetBodyB();
 
     int32 ID;
+    int32 b2Joint_ID;
 
     int32 WorldID;
     int32 B2bodyA_ID;

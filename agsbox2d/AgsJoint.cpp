@@ -25,7 +25,7 @@ AgsJoint::AgsJoint(AgsJointDistance* ags_joint_distance) {
     B2bodyA_ID = ags_joint_distance->B2bodyA_ID;
     B2bodyB_ID = ags_joint_distance->B2bodyB_ID;
 
-    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_distance->B2AgsJointDistance);
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_distance->GetB2AgsJointDistance());
 }
 
 AgsJoint::AgsJoint(AgsJointMotor* ags_joint_motor) {
@@ -37,7 +37,7 @@ AgsJoint::AgsJoint(AgsJointMotor* ags_joint_motor) {
     B2bodyA_ID = ags_joint_motor->B2bodyA_ID;
     B2bodyB_ID = ags_joint_motor->B2bodyB_ID;
 
-    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_motor->B2AgsJointMotor);
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_motor->GetB2AgsJointMotor());
 }
 
 AgsJoint::AgsJoint(AgsJointMouse* ags_joint_mouse) {
@@ -49,7 +49,7 @@ AgsJoint::AgsJoint(AgsJointMouse* ags_joint_mouse) {
     B2bodyA_ID = ags_joint_mouse->B2bodyA_ID;
     B2bodyB_ID = ags_joint_mouse->B2bodyB_ID;
 
-    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_mouse->B2AgsJointMouse);
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_mouse->GetB2AgsJointMouse());
 }
 
 AgsJoint::AgsJoint(AgsJointPulley* ags_joint_pulley) {
@@ -61,14 +61,21 @@ AgsJoint::AgsJoint(AgsJointPulley* ags_joint_pulley) {
     B2bodyA_ID = ags_joint_pulley->B2bodyA_ID;
     B2bodyB_ID = ags_joint_pulley->B2bodyB_ID;
 
-    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_pulley->B2AgsJointPulley);
+    B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_pulley->GetB2AgsJointPulley());
 }
 
 AgsJoint::~AgsJoint(void)
 {
 }
 
+void AgsJoint::InitializeIfNeeded(){
+    if(B2AgsJoint == nullptr) {
+        B2AgsJoint = Book::IDtoB2Joint(WorldID, b2Joint_ID);
+    }
+}
+
 int32 AgsJoint::GetType() {
+    InitializeIfNeeded();
     if(B2AgsJoint->GetType() == e_unknownJoint) {
         return eJointUnknown;
     }
@@ -108,27 +115,33 @@ int32 AgsJoint::GetType() {
 }
 
 bool AgsJoint::isValid(){
+    InitializeIfNeeded();
     return  B2AgsJoint!=nullptr;
 }
 
 bool AgsJoint::isActive(){
+    InitializeIfNeeded();
     return  B2AgsJoint->IsActive();
 }
 
 b2Joint* AgsJoint::GetB2AgsJoint(){
+    InitializeIfNeeded();
     return  B2AgsJoint;
 }
 
 b2Body* AgsJoint::GetBodyA() {
+    InitializeIfNeeded();
     return B2AgsJoint->GetBodyA();
 }
 
 b2Body* AgsJoint::GetBodyB() {
+    InitializeIfNeeded();
     return B2AgsJoint->GetBodyB();
 }
 
 
 AgsWorld* AgsJoint::GetAgsWorld() {
+    InitializeIfNeeded();
     return Book::IDtoAgsWorld(WorldID);
 }
 

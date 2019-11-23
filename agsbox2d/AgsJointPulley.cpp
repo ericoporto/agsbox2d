@@ -39,8 +39,6 @@ AgsJointPulley::AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* 
     WorldID = agsworld->ID;
     B2bodyA_ID = agsbody_a->B2BodyID;
     B2bodyB_ID = agsbody_b->B2BodyID;
-
-
 }
 
 AgsJointPulley::AgsJointPulley(b2PulleyJoint* Pulleyjoint){
@@ -53,26 +51,43 @@ AgsJointPulley::~AgsJointPulley(void)
 {
 }
 
+void AgsJointPulley::InitializeIfNeeded(){
+    if(B2AgsJointPulley == nullptr) {
+        B2AgsJointPulley = dynamic_cast<b2PulleyJoint *>(Book::IDtoB2Joint(WorldID, b2Joint_ID));
+    }
+}
+
+b2PulleyJoint* AgsJointPulley::GetB2AgsJointPulley(){
+    InitializeIfNeeded();
+    return  B2AgsJointPulley;
+}
+
+
 float32 AgsJointPulley::GetLengthA()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointPulley->GetLengthA());
 }
 
 float32 AgsJointPulley::GetLengthB()
 {
+    InitializeIfNeeded();
     return Scale::ScaleUp(B2AgsJointPulley->GetLengthB());
 }
 
 float32 AgsJointPulley::GetRatio()
 {
+    InitializeIfNeeded();
     return B2AgsJointPulley->GetRatio();
 }
 
 b2Body* AgsJointPulley::GetBodyA() {
+    InitializeIfNeeded();
     return B2AgsJointPulley->GetBodyB();
 }
 
 b2Body* AgsJointPulley::GetBodyB() {
+    InitializeIfNeeded();
     return B2AgsJointPulley->GetBodyB();
 }
 

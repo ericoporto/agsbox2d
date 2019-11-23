@@ -18,12 +18,16 @@
 
 class AgsJointMotor
 {
+private:
+    b2MotorJoint* B2AgsJointMotor;
 public:
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 correction_factor, bool collide_connected);
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
     AgsJointMotor(b2MotorJoint* Motorjoint);
     ~AgsJointMotor(void);
-    b2MotorJoint* B2AgsJointMotor;
+
+    void InitializeIfNeeded();
+    b2MotorJoint* GetB2AgsJointMotor();
 
     void SetLinearOffset(float x, float y);
 
@@ -48,6 +52,7 @@ public:
     b2Body* GetBodyB();
 
     int32 ID;
+    int32 b2Joint_ID;
 
     int32 WorldID;
     int32 B2bodyA_ID;

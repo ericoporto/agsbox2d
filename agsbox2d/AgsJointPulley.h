@@ -18,6 +18,8 @@
 
 class AgsJointPulley
 {
+private:
+    b2PulleyJoint* B2AgsJointPulley;
 public:
     AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
                    float32 ground_anchor_a_x, float32 ground_anchor_a_y, float32 ground_anchor_b_x, float32 ground_anchor_b_y,
@@ -26,7 +28,9 @@ public:
     );
     AgsJointPulley(b2PulleyJoint* Pulleyjoint);
     ~AgsJointPulley(void);
-    b2PulleyJoint* B2AgsJointPulley;
+
+    void InitializeIfNeeded();
+    b2PulleyJoint* GetB2AgsJointPulley();
 
     float32 GetLengthA();
     float32 GetLengthB();
@@ -36,6 +40,7 @@ public:
     b2Body* GetBodyB();
 
     int32 ID;
+    int32 b2Joint_ID;
 
     int32 WorldID;
     int32 B2bodyA_ID;
