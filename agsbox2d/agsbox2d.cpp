@@ -457,6 +457,30 @@ AgsBody* FindAgsBodyFromB2Body(b2World* world, int32 world_id, b2Body* b2body) {
     return body;
 }
 
+AgsFixture* FindAgsFixtureFromB2Fixture(b2World* world, int32 world_id, b2Fixture* b2fixture) {
+    // fixture was null in the first place
+    if(b2fixture == nullptr)
+        return nullptr;
+
+    int32 b2fixture_id = Book::b2FixtureToID(world_id,b2fixture);
+
+    // fixture is not from this world
+    if(b2fixture_id < 0)
+        return nullptr;
+
+    // we found an already registered AgsFixture
+    AgsFixture* agsfixture = Book::b2FixtureIDtoAgsFixture(b2fixture_id, world_id);
+    if(agsfixture != nullptr)
+        return agsfixture;
+
+    // we didn't find an already registered AgsFixture, so let's create one
+    AgsFixture* fixture = new AgsFixture(world_id,  Book::b2BodyToID(world_id, b2fixture->GetBody()), b2fixture_id);
+    fixture->ID = engine->RegisterManagedObject(fixture, &AgsFixture_Interface);
+
+    Book::RegisterAgsFixture(fixture->ID, fixture);
+    return fixture;
+}
+
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
 

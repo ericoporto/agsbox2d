@@ -12,6 +12,7 @@
 #include "AgsJoint.h"
 #include "Scale.h"
 #include "Book.h"
+#include <vector>
 
 AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 	B2AgsWorld = new b2World(Scale::ScaleDown(b2Vec2(gravityX, gravityY)));
@@ -54,6 +55,47 @@ void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIteratio
 	B2AgsWorld->Step(dt, velocityIterations, positionIterations);
 	//printf("step of world id %d of dt %f and v %d and p %d\n", ID, dt, velocityIterations, positionIterations );
 }
+
+
+// -- functions for AABB query
+std::vector<b2Fixture* > _fixtureQueryList;
+
+class QueryFixturesCallback : public b2QueryCallback
+{
+public:
+    bool ReportFixture(b2Fixture* fixture)
+    {
+        _fixtureQueryList.push_back(fixture);
+        return true;
+    }
+};
+
+int32 AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy) {
+    b2AABB box;
+    box.lowerBound = Scale::ScaleDown(b2Vec2(lx, ly));
+    box.upperBound = Scale::ScaleDown(b2Vec2(ux, uy));
+    _fixtureQueryList.clear();
+    QueryFixturesCallback query;
+    B2AgsWorld->QueryAABB(&query, box);
+    return _fixtureQueryList.size();
+}
+
+int32 AgsWorld::BoundingBoxQueryFixtureCount() {
+    return _fixtureQueryList.size();
+}
+
+b2Fixture* AgsWorld::BoundingBoxQueryFixture(int32 i) {
+    if(i >= _fixtureQueryList.size() || i<0)
+        return nullptr;
+
+    return _fixtureQueryList[i];
+}
+
+void AgsWorld::BoundingBoxQueryReset() {
+    _fixtureQueryList.clear();
+}
+
+// -- end of functions for AABB query
 
 AgsWorld::~AgsWorld(void)
 {

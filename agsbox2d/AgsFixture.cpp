@@ -53,6 +53,11 @@ void AgsFixture::InitializeIfNeeded(){
     }
 }
 
+b2Fixture*  AgsFixture::GetB2AgsFixture(){
+    InitializeIfNeeded();
+    return B2AgsFixture;
+}
+
 float32 AgsFixture::GetDensity() {
     InitializeIfNeeded();
 	return B2AgsFixture->GetDensity();
@@ -136,7 +141,7 @@ int AgsFixtureInterface::Serialize(const char* address, char* buffer, int bufsiz
 
     int32 fixturecount = 0;
     for (b2Fixture* fixture =  b2_body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
-        if(fixture == agsFixture->B2AgsFixture){
+        if(fixture == agsFixture->GetB2AgsFixture()){
             break;
         }
         fixturecount++;

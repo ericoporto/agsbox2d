@@ -39,6 +39,9 @@ private:
     std::unordered_map<int32, std::unordered_map<int32, b2Joint* >*> B2JointByID;
     std::unordered_map<int32, std::unordered_map<b2Joint*, int32 >*> B2JointByPointer;
 
+    std::unordered_map<int32, std::unordered_map<int32, b2Fixture* >*> B2FixtureByID;
+    std::unordered_map<int32, std::unordered_map<b2Fixture*, int32 >*> B2FixtureByPointer;
+
 	std::unordered_map<int32, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
 	std::unordered_map<int32, AgsFixture*> MapAgsFixture;
@@ -52,6 +55,7 @@ private:
 
 	uint32 BodyIDCount;
     uint32 JointIDCount;
+    uint32 FixtureIDCount;
 
 	static void DisposeWorldIfNeeded();
 
@@ -75,6 +79,15 @@ public:
     static std::unordered_map<int32, b2Joint* >::iterator GetJointEnd(int32 world_id);
     static int32 GetJointCount(int32 world_id);
 
+    static int32 GetNewFixtureID(int32 world_id);
+    static bool RegisterFixtureFromWorld(b2Fixture* fixture, int32 fixture_id, int32 world_id);
+    static bool UnregisterFixtureFromWorldByID(int32 fixture_id, int32 world_id);
+    static int32 b2FixtureToID(int32 world_id, b2Fixture* fixture);
+    static b2Fixture* IDtoB2Fixture(int32 world_id, int32 fixture_id);
+    static std::unordered_map<int32, b2Fixture* >::iterator GetFixtureBegin(int32 world_id);
+    static std::unordered_map<int32, b2Fixture* >::iterator GetFixtureEnd(int32 world_id);
+    static int32 GetFixtureCount(int32 world_id);
+
 	static Book* i();
 
 	static bool isAgsWorldRegisteredByID(int32 id);
@@ -97,6 +110,7 @@ public:
 	static bool RegisterAgsFixture(int32 id, AgsFixture* fixture);
 	static bool UnregisterAgsFixtureByID(int32 id);
 	static AgsFixture* IDtoAgsFixture(int32 id);
+    static AgsFixture* b2FixtureIDtoAgsFixture(int32 fixture_id, int32 world_id);
 
     static bool isAgsJointRegisteredByID(int32 id);
     static bool RegisterAgsJoint(int32 id, AgsJoint* joint);
