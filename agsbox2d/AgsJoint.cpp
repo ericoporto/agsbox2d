@@ -161,9 +161,7 @@ using namespace SerialHelper;
 
 int AgsJointInterface::Dispose(const char* address, bool force)
 {
-   // Book::UnregisterAgsAgsJointByID(((AgsJoint*)address)->ID);
-    //((AgsShape*)address)->B2AgsShape->~b2Shape();
-   // delete ((AgsJoint*)address)->B2AgsJoint;
+    Book::UnregisterAgsJointByID(((AgsJoint*)address)->ID);
     delete ((AgsJoint*)address);
     return (1);
 }

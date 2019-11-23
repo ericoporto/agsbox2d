@@ -388,3 +388,119 @@ AgsJoint* Book::IDtoAgsJoint(int32 id) {
     return i()->MapAgsJoint[id];
 }
 // -- End of AgsJoint Bookkeeping --
+
+// -- AgsJointDistance Bookkeeping --
+bool Book::isAgsJointDistanceRegisteredByID(int32 id) {
+    return i()->MapAgsJointDistance.count(id) != 0;
+}
+
+bool Book::RegisterAgsJointDistance(int32 id, AgsJointDistance* joint) {
+    if (i()->MapAgsJointDistance.count(id) == 0) {
+        i()->MapAgsJointDistance[id] = joint;
+        return true;
+    }
+    return false;
+}
+
+bool Book::UnregisterAgsJointDistanceByID(int32 id) {
+    if (i()->MapAgsJointDistance.count(id) == 0) {
+        return false;
+    }
+    i()->MapAgsJointDistance.erase(id);
+    return true;
+}
+
+AgsJointDistance* Book::IDtoAgsJointDistance(int32 id) {
+    if (i()->MapAgsJointDistance.count(id) == 0) {
+        return nullptr;
+    }
+    return i()->MapAgsJointDistance[id];
+}
+// -- End of AgsJointDistance Bookkeeping --
+
+// -- AgsJointMotor Bookkeeping --
+bool Book::isAgsJointMotorRegisteredByID(int32 id) {
+    return i()->MapAgsJointMotor.count(id) != 0;
+}
+
+bool Book::RegisterAgsJointMotor(int32 id, AgsJointMotor* joint) {
+    if (i()->MapAgsJointMotor.count(id) == 0) {
+        i()->MapAgsJointMotor[id] = joint;
+        return true;
+    }
+    return false;
+}
+
+bool Book::UnregisterAgsJointMotorByID(int32 id) {
+    if (i()->MapAgsJointMotor.count(id) == 0) {
+        return false;
+    }
+    i()->MapAgsJointMotor.erase(id);
+    return true;
+}
+
+AgsJointMotor* Book::IDtoAgsJointMotor(int32 id) {
+    if (i()->MapAgsJointMotor.count(id) == 0) {
+        return nullptr;
+    }
+    return i()->MapAgsJointMotor[id];
+}
+// -- End of AgsJointMotor Bookkeeping --
+
+// -- AgsJointMouse Bookkeeping --
+bool Book::isAgsJointMouseRegisteredByID(int32 id) {
+    return i()->MapAgsJointMouse.count(id) != 0;
+}
+
+bool Book::RegisterAgsJointMouse(int32 id, AgsJointMouse* joint) {
+    if (i()->MapAgsJointMouse.count(id) == 0) {
+        i()->MapAgsJointMouse[id] = joint;
+        return true;
+    }
+    return false;
+}
+
+bool Book::UnregisterAgsJointMouseByID(int32 id) {
+    if (i()->MapAgsJointMouse.count(id) == 0) {
+        return false;
+    }
+    i()->MapAgsJointMouse.erase(id);
+    return true;
+}
+
+AgsJointMouse* Book::IDtoAgsJointMouse(int32 id) {
+    if (i()->MapAgsJointMouse.count(id) == 0) {
+        return nullptr;
+    }
+    return i()->MapAgsJointMouse[id];
+}
+// -- End of AgsJointMouse Bookkeeping --
+
+// -- AgsJointPulley Bookkeeping --
+bool Book::isAgsJointPulleyRegisteredByID(int32 id) {
+    return i()->MapAgsJointPulley.count(id) != 0;
+}
+
+bool Book::RegisterAgsJointPulley(int32 id, AgsJointPulley* joint) {
+    if (i()->MapAgsJointPulley.count(id) == 0) {
+        i()->MapAgsJointPulley[id] = joint;
+        return true;
+    }
+    return false;
+}
+
+bool Book::UnregisterAgsJointPulleyByID(int32 id) {
+    if (i()->MapAgsJointPulley.count(id) == 0) {
+        return false;
+    }
+    i()->MapAgsJointPulley.erase(id);
+    return true;
+}
+
+AgsJointPulley* Book::IDtoAgsJointPulley(int32 id) {
+    if (i()->MapAgsJointPulley.count(id) == 0) {
+        return nullptr;
+    }
+    return i()->MapAgsJointPulley[id];
+}
+// -- End of AgsJointPulley Bookkeeping --

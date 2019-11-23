@@ -144,7 +144,8 @@ const char* AgsJointMotorInterface::name = "JointMotor";
 
 int AgsJointMotorInterface::Dispose(const char* address, bool force)
 {
-    //delete ((AgsShapeCircle*)address);
+    Book::UnregisterAgsJointMotorByID(((AgsJointMotor*)address)->ID);
+    delete ((AgsJointMotor*)address);
     return (1);
 }
 

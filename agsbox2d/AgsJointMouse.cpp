@@ -118,7 +118,8 @@ const char* AgsJointMouseInterface::name = "JointMouse";
 
 int AgsJointMouseInterface::Dispose(const char* address, bool force)
 {
-    //delete ((AgsShapeCircle*)address);
+    Book::UnregisterAgsJointMouseByID(((AgsJointMouse*)address)->ID);
+    delete ((AgsJointMouse*)address);
     return (1);
 }
 

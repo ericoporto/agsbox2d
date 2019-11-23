@@ -22,6 +22,10 @@ class AgsBody; // forward declaration, we need AgsBody.h on the cpp
 class AgsFixture; // forward declaration, we need AgsFixture.h on the cpp
 class AgsShape; // forward declaration, we need AgsShape.h on the cpp
 class AgsJoint; // forward declaration, we need AgsShape.h on the cpp
+class AgsJointDistance; // forward declaration, we need AgsShape.h on the cpp
+class AgsJointMotor; // forward declaration, we need AgsShape.h on the cpp
+class AgsJointMouse; // forward declaration, we need AgsShape.h on the cpp
+class AgsJointPulley; // forward declaration, we need AgsShape.h on the cpp
 
 class Book
 {
@@ -39,7 +43,12 @@ private:
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
 	std::unordered_map<int32, AgsFixture*> MapAgsFixture;
 	std::unordered_map<int32, AgsShape*> MapAgsShape;
+
     std::unordered_map<int32, AgsJoint*> MapAgsJoint;
+    std::unordered_map<int32, AgsJointDistance*> MapAgsJointDistance;
+    std::unordered_map<int32, AgsJointMotor*> MapAgsJointMotor;
+    std::unordered_map<int32, AgsJointMouse*> MapAgsJointMouse;
+    std::unordered_map<int32, AgsJointPulley*> MapAgsJointPulley;
 
 	uint32 BodyIDCount;
     uint32 JointIDCount;
@@ -93,6 +102,26 @@ public:
     static bool RegisterAgsJoint(int32 id, AgsJoint* joint);
     static bool UnregisterAgsJointByID(int32 id);
     static AgsJoint* IDtoAgsJoint(int32 id);
+
+    static bool isAgsJointDistanceRegisteredByID(int32 id);
+    static bool RegisterAgsJointDistance(int32 id, AgsJointDistance* joint);
+    static bool UnregisterAgsJointDistanceByID(int32 id);
+    static AgsJointDistance* IDtoAgsJointDistance(int32 id);
+
+    static bool isAgsJointMotorRegisteredByID(int32 id);
+    static bool RegisterAgsJointMotor(int32 id, AgsJointMotor* joint);
+    static bool UnregisterAgsJointMotorByID(int32 id);
+    static AgsJointMotor* IDtoAgsJointMotor(int32 id);
+
+    static bool isAgsJointMouseRegisteredByID(int32 id);
+    static bool RegisterAgsJointMouse(int32 id, AgsJointMouse* joint);
+    static bool UnregisterAgsJointMouseByID(int32 id);
+    static AgsJointMouse* IDtoAgsJointMouse(int32 id);
+
+    static bool isAgsJointPulleyRegisteredByID(int32 id);
+    static bool RegisterAgsJointPulley(int32 id, AgsJointPulley* joint);
+    static bool UnregisterAgsJointPulleyByID(int32 id);
+    static AgsJointPulley* IDtoAgsJointPulley(int32 id);
 };
 
 

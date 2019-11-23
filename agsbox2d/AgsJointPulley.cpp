@@ -90,7 +90,8 @@ const char* AgsJointPulleyInterface::name = "JointPulley";
 
 int AgsJointPulleyInterface::Dispose(const char* address, bool force)
 {
-    //delete ((AgsShapeCircle*)address);
+    Book::UnregisterAgsJointPulleyByID(((AgsJointPulley*)address)->ID);
+    delete ((AgsJointPulley*)address);
     return (1);
 }
 

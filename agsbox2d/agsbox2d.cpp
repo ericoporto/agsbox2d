@@ -331,6 +331,9 @@ const char *ourScriptHeader =
 "  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
 "  import static Fixture* CreateFixture(Body* body, Shape* shape, float density=0); \r\n"
 "  \r\n"
+"  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
+"  import static Joint* CreateDistanceJoint(World* world, Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collide_connected); \r\n"
+"  \r\n"
 "}; \r\n";
 
 
@@ -518,6 +521,26 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	Book::RegisterAgsFixture(fixture->ID, fixture);
 
 	return fixture;
+}
+
+AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                                    uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2,
+                                    int32 collide_connected) {
+    float32 fx1 = ToNormalFloat(x1);
+    float32 fy1 = ToNormalFloat(y1);
+    float32 fx2 = ToNormalFloat(x2);
+    float32 fy2 = ToNormalFloat(y2);
+    bool bcollide_connected = collide_connected != 0;
+
+    AgsJointDistance* agsJointDistance = new AgsJointDistance(
+            agsworld, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
+
+    AgsJoint* agsJoint = new AgsJoint(agsJointDistance);
+
+    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+
+    return agsJoint;
 }
 
 #pragma endregion // agsbox2d_ScriptAPI
@@ -985,19 +1008,31 @@ uint32_t AgsJointPulley_GetRatio (AgsJointPulley* self) {
 #pragma region AgsJoint_ScriptAPI
 
 AgsJointDistance* AgsJoint_AsDistance (AgsJoint* self) {
-    return self->JointDistance;
+    AgsJointDistance* agsJointDistance = self->JointDistance;
+    agsJointDistance->ID = engine->RegisterManagedObject(agsJointDistance, &AgsJointDistance_Interface);
+    Book::RegisterAgsJointDistance(agsJointDistance->ID, agsJointDistance);
+    return agsJointDistance;
 }
 
 AgsJointMotor* AgsJoint_AsMotor (AgsJoint* self) {
-    return  self->JointMotor;
+    AgsJointMotor* agsJointMotor = self->JointMotor;
+    agsJointMotor->ID = engine->RegisterManagedObject(agsJointMotor, &AgsJointMotor_Interface);
+    Book::RegisterAgsJointMotor(agsJointMotor->ID, agsJointMotor);
+    return agsJointMotor;
 }
 
 AgsJointMouse* AgsJoint_AsMouse (AgsJoint* self) {
-    return  self->JointMouse;
+    AgsJointMouse* agsJointMouse = self->JointMouse;
+    agsJointMouse->ID = engine->RegisterManagedObject(agsJointMouse, &AgsJointMouse_Interface);
+    Book::RegisterAgsJointMouse(agsJointMouse->ID, agsJointMouse);
+    return agsJointMouse;
 }
 
 AgsJointPulley* AgsJoint_AsPulley (AgsJoint* self) {
-    return  self->JointPulley;
+    AgsJointPulley* agsJointPulley = self->JointPulley;
+    agsJointPulley->ID = engine->RegisterManagedObject(agsJointPulley, &AgsJointPulley_Interface);
+    Book::RegisterAgsJointPulley(agsJointPulley->ID, agsJointPulley);
+    return agsJointPulley;
 }
 
 int32 AgsJoint_GetIsValid (AgsJoint* self) {
@@ -1043,6 +1078,12 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
 
+    engine->AddManagedObjectReader(AgsJointInterface::name, &AgsJoint_Reader);
+    engine->AddManagedObjectReader(AgsJointDistanceInterface::name, &AgsJointDistance_Reader);
+    engine->AddManagedObjectReader(AgsJointMotorInterface::name, &AgsJointMotor_Reader);
+    engine->AddManagedObjectReader(AgsJointMouseInterface::name, &AgsJointMouse_Reader);
+    engine->AddManagedObjectReader(AgsJointPulleyInterface::name, &AgsJointPulley_Reader);
+
 	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
@@ -1051,6 +1092,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
+    engine->RegisterScriptFunction("AgsBox2D::CreateDistanceJoint^8", (void*)agsbox2d_newDistanceJoint);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);
