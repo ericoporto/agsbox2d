@@ -86,7 +86,7 @@ const char* AgsJointDistanceInterface::name = "JointDistance";
 int AgsJointDistanceInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointDistanceByID(((AgsJointDistance*)address)->ID);
-    delete ((AgsJointDistance*)address);
+    //delete ((AgsJointDistance*)address);
     return (1);
 }
 

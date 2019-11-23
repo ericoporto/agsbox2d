@@ -119,7 +119,7 @@ const char* AgsJointMouseInterface::name = "JointMouse";
 int AgsJointMouseInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointMouseByID(((AgsJointMouse*)address)->ID);
-    delete ((AgsJointMouse*)address);
+    //delete ((AgsJointMouse*)address);
     return (1);
 }
 

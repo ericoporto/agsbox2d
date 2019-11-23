@@ -331,8 +331,17 @@ const char *ourScriptHeader =
 "  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
 "  import static Fixture* CreateFixture(Body* body, Shape* shape, float density=0); \r\n"
 "  \r\n"
-"  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
-"  import static Joint* CreateDistanceJoint(World* world, Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collide_connected); \r\n"
+"  /// Create Distance Joint. \r\n"
+"  import static Joint* CreateDistanceJoint(World* world, Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collideConnected = 0); \r\n"
+"  \r\n"
+"  /// Create Motor Joint. \r\n"
+"  import static Joint* CreateMotorJoint(World* world, Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0); \r\n"
+"  \r\n"
+"  /// Create Mouse Joint between body and a target point. \r\n"
+"  import static Joint* CreateMouseJoint(World* world, Body* bodyA, float x, float y); \r\n"
+"  \r\n"
+"  /// Create Pulley Joint. \r\n"
+"  import static Joint* CreatePulleyJoint(World* world, Body* bodyA, Body* bodyB, float gAnchorAX, float gAnchorAY, float gAnchorBX, float gAnchorBY, float AnchorAX, float AnchorAY, float AnchorBX, float AnchorBY, float ratio, bool collideConnected = 0); \r\n"
 "  \r\n"
 "}; \r\n";
 
@@ -536,6 +545,69 @@ AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsB
             agsworld, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
 
     AgsJoint* agsJoint = new AgsJoint(agsJointDistance);
+
+    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+
+    return agsJoint;
+}
+
+AgsJoint* agsbox2d_newMotorJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                                 uint32_t correction_factor,
+                                 int32 collide_connected) {
+
+    float32 fcorrection_factor = ToNormalFloat(correction_factor);
+    bool bcollide_connected = collide_connected != 0;
+
+    AgsJointMotor* agsJointMotor = new AgsJointMotor(
+            agsworld, agsbody_a, agsbody_b, fcorrection_factor, bcollide_connected);
+
+    AgsJoint* agsJoint = new AgsJoint(agsJointMotor);
+
+    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+
+    return agsJoint;
+}
+
+AgsJoint* agsbox2d_newMouseJoint(AgsWorld* agsworld, AgsBody* agsbody_a,
+                                uint32_t x, uint32_t y) {
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+
+    AgsJointMouse* agsJointMouse = new AgsJointMouse(
+            agsworld, agsbody_a, fx, fy);
+
+    AgsJoint* agsJoint = new AgsJoint(agsJointMouse);
+
+    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+
+    return agsJoint;
+}
+
+AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                                  uint32_t ground_anchor_a_x, uint32_t ground_anchor_a_y, uint32_t ground_anchor_b_x, uint32_t ground_anchor_b_y,
+                                  uint32_t anchor_a_x, uint32_t anchor_a_y, uint32_t anchor_b_x, uint32_t anchor_b_y,
+                                  uint32_t ratio, int32 collide_connected) {
+    float32 fground_anchor_a_x = ToNormalFloat(ground_anchor_a_x);
+    float32 fground_anchor_a_y = ToNormalFloat(ground_anchor_a_y);
+    float32 fground_anchor_b_x = ToNormalFloat(ground_anchor_b_x);
+    float32 fground_anchor_b_y = ToNormalFloat(ground_anchor_b_y);
+    float32 fanchor_a_x = ToNormalFloat(anchor_a_x);
+    float32 fanchor_a_y = ToNormalFloat(anchor_a_y);
+    float32 fanchor_b_x = ToNormalFloat(anchor_b_x);
+    float32 fanchor_b_y = ToNormalFloat(anchor_b_y);
+    float32 fratio = ToNormalFloat(ratio);
+    bool bcollide_connected = collide_connected != 0;
+
+    AgsJointPulley* agsJointPulley = new AgsJointPulley(
+            agsworld, agsbody_a, agsbody_b,
+            fground_anchor_a_x, fground_anchor_a_y, fground_anchor_b_x, fground_anchor_b_y,
+            fanchor_a_x, fanchor_a_y, fanchor_b_x, fanchor_b_y,
+            fratio, bcollide_connected);
+
+    AgsJoint* agsJoint = new AgsJoint(agsJointPulley);
 
     agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
     Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
@@ -1093,6 +1165,9 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
     engine->RegisterScriptFunction("AgsBox2D::CreateDistanceJoint^8", (void*)agsbox2d_newDistanceJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateMotorJoint^5", (void*)agsbox2d_newMotorJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateMouseJoint^4", (void*)agsbox2d_newMouseJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^13", (void*)agsbox2d_newPulleyJoint);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);

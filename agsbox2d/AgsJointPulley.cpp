@@ -91,7 +91,7 @@ const char* AgsJointPulleyInterface::name = "JointPulley";
 int AgsJointPulleyInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointPulleyByID(((AgsJointPulley*)address)->ID);
-    delete ((AgsJointPulley*)address);
+    //delete ((AgsJointPulley*)address);
     return (1);
 }
 
