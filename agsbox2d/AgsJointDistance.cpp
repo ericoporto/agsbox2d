@@ -35,6 +35,9 @@ AgsJointDistance::AgsJointDistance(b2DistanceJoint* distancejoint){
     B2AgsJointDistance = distancejoint;
 }
 
+AgsJointDistance::~AgsJointDistance(void)
+{
+}
 
 void AgsJointDistance::SetLength(float32 length) {
     B2AgsJointDistance->SetLength(Scale::ScaleDown(length));
