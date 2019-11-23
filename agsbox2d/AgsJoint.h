@@ -53,6 +53,8 @@ public:
     ~AgsJoint(void);
     b2Joint* B2AgsJoint;
 
+    b2Joint* GetB2AgsJoint();
+
     AgsJointDistance* JointDistance;
     AgsJointMotor* JointMotor;
     AgsJointMouse* JointMouse;

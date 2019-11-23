@@ -343,6 +343,9 @@ const char *ourScriptHeader =
 "  /// Create Pulley Joint. \r\n"
 "  import static Joint* CreatePulleyJoint(World* world, Body* bodyA, Body* bodyB, float gAnchorAX, float gAnchorAY, float gAnchorBX, float gAnchorBY, float AnchorAX, float AnchorAY, float AnchorBX, float AnchorBY, float ratio, bool collideConnected = 0); \r\n"
 "  \r\n"
+"  /// Removes a joint from the world, and marks it as invalid. \r\n"
+"  import static void DestroyJoint(World* world, Joint* joint);  \r\n"
+"  \r\n"
 "}; \r\n";
 
 
@@ -614,6 +617,14 @@ AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBod
 
     return agsJoint;
 }
+
+void agsbox2d_DestroyJoint(AgsWorld* world, AgsJoint* joint) {
+    if (world == nullptr)
+        return;
+
+    world->DestroyJoint(joint);
+}
+
 
 #pragma endregion // agsbox2d_ScriptAPI
 //-----------------------------------------------------------------------------
@@ -1168,6 +1179,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("AgsBox2D::CreateMotorJoint^5", (void*)agsbox2d_newMotorJoint);
     engine->RegisterScriptFunction("AgsBox2D::CreateMouseJoint^4", (void*)agsbox2d_newMouseJoint);
     engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^13", (void*)agsbox2d_newPulleyJoint);
+    engine->RegisterScriptFunction("AgsBox2D::DestroyJoint^2", (void*)agsbox2d_DestroyJoint);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);

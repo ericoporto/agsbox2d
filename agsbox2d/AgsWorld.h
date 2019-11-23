@@ -17,6 +17,7 @@
 #include <vector>
 
 class AgsBody; // forward declaration, we need AgsBody.h on the cpp
+class AgsJoint; // forward declaration, we need AgsBody.h on the cpp
 
 class AgsWorld
 {
@@ -29,7 +30,8 @@ public:
 	AgsBody* NewBody(float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
     AgsBody* findObject(b2Body* b2body);
 	void DestroyBody(AgsBody* body);
-	void Step(float32 dt, int velocityIterations, int positionIterations);
+	void DestroyJoint(AgsJoint* joint);
+    void Step(float32 dt, int velocityIterations, int positionIterations);
 	int32 ID;
 	//std::vector<AgsBody*> AgsBodyList;
 };

@@ -9,6 +9,7 @@
 
 #include "AgsWorld.h"
 #include "AgsBody.h"
+#include "AgsJoint.h"
 #include "Scale.h"
 #include "Book.h"
 
@@ -38,6 +39,15 @@ void AgsWorld::DestroyBody(AgsBody* body) {
 	B2AgsWorld->DestroyBody(body->GetB2AgsBody());
 
 	body->SetIsDestroyed();
+}
+
+void AgsWorld::DestroyJoint(AgsJoint* joint) {
+    if (joint == nullptr && !joint->isValid()) {
+        return;
+    }
+
+    Book::UnregisterJointFromWorldByID(Book::b2JointToID(this->ID,joint->GetB2AgsJoint()),this->ID);
+    B2AgsWorld->DestroyJoint(joint->GetB2AgsJoint());
 }
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {

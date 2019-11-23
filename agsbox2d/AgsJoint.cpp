@@ -115,6 +115,9 @@ bool AgsJoint::isActive(){
     return  B2AgsJoint->IsActive();
 }
 
+b2Joint* AgsJoint::GetB2AgsJoint(){
+    return  B2AgsJoint;
+}
 
 AgsBody*  AgsJoint::GetBody(int world_id, b2Body* body) {
     b2Body *b2body = body;
