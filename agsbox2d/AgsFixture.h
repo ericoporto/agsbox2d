@@ -27,6 +27,7 @@ public:
 	b2FixtureDef B2AgsFixtureDef;
 
     void InitializeIfNeeded();
+    b2Body* GetB2Body();
 
 	float32 GetDensity();
 	void SetDensity(float32 density);

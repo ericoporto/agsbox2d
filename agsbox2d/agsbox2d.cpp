@@ -428,6 +428,32 @@ IAGSEngine* engine;
 
 AgsDebugDraw debugDraw;  // Declare an instance of our DebugDraw class so we can actually use it
 
+AgsBody* FindAgsBodyFromB2Body(b2World* world, int32 world_id, b2Body* b2body) {
+    // body was null in the first place
+    if(b2body == nullptr)
+        return nullptr;
+
+    int32 b2body_id = Book::b2BodyToID(world_id,b2body);
+
+    // body is not from this world
+    if(b2body_id < 0)
+        return nullptr;
+
+    // we found an already registered AgsBody
+    AgsBody* agsbody = Book::b2bodyIDtoAgsBody(b2body_id, world_id);
+    if(agsbody != nullptr)
+        return agsbody;
+
+    // we didn't find an already registered AgsBody, so let's create one
+    AgsBody* body = new AgsBody();
+    body->ID = engine->RegisterManagedObject(body, &AgsBody_Interface);
+    body->B2BodyID = b2body_id;
+    body->World = Book::IDtoAgsWorld(world_id);
+
+    Book::RegisterAgsBody(body->ID, body);
+    return body;
+}
+
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
 
@@ -948,6 +974,12 @@ void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
 	float32 frestitution = ToNormalFloat(restitution);
 
 	self->SetRestitution(frestitution);
+}
+
+AgsBody* AgsFixture_GetBody(AgsFixture* self) {
+    AgsWorld* world = Book::IDtoAgsWorld(self->WorldID);
+
+    return FindAgsBodyFromB2Body(world->B2AgsWorld, world->ID, self->GetB2Body());
 }
 
 #pragma endregion // AgsFixture_ScriptAPI

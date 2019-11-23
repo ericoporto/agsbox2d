@@ -83,6 +83,10 @@ void AgsFixture::SetRestitution(float32 restitution) {
 	B2AgsFixture->SetRestitution(restitution);
 }
 
+b2Body* AgsFixture::GetB2Body() {
+    InitializeIfNeeded();
+    return B2AgsFixture->GetBody();
+}
 
 AgsFixture::~AgsFixture(void)
 {

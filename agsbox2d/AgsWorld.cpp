@@ -56,11 +56,7 @@ void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIteratio
 }
 
 AgsBody* AgsWorld::findObject(b2Body* b2body){
-    AgsBody* agsbody = Book::b2bodyIDtoAgsBody(Book::b2BodyToID(ID,b2body), ID);
-    if(agsbody != nullptr)
-        return agsbody;
 
-    return nullptr;
 }
 
 AgsWorld::~AgsWorld(void)
