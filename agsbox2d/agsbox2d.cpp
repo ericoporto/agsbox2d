@@ -535,7 +535,7 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	return fixture;
 }
 
-AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
                                     uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2,
                                     int32 collide_connected) {
     float32 fx1 = ToNormalFloat(x1);
@@ -545,17 +545,20 @@ AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsB
     bool bcollide_connected = collide_connected != 0;
 
     AgsJointDistance* agsJointDistance = new AgsJointDistance(
-            agsworld, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
+            world, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
 
-    AgsJoint* agsJoint = new AgsJoint(agsJointDistance);
+    AgsJoint* joint = new AgsJoint(agsJointDistance);
 
-    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
-    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
 
-    return agsJoint;
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
 }
 
-AgsJoint* agsbox2d_newMotorJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+AgsJoint* agsbox2d_newMotorJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
                                  uint32_t correction_factor,
                                  int32 collide_connected) {
 
@@ -563,33 +566,39 @@ AgsJoint* agsbox2d_newMotorJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody
     bool bcollide_connected = collide_connected != 0;
 
     AgsJointMotor* agsJointMotor = new AgsJointMotor(
-            agsworld, agsbody_a, agsbody_b, fcorrection_factor, bcollide_connected);
+            world, agsbody_a, agsbody_b, fcorrection_factor, bcollide_connected);
 
-    AgsJoint* agsJoint = new AgsJoint(agsJointMotor);
+    AgsJoint* joint = new AgsJoint(agsJointMotor);
 
-    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
-    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
 
-    return agsJoint;
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
 }
 
-AgsJoint* agsbox2d_newMouseJoint(AgsWorld* agsworld, AgsBody* agsbody_a,
+AgsJoint* agsbox2d_newMouseJoint(AgsWorld* world, AgsBody* agsbody_a,
                                 uint32_t x, uint32_t y) {
     float32 fx = ToNormalFloat(x);
     float32 fy = ToNormalFloat(y);
 
     AgsJointMouse* agsJointMouse = new AgsJointMouse(
-            agsworld, agsbody_a, fx, fy);
+            world, agsbody_a, fx, fy);
 
-    AgsJoint* agsJoint = new AgsJoint(agsJointMouse);
+    AgsJoint* joint = new AgsJoint(agsJointMouse);
 
-    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
-    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
 
-    return agsJoint;
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
 }
 
-AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
+AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
                                   uint32_t ground_anchor_a_x, uint32_t ground_anchor_a_y, uint32_t ground_anchor_b_x, uint32_t ground_anchor_b_y,
                                   uint32_t anchor_a_x, uint32_t anchor_a_y, uint32_t anchor_b_x, uint32_t anchor_b_y,
                                   uint32_t ratio, int32 collide_connected) {
@@ -605,17 +614,20 @@ AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBod
     bool bcollide_connected = collide_connected != 0;
 
     AgsJointPulley* agsJointPulley = new AgsJointPulley(
-            agsworld, agsbody_a, agsbody_b,
+            world, agsbody_a, agsbody_b,
             fground_anchor_a_x, fground_anchor_a_y, fground_anchor_b_x, fground_anchor_b_y,
             fanchor_a_x, fanchor_a_y, fanchor_b_x, fanchor_b_y,
             fratio, bcollide_connected);
 
-    AgsJoint* agsJoint = new AgsJoint(agsJointPulley);
+    AgsJoint* joint = new AgsJoint(agsJointPulley);
 
-    agsJoint->ID = engine->RegisterManagedObject(agsJoint, &AgsJoint_Interface);
-    Book::RegisterAgsJoint(agsJoint->ID, agsJoint);
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
 
-    return agsJoint;
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
 }
 
 void agsbox2d_DestroyJoint(AgsWorld* world, AgsJoint* joint) {

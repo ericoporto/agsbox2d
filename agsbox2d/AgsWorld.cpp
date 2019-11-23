@@ -31,7 +31,7 @@ b2Body* AgsWorld::GetGroundB2Body(){
 }
 
 void AgsWorld::DestroyBody(AgsBody* body) {
-	if (body == nullptr && body->GetIsDestroyed()) {
+	if (body == nullptr || body->GetIsDestroyed()) {
 		return;
 	}
 
@@ -42,7 +42,7 @@ void AgsWorld::DestroyBody(AgsBody* body) {
 }
 
 void AgsWorld::DestroyJoint(AgsJoint* joint) {
-    if (joint == nullptr && !joint->isValid()) {
+    if (joint == nullptr || !joint->isValid()) {
         return;
     }
 
