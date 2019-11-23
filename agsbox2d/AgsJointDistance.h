@@ -33,8 +33,9 @@ public:
     void SetDampingRatio(float32 dratio);
     float32  GetDampingRatio();
 
-    AgsBody* GetBodyA();
-    AgsBody* GetBodyB();
+
+    b2Body* GetBodyA();
+    b2Body* GetBodyB();
 
     int32 ID;
 

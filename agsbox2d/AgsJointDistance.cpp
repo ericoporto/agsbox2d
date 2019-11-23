@@ -63,13 +63,14 @@ float32 AgsJointDistance::GetDampingRatio(){
     return   B2AgsJointDistance->GetDampingRatio();
 }
 
-AgsBody* AgsJointDistance::GetBodyA() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointDistance->GetBodyA());
+b2Body* AgsJointDistance::GetBodyA() {
+    return B2AgsJointDistance->GetBodyB();
 }
 
-AgsBody* AgsJointDistance::GetBodyB() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointDistance->GetBodyB());
+b2Body* AgsJointDistance::GetBodyB() {
+    return B2AgsJointDistance->GetBodyB();
 }
+
 
 //------------------------------------------------------------------------------
 

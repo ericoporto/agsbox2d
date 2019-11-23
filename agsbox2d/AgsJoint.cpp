@@ -119,27 +119,6 @@ b2Joint* AgsJoint::GetB2AgsJoint(){
     return  B2AgsJoint;
 }
 
-AgsBody*  AgsJoint::GetBody(int world_id, b2Body* body) {
-    b2Body *b2body = body;
-    if (b2body == nullptr)
-        return nullptr;
-
-    AgsWorld* agsworld = Book::IDtoAgsWorld(world_id);
-    AgsBody* agsbody = agsworld->findObject(b2body);
-
-    if(agsbody!= nullptr)
-        return  agsbody;
-
-
-    agsbody = new AgsBody(false);
-
-    agsbody->B2BodyID = Book::b2BodyToID(world_id, b2body);
-    agsbody->World = agsworld;
-    agsbody->ID = -1;
-
-    return  agsbody;
-}
-
 b2Body* AgsJoint::GetBodyA() {
     return B2AgsJoint->GetBodyA();
 }

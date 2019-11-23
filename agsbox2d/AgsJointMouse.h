@@ -24,8 +24,8 @@ public:
     ~AgsJointMouse(void);
     b2MouseJoint* B2AgsJointMouse;
 
-    AgsBody* GetBodyA();
-    AgsBody* GetBodyB();
+    b2Body* GetBodyA();
+    b2Body* GetBodyB();
 
     void SetTarget(float32 x, float32 y);
     float32 GetTargetX();

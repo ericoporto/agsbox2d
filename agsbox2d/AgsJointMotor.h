@@ -44,8 +44,8 @@ public:
     void SetCorrectionFactor(float factor);
     float32 GetCorrectionFactor();
 
-    AgsBody* GetBodyA();
-    AgsBody* GetBodyB();
+    b2Body* GetBodyA();
+    b2Body* GetBodyB();
 
     int32 ID;
 

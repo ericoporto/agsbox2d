@@ -1176,12 +1176,18 @@ int32 AgsJoint_GetIsActive (AgsJoint* self) {
 AgsBody* AgsJoint_GetBodyA (AgsJoint* self) {
     b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
     int32 world_id = self->GetAgsWorld()->ID;
+    if(self->B2AgsJoint->GetType() == e_mouseJoint)
+        return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());
+
     return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyA());
 }
 
 AgsBody* AgsJoint_GetBodyB (AgsJoint* self) {
     b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
     int32 world_id = self->GetAgsWorld()->ID;
+    if(self->B2AgsJoint->GetType() == e_mouseJoint)
+        return nullptr;
+
     return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());
 }
 

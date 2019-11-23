@@ -95,11 +95,11 @@ float32 AgsJointMouse::GetDampingRatio()
     return B2AgsJointMouse->GetDampingRatio();
 }
 
-AgsBody* AgsJointMouse::GetBodyA() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointMouse->GetBodyB());
+b2Body* AgsJointMouse::GetBodyA() {
+    return  B2AgsJointMouse->GetBodyB();
 }
 
-AgsBody *AgsJointMouse::GetBodyB()
+b2Body *AgsJointMouse::GetBodyB()
 {
     return nullptr;
 }

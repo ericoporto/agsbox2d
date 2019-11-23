@@ -41,7 +41,6 @@ class AgsJoint
     int32 B2bodyA_ID;
     int32 B2bodyB_ID;
 public:
-    static AgsBody*  GetBody(int world_id, b2Body* body);
 
     AgsJoint(b2Joint* b2joint);
 

@@ -28,7 +28,6 @@ public:
 	b2World* B2AgsWorld;
     b2Body* GetGroundB2Body();
 	AgsBody* NewBody(float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
-    AgsBody* findObject(b2Body* b2body);
 	void DestroyBody(AgsBody* body);
 	void DestroyJoint(AgsJoint* joint);
     void Step(float32 dt, int velocityIterations, int positionIterations);

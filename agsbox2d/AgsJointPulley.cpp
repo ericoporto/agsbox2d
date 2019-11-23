@@ -68,12 +68,12 @@ float32 AgsJointPulley::GetRatio()
     return B2AgsJointPulley->GetRatio();
 }
 
-AgsBody* AgsJointPulley::GetBodyA() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointPulley->GetBodyA());
+b2Body* AgsJointPulley::GetBodyA() {
+    return B2AgsJointPulley->GetBodyB();
 }
 
-AgsBody* AgsJointPulley::GetBodyB() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointPulley->GetBodyB());
+b2Body* AgsJointPulley::GetBodyB() {
+    return B2AgsJointPulley->GetBodyB();
 }
 
 //------------------------------------------------------------------------------

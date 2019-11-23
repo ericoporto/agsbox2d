@@ -122,12 +122,12 @@ float32 AgsJointMotor::GetCorrectionFactor()
     return B2AgsJointMotor->GetCorrectionFactor();
 }
 
-AgsBody* AgsJointMotor::GetBodyA() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointMotor->GetBodyA());
+b2Body* AgsJointMotor::GetBodyA() {
+    return B2AgsJointMotor->GetBodyB();
 }
 
-AgsBody* AgsJointMotor::GetBodyB() {
-    return AgsJoint::GetBody(WorldID, B2AgsJointMotor->GetBodyB());
+b2Body* AgsJointMotor::GetBodyB() {
+    return B2AgsJointMotor->GetBodyB();
 }
 
 //------------------------------------------------------------------------------
