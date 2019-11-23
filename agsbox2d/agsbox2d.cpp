@@ -197,6 +197,9 @@ const char *ourScriptHeader =
 "  /// Usually a value between 0.0 and 1.0 to make objects bounce. \r\n"
 "  import attribute float Restitution; \r\n"
 "  \r\n"
+"  /// Returns Bodyif it's defined for this fixture, otherwise null. \r\n"
+"  readonly import attribute Body* Body; \r\n"
+"  \r\n"
 "}; \r\n"
 " \r\n"
 "builtin managed struct JointDistance; \r\n"
@@ -951,9 +954,9 @@ uint32_t AgsFixture_GetDensity(AgsFixture* self) {
 }
 
 void AgsFixture_SetDensity(AgsFixture* self, uint32_t density) {
-	float32 fdensity = ToNormalFloat(density);
+	float32 f_density = ToNormalFloat(density);
 
-	self->SetDensity(fdensity);
+	self->SetDensity(f_density);
 }
 
 uint32_t AgsFixture_GetFriction(AgsFixture* self) {
@@ -971,9 +974,9 @@ uint32_t AgsFixture_GetRestitution(AgsFixture* self) {
 }
 
 void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
-	float32 frestitution = ToNormalFloat(restitution);
+	float32 f_restitution = ToNormalFloat(restitution);
 
-	self->SetRestitution(frestitution);
+	self->SetRestitution(f_restitution);
 }
 
 AgsBody* AgsFixture_GetBody(AgsFixture* self) {
@@ -992,8 +995,8 @@ uint32_t AgsJointDistance_GetLength (AgsJointDistance* self) {
 }
 
 void AgsJointDistance_SetLength (AgsJointDistance* self, uint32_t length) {
-    float32 flength = ToNormalFloat(length);
-    self->SetLength(flength);
+    float32 f_length = ToNormalFloat(length);
+    self->SetLength(f_length);
 }
 
 uint32_t AgsJointDistance_GetDampingRatio (AgsJointDistance* self) {
@@ -1001,8 +1004,8 @@ uint32_t AgsJointDistance_GetDampingRatio (AgsJointDistance* self) {
 }
 
 void AgsJointDistance_SetDampingRatio (AgsJointDistance* self, uint32_t dratio) {
-    float32 fdratio = ToNormalFloat(dratio);
-    self->SetDampingRatio(fdratio);
+    float32 f_dratio = ToNormalFloat(dratio);
+    self->SetDampingRatio(f_dratio);
 }
 
 uint32_t AgsJointDistance_GetFrequency (AgsJointDistance* self) {
@@ -1056,8 +1059,8 @@ uint32_t AgsJointMotor_GetMaxForce (AgsJointMotor* self) {
 }
 
 void AgsJointMotor_SetMaxForce (AgsJointMotor* self, uint32_t force) {
-    float32 fforce = ToNormalFloat(force);
-    self->SetMaxForce(fforce);
+    float32 f_force = ToNormalFloat(force);
+    self->SetMaxForce(f_force);
 }
 
 uint32_t AgsJointMotor_GetMaxTorque (AgsJointMotor* self) {
@@ -1078,8 +1081,8 @@ uint32_t AgsJointMouse_GetDampingRatio (AgsJointMouse* self) {
 }
 
 void AgsJointMouse_SetDampingRatio (AgsJointMouse* self, uint32_t dratio) {
-    float32 fdratio = ToNormalFloat(dratio);
-    self->SetDampingRatio(fdratio);
+    float32 f_dratio = ToNormalFloat(dratio);
+    self->SetDampingRatio(f_dratio);
 }
 
 uint32_t AgsJointMouse_GetFrequency (AgsJointMouse* self) {
@@ -1110,8 +1113,8 @@ uint32_t AgsJointMouse_GetMaxForce (AgsJointMouse* self) {
 }
 
 void AgsJointMouse_SetMaxForce (AgsJointMouse* self, uint32_t force) {
-    float32 fforce = ToNormalFloat(force);
-    self->SetMaxForce(fforce);
+    float32 f_force = ToNormalFloat(force);
+    self->SetMaxForce(f_force);
 }
 
 #pragma endregion // AgsJointMouse_ScriptAPI
@@ -1171,11 +1174,15 @@ int32 AgsJoint_GetIsActive (AgsJoint* self) {
 }
 
 AgsBody* AgsJoint_GetBodyA (AgsJoint* self) {
-    return self->GetBodyA();
+    b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
+    int32 world_id = self->GetAgsWorld()->ID;
+    return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyA());
 }
 
 AgsBody* AgsJoint_GetBodyB (AgsJoint* self) {
-    return  self->GetBodyB();
+    b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
+    int32 world_id = self->GetAgsWorld()->ID;
+    return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());
 }
 
 int32 AgsJoint_GetType (AgsJoint* self) {
@@ -1280,6 +1287,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
 	engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
 	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
+    engine->RegisterScriptFunction("Fixture::get_Body", (void*)AgsFixture_GetBody);
 
     engine->RegisterScriptFunction("JointDistance::get_Length", (void*)AgsJointDistance_GetLength);
     engine->RegisterScriptFunction("JointDistance::set_Length", (void*)AgsJointDistance_SetLength);

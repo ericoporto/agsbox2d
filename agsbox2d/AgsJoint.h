@@ -66,8 +66,9 @@ public:
     bool isValid();
     bool isActive();
 
-    AgsBody* GetBodyA();
-    AgsBody* GetBodyB();
+    AgsWorld* GetAgsWorld();
+    b2Body* GetBodyA();
+    b2Body* GetBodyB();
 };
 
 

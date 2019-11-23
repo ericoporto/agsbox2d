@@ -140,12 +140,17 @@ AgsBody*  AgsJoint::GetBody(int world_id, b2Body* body) {
     return  agsbody;
 }
 
-AgsBody* AgsJoint::GetBodyA() {
-    return AgsJoint::GetBody(WorldID, B2AgsJoint->GetBodyA());
+b2Body* AgsJoint::GetBodyA() {
+    return B2AgsJoint->GetBodyA();
 }
 
-AgsBody* AgsJoint::GetBodyB() {
-    return AgsJoint::GetBody(WorldID, B2AgsJoint->GetBodyB());
+b2Body* AgsJoint::GetBodyB() {
+    return B2AgsJoint->GetBodyB();
+}
+
+
+AgsWorld* AgsJoint::GetAgsWorld() {
+    return Book::IDtoAgsWorld(WorldID);
 }
 
 //------------------------------------------------------------------------------
