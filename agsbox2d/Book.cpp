@@ -53,7 +53,41 @@ void Book::DisposeWorldIfNeeded(){
 		}
 
         if(!(i()->B2BodiesByPointer.empty())){
-            i()->B2BodiesByID.clear();
+            i()->B2BodiesByPointer.clear();
+        }
+
+        if(!(i()->B2FixtureByID.empty())){
+
+            std::unordered_map<int32, std::unordered_map<int32, b2Fixture* >*>::iterator it;
+
+            for (it=i()->B2FixtureByID.begin(); it != i()->B2FixtureByID.end(); ++it){
+                if(it->second != nullptr){
+                    delete it->second;
+                }
+            }
+        //
+            i()->B2FixtureByID.clear();
+        }
+
+        if(!(i()->B2FixtureByPointer.empty())){
+            i()->B2FixtureByPointer.clear();
+        }
+
+        if(!(i()->B2JointByID.empty())){
+
+            std::unordered_map<int32, std::unordered_map<int32, b2Joint* >*>::iterator it;
+
+            for (it=i()->B2JointByID.begin(); it != i()->B2JointByID.end(); ++it){
+                if(it->second != nullptr){
+                    delete it->second;
+                }
+            }
+            //
+            i()->B2JointByID.clear();
+        }
+
+        if(!(i()->B2JointByPointer.empty())){
+            i()->B2JointByPointer.clear();
         }
 	}
 }

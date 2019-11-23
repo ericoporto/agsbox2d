@@ -40,16 +40,7 @@ AgsFixture::AgsFixture(int32 world_id, int32 b2body_id, int32 fixture_id) {
 
 void AgsFixture::InitializeIfNeeded(){
     if(B2AgsFixture == nullptr) {
-        b2Body* body = Book::IDtoB2Body(WorldID,b2BodyID);
-        int32 fixturecount = 0;
-        b2Fixture* fixture;
-        for (fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
-            if(fixturecount == b2FixtureID){
-                break;
-            }
-            fixturecount++;
-        }
-        B2AgsFixture = fixture;
+        B2AgsFixture = Book::IDtoB2Fixture(WorldID, b2FixtureID);
     }
 }
 
@@ -136,17 +127,7 @@ int AgsFixtureInterface::Serialize(const char* address, char* buffer, int bufsiz
 
     int32 world_id = agsFixture->WorldID;
     int32 b2body_id = agsFixture->b2BodyID;
-
-    b2Body* b2_body = Book::IDtoB2Body(world_id,b2body_id);
-
-    int32 fixturecount = 0;
-    for (b2Fixture* fixture =  b2_body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
-        if(fixture == agsFixture->GetB2AgsFixture()){
-            break;
-        }
-        fixturecount++;
-    }
-    int32 fixture_id = fixturecount;
+    int32 fixture_id = agsFixture->b2FixtureID;
 
     ptr = IntToChar(world_id, ptr, end);
     ptr = IntToChar(b2body_id, ptr, end);

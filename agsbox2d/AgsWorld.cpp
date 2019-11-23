@@ -150,6 +150,18 @@ int AgsWorldInterface::Serialize(const char* address, char* buffer, int bufsize)
 		}
 	}
 
+	int32 fixturecount = Book::GetFixtureCount(world->ID);
+    ptr = IntToChar(fixturecount, ptr, end);
+
+    if (fixturecount > 0) {
+        for (std::unordered_map<int32, b2Fixture* >::iterator itr = Book::GetFixtureBegin(world->ID);
+             itr != Book::GetFixtureEnd(world->ID); ++itr) {
+            ptr = IntToChar(itr->first, ptr, end);
+            int b2body_id = Book::b2BodyToID(world->ID, itr->second->GetBody());
+            ptr = IntToChar(b2body_id, ptr, end);
+        }
+    }
+
 	return (ptr - buffer);
 }
 
@@ -195,6 +207,28 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 			Book::RegisterBodyFromWorld(body, body_id, world->ID);
 		}
 	}
+
+    int32 fixturecount;
+    ptr = CharToInt(fixturecount, ptr);
+
+    int32 temp_prev_body_id=-1;
+    b2Fixture* temp_f;
+    if (fixturecount > 0) {
+        for (int i = 0; i < fixturecount; i++) {
+            int32 fixture_id;
+            int32 body_id;
+            ptr = CharToInt(fixture_id, ptr);
+            ptr = CharToInt(body_id, ptr);
+            b2Body* b2body = Book::IDtoB2Body( world->ID, body_id);
+            if(temp_prev_body_id != body_id)
+                temp_f = b2body->GetFixtureList();
+
+            Book::RegisterFixtureFromWorld(temp_f, fixture_id, world->ID);
+
+            temp_prev_body_id = body_id;
+            temp_f->GetNext();
+        }
+    }
 
 	engine->RegisterUnserializedObject(key, world, &AgsWorld_Interface);
 }
