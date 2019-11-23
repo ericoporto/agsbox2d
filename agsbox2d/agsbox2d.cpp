@@ -838,27 +838,30 @@ void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
 
 
 uint32_t AgsJointDistance_GetLength (AgsJointDistance* self) {
-
+    return ToAgsFloat(self->GetLength());
 }
 
-void AgsJointDistance_SetLength (AgsJointDistance* self) {
-
+void AgsJointDistance_SetLength (AgsJointDistance* self, uint32_t length) {
+    float32 flength = ToNormalFloat(length);
+    self->SetLength(flength);
 }
 
 uint32_t AgsJointDistance_GetDampingRatio (AgsJointDistance* self) {
-
+    return ToAgsFloat(self->GetDampingRatio());
 }
 
-void AgsJointDistance_SetDampingRatio (AgsJointDistance* self) {
-
+void AgsJointDistance_SetDampingRatio (AgsJointDistance* self, uint32_t dratio) {
+    float32 fdratio = ToNormalFloat(dratio);
+    self->SetDampingRatio(fdratio);
 }
 
 uint32_t AgsJointDistance_GetFrequency (AgsJointDistance* self) {
-
+    return ToAgsFloat(self->GetFrequency());
 }
 
-void AgsJointDistance_SetFrequency (AgsJointDistance* self) {
-
+void AgsJointDistance_SetFrequency (AgsJointDistance* self, uint32_t hz) {
+    float32 fhz = ToNormalFloat(hz);
+    self->SetFrequency(fhz);
 }
 
 #pragma endregion // AgsJointDistance_ScriptAPI
@@ -866,47 +869,54 @@ void AgsJointDistance_SetFrequency (AgsJointDistance* self) {
 #pragma region AgsJointMotor_ScriptAPI
 
 uint32_t AgsJointMotor_GetLinearOffsetX (AgsJointMotor* self) {
-
+    return ToAgsFloat(self->GetLinearOffsetX());
 }
 
-void AgsJointMotor_SetLinearOffsetX (AgsJointMotor* self) {
-
+void AgsJointMotor_SetLinearOffsetX (AgsJointMotor* self, uint32_t x) {
+    float32 fx = ToNormalFloat(x);
+    self->SetLinearOffsetX(fx);
 }
 
 uint32_t AgsJointMotor_GetLinearOffsetY (AgsJointMotor* self) {
-
+    return ToAgsFloat(self->GetLinearOffsetY());
 }
 
-void AgsJointMotor_SetLinearOffsetY (AgsJointMotor* self) {
-
+void AgsJointMotor_SetLinearOffsetY (AgsJointMotor* self, uint32_t y) {
+    float32 fy = ToNormalFloat(y);
+    self->SetLinearOffsetY(fy);
 }
 
-void AgsJointMotor_SetLinearOffset (AgsJointMotor* self) {
-
+void AgsJointMotor_SetLinearOffset (AgsJointMotor* self, uint32_t x, uint32_t y) {
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+    self->SetLinearOffset(fx,fy);
 }
 
 uint32_t AgsJointMotor_GetAngularOffset (AgsJointMotor* self) {
-
+    return ToAgsFloat(self->GetAngularOffset());
 }
 
-void AgsJointMotor_SetAngularOffset (AgsJointMotor* self) {
-
+void AgsJointMotor_SetAngularOffset (AgsJointMotor* self, uint32_t angularOffset) {
+    float32 fangularOffset = ToNormalFloat(angularOffset);
+    self->SetAngularOffset(fangularOffset);
 }
 
 uint32_t AgsJointMotor_GetMaxForce (AgsJointMotor* self) {
-
+    return ToAgsFloat(self->GetMaxForce());
 }
 
-void AgsJointMotor_SetMaxForce (AgsJointMotor* self) {
-
+void AgsJointMotor_SetMaxForce (AgsJointMotor* self, uint32_t force) {
+    float32 fforce = ToNormalFloat(force);
+    self->SetMaxForce(fforce);
 }
 
 uint32_t AgsJointMotor_GetMaxTorque (AgsJointMotor* self) {
-
+    return ToAgsFloat(self->GetMaxTorque());
 }
 
-void AgsJointMotor_SetMaxTorque (AgsJointMotor* self) {
-
+void AgsJointMotor_SetMaxTorque (AgsJointMotor* self, uint32_t torque) {
+    float32 ftorque = ToNormalFloat(torque);
+    self->SetMaxTorque(ftorque);
 }
 
 #pragma endregion // AgsJointMotor_ScriptAPI
@@ -914,39 +924,44 @@ void AgsJointMotor_SetMaxTorque (AgsJointMotor* self) {
 #pragma region AgsJointMouse_ScriptAPI
 
 uint32_t AgsJointMouse_GetDampingRatio (AgsJointMouse* self) {
-
+    return ToAgsFloat(self->GetDampingRatio());
 }
 
-void AgsJointMouse_SetDampingRatio (AgsJointMouse* self) {
-
+void AgsJointMouse_SetDampingRatio (AgsJointMouse* self, uint32_t dratio) {
+    float32 fdratio = ToNormalFloat(dratio);
+    self->SetDampingRatio(fdratio);
 }
 
 uint32_t AgsJointMouse_GetFrequency (AgsJointMouse* self) {
-
+    return ToAgsFloat(self->GetFrequency());
 }
 
-void AgsJointMouse_SetFrequency (AgsJointMouse* self) {
-
+void AgsJointMouse_SetFrequency (AgsJointMouse* self, uint32_t hz) {
+    float32 fhz = ToNormalFloat(hz);
+    self->SetFrequency(fhz);
 }
 
 uint32_t AgsJointMouse_GetTargetX (AgsJointMouse* self) {
-
+    return ToAgsFloat(self->GetTargetX());
 }
 
 uint32_t AgsJointMouse_GetTargetY (AgsJointMouse* self) {
-
+    return ToAgsFloat(self->GetTargetY());
 }
 
-void AgsJointMouse_SetTarget (AgsJointMouse* self) {
-
+void AgsJointMouse_SetTarget (AgsJointMouse* self, uint32_t x, uint32_t y) {
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+    self->SetTarget(fx,fy);
 }
 
 uint32_t AgsJointMouse_GetMaxForce (AgsJointMouse* self) {
-
+    return ToAgsFloat(self->GetMaxForce());
 }
 
-void AgsJointMouse_SetMaxForce (AgsJointMouse* self) {
-
+void AgsJointMouse_SetMaxForce (AgsJointMouse* self, uint32_t force) {
+    float32 fforce = ToNormalFloat(force);
+    self->SetMaxForce(fforce);
 }
 
 #pragma endregion // AgsJointMouse_ScriptAPI
@@ -954,15 +969,15 @@ void AgsJointMouse_SetMaxForce (AgsJointMouse* self) {
 #pragma region AgsJointPulley_ScriptAPI
 
 uint32_t AgsJointPulley_GetLengthA (AgsJointPulley* self) {
-
+    return ToAgsFloat(self->GetLengthA());
 }
 
 uint32_t AgsJointPulley_GetLengthB (AgsJointPulley* self) {
-
+    return ToAgsFloat(self->GetLengthB());
 }
 
 uint32_t AgsJointPulley_GetRatio (AgsJointPulley* self) {
-
+    return ToAgsFloat(self->GetRatio());
 }
 
 #pragma endregion // AgsJointPulley_ScriptAPI
@@ -970,39 +985,39 @@ uint32_t AgsJointPulley_GetRatio (AgsJointPulley* self) {
 #pragma region AgsJoint_ScriptAPI
 
 AgsJointDistance* AgsJoint_AsDistance (AgsJoint* self) {
-
+    return self->JointDistance;
 }
 
 AgsJointMotor* AgsJoint_AsMotor (AgsJoint* self) {
-
+    return  self->JointMotor;
 }
 
 AgsJointMouse* AgsJoint_AsMouse (AgsJoint* self) {
-
+    return  self->JointMouse;
 }
 
 AgsJointPulley* AgsJoint_AsPulley (AgsJoint* self) {
-
+    return  self->JointPulley;
 }
 
 int32 AgsJoint_GetIsValid (AgsJoint* self) {
-
+    return self->isValid();
 }
 
 int32 AgsJoint_GetIsActive (AgsJoint* self) {
-
+    return  self->isActive();
 }
 
 AgsBody* AgsJoint_GetBodyA (AgsJoint* self) {
-
+    return self->GetBodyA();
 }
 
 AgsBody* AgsJoint_GetBodyB (AgsJoint* self) {
-
+    return  self->GetBodyB();
 }
 
 int32 AgsJoint_GetType (AgsJoint* self) {
-
+    return  self->GetType();
 }
 
 #pragma endregion // AgsJoint_ScriptAPI

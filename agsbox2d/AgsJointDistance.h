@@ -30,7 +30,7 @@ public:
     void SetFrequency(float32 hz);
     float32  GetFrequency();
 
-    void SetDampingRation(float32 dratio);
+    void SetDampingRatio(float32 dratio);
     float32  GetDampingRatio();
 
     AgsBody* GetBodyA();

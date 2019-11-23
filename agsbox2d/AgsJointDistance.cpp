@@ -52,7 +52,7 @@ float32 AgsJointDistance::GetFrequency(){
     return B2AgsJointDistance->GetFrequency();
 }
 
-void AgsJointDistance::SetDampingRation(float32 dratio) {
+void AgsJointDistance::SetDampingRatio(float32 dratio) {
     B2AgsJointDistance->SetDampingRatio(dratio);
 }
 
