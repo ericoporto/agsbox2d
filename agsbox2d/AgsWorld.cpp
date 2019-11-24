@@ -261,7 +261,7 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
             ptr = CharToInt(joint_id, ptr);
             ptr = CharToInt(body_a_id, ptr);
             ptr = CharToInt(body_b_id, ptr);
-            ptr = CharTob2JointDef(b2jointdef, ptr);
+            ptr = CharTob2JointDef(&b2jointdef, ptr);
 
             b2jointdef->bodyA = Book::IDtoB2Body(world->ID, body_a_id);
             b2jointdef->bodyB = Book::IDtoB2Body(world->ID, body_b_id);

@@ -44,7 +44,7 @@ namespace SerialHelper {
 	char* CharTob2Shape(b2Shape** b2shape, char * buf);
 	char* CharTob2FixtureDef(b2FixtureDef* b2fixturedef, char* buf);
 	char* CharTob2Body(b2BodyDef &b2bodydef, b2Body** pb2body, b2World* world, char* buf);
-    char* CharTob2JointDef(b2JointDef *b2jointdef, char* buf);
+    char* CharTob2JointDef(b2JointDef** b2jointdef, char* buf);
 }
 
 #endif /* AGSBOX2D_SERIALHELPER_H */

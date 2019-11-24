@@ -383,7 +383,7 @@ namespace SerialHelper {
 		return buf;
 	}
 
-    char* CharTob2JointDef(b2JointDef *b2jointdef, char* buf) {
+    char* CharTob2JointDef(b2JointDef** b2jointdef, char* buf) {
         int32 jointType;
         bool collide_connected;
 
@@ -392,11 +392,11 @@ namespace SerialHelper {
 
         if(jointType == b2JointType::e_revoluteJoint) {
             b2RevoluteJointDef* revoluteJointDef = new b2RevoluteJointDef;
-            b2jointdef = revoluteJointDef;
+            (*b2jointdef) = revoluteJointDef;
 
         } else if(jointType == b2JointType::e_distanceJoint) {
             b2DistanceJointDef* distanceJointDef = new b2DistanceJointDef;
-            b2jointdef = distanceJointDef;
+            (*b2jointdef) = distanceJointDef;
 
             b2Vec2 localAnchorA;
             b2Vec2 localAnchorB;
@@ -418,7 +418,7 @@ namespace SerialHelper {
 
         } else if(jointType == b2JointType::e_pulleyJoint) {
             b2PulleyJointDef* pulleyJointDef = new b2PulleyJointDef;
-            b2jointdef = pulleyJointDef;
+            (*b2jointdef) = pulleyJointDef;
 
             b2Vec2 groundAnchorA;
             b2Vec2 groundAnchorB;
@@ -446,7 +446,7 @@ namespace SerialHelper {
 
         } else if(jointType == b2JointType::e_mouseJoint) {
             b2MouseJointDef* mouseJointDef = new b2MouseJointDef;
-            b2jointdef = mouseJointDef;
+            (*b2jointdef) = mouseJointDef;
 
             b2Vec2 target;
             b2Vec2 anchorB;
@@ -468,7 +468,7 @@ namespace SerialHelper {
 
         } else if(jointType == b2JointType::e_motorJoint) {
             b2MotorJointDef* motorJointDef = new b2MotorJointDef;
-            b2jointdef = motorJointDef;
+            (*b2jointdef) = motorJointDef;
 
             b2Vec2 linearOffset;
             float32 angularOffset;
@@ -489,8 +489,8 @@ namespace SerialHelper {
             motorJointDef->correctionFactor = correctionFactor;
         }
 
-        if(b2jointdef) {
-            b2jointdef->collideConnected = collide_connected;
+        if((*b2jointdef)) {
+            (*b2jointdef)->collideConnected = collide_connected;
         }
 
 
