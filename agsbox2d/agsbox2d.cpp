@@ -36,6 +36,7 @@
 #include "AgsNumberInterface.h"
 #include "Scale.h"
 
+#include "PointF.h"
 #include "AgsWorld.h"
 #include "AgsBody.h"
 #include "AgsShape.h"
@@ -82,6 +83,18 @@ const char *ourScriptHeader =
 "  eJointFriction=9, \r\n"
 "  eJointRope=10, \r\n"
 "  eJointMotor=11, \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct PointF { \r\n"
+"  \r\n"
+"  /// Creates a point with float X and Y coordinates. \r\n"
+"  import static PointF* Create(float x, float y); // $AUTOCOMPLETESTATICONLY$ \r\n"
+"  \r\n"
+"  /// Float X coordinate of the point. \r\n"
+"  import attribute float X; \r\n"
+"  \r\n"
+"  /// Float Y coordinate of the point. \r\n"
+"  import attribute float Y; \r\n"
 "}; \r\n"
 " \r\n"
 "builtin managed struct Body { \r\n"
@@ -344,7 +357,7 @@ const char *ourScriptHeader =
 "  import static Joint* CreateMouseJoint(Body* bodyA, float x, float y); \r\n"
 "  \r\n"
 "  /// Create Pulley Joint. \r\n"
-"  import static Joint* CreatePulleyJoint(Body* bodyA, Body* bodyB, float gAnchorAX, float gAnchorAY, float gAnchorBX, float gAnchorBY, float AnchorAX, float AnchorAY, float AnchorBX, float AnchorBY, float ratio, bool collideConnected = 0); \r\n"
+"  import static Joint* CreatePulleyJoint(Body* bodyA, Body* bodyB, PointF* groundAnchorA, PointF* groundAnchorB, PointF* localAnchorA, PointF* localAnchorB, float ratio, bool collideConnected = 0); \r\n"
 "  \r\n"
 "  /// Removes a joint from the world, and marks it as invalid. \r\n"
 "  import static void DestroyJoint(World* world, Joint* joint);  \r\n"
@@ -481,6 +494,38 @@ AgsFixture* FindAgsFixtureFromB2Fixture(b2World* world, int32 world_id, b2Fixtur
     return fixture;
 }
 
+//-----------------------------------------------------------------------------
+#pragma region PointF_ScriptAPI
+
+PointF* PointF_Create(uint32_t x, uint32_t y){
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+    PointF* point_f = new PointF(fx, fy);
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
+}
+
+int32 PointF_GetY(PointF* self) {
+    return ToAgsFloat(self->GetY());
+}
+
+void PointF_SetX(PointF* self, uint32_t x) {
+    float32 fx = ToNormalFloat(x);
+
+    self->SetX(fx);
+}
+
+uint32_t PointF_GetX(PointF* self) {
+    return ToAgsFloat(self->GetX());
+}
+
+void PointF_SetY(PointF* self, uint32_t y) {
+    float32 fy = ToNormalFloat(y);
+
+    self->SetX(fy);
+}
+
+#pragma endregion // PointF_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
 
@@ -667,26 +712,26 @@ AgsJoint* agsbox2d_newMouseJoint(AgsBody* agsbody_a,
 }
 
 AgsJoint* agsbox2d_newPulleyJoint(AgsBody* agsbody_a, AgsBody* agsbody_b,
-                                  uint32_t ground_anchor_a_x, uint32_t ground_anchor_a_y, uint32_t ground_anchor_b_x, uint32_t ground_anchor_b_y,
-                                  uint32_t anchor_a_x, uint32_t anchor_a_y, uint32_t anchor_b_x, uint32_t anchor_b_y,
+                                  PointF* ground_anchor_a, PointF* ground_anchor_b,
+                                  PointF* anchor_a, PointF* anchor_b,
                                   uint32_t ratio, int32 collide_connected) {
-    float32 fground_anchor_a_x = ToNormalFloat(ground_anchor_a_x);
-    float32 fground_anchor_a_y = ToNormalFloat(ground_anchor_a_y);
-    float32 fground_anchor_b_x = ToNormalFloat(ground_anchor_b_x);
-    float32 fground_anchor_b_y = ToNormalFloat(ground_anchor_b_y);
-    float32 fanchor_a_x = ToNormalFloat(anchor_a_x);
-    float32 fanchor_a_y = ToNormalFloat(anchor_a_y);
-    float32 fanchor_b_x = ToNormalFloat(anchor_b_x);
-    float32 fanchor_b_y = ToNormalFloat(anchor_b_y);
-    float32 fratio = ToNormalFloat(ratio);
-    bool bcollide_connected = collide_connected != 0;
+    float32 fground_anchor_a_x = ground_anchor_a->GetX(); // ToNormalFloat(ground_anchor_a_x);
+    float32 fground_anchor_a_y = ground_anchor_a->GetY(); // ToNormalFloat(ground_anchor_a_y);
+    float32 fground_anchor_b_x = ground_anchor_b->GetX(); // ToNormalFloat(ground_anchor_b_x);
+    float32 fground_anchor_b_y = ground_anchor_b->GetY(); // ToNormalFloat(ground_anchor_b_y);
+    float32 fanchor_a_x = anchor_a->GetX(); // ToNormalFloat(anchor_a_x);
+    float32 fanchor_a_y = anchor_a->GetY(); // ToNormalFloat(anchor_a_y);
+    float32 fanchor_b_x = anchor_b->GetX(); // ToNormalFloat(anchor_b_x);
+    float32 fanchor_b_y = anchor_b->GetY(); // ToNormalFloat(anchor_b_y);
+    float32 f_ratio = ToNormalFloat(ratio);
+    bool b_collide_connected = collide_connected != 0;
     AgsWorld* world = Book::IDtoAgsWorld(agsbody_a->World->ID);
 
     AgsJointPulley* agsJointPulley = new AgsJointPulley(
             world, agsbody_a, agsbody_b,
             fground_anchor_a_x, fground_anchor_a_y, fground_anchor_b_x, fground_anchor_b_y,
             fanchor_a_x, fanchor_a_y, fanchor_b_x, fanchor_b_y,
-            fratio, bcollide_connected);
+            f_ratio, b_collide_connected);
 
     AgsJoint* joint = new AgsJoint(agsJointPulley);
 
@@ -1266,6 +1311,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 			engine->AbortGame("Plugin needs engine version " STRINGIFY(MIN_ENGINE_VERSION) " or newer.");
 
 	//register functions
+	engine->AddManagedObjectReader(PointFInterface::name, &PointF_Reader);
+
 	engine->AddManagedObjectReader(AgsWorldInterface::name, &AgsWorld_Reader);
 	engine->AddManagedObjectReader(AgsBodyInterface::name, &AgsBody_Reader);
 	engine->AddManagedObjectReader(AgsShapeInterface::name, &AgsShape_Reader);
@@ -1279,6 +1326,12 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->AddManagedObjectReader(AgsJointMouseInterface::name, &AgsJointMouse_Reader);
     engine->AddManagedObjectReader(AgsJointPulleyInterface::name, &AgsJointPulley_Reader);
 
+    engine->RegisterScriptFunction("PointF::Create^2", (void*)PointF_Create);
+    engine->RegisterScriptFunction("PointF::set_X", (void*)PointF_SetX);
+    engine->RegisterScriptFunction("PointF::get_X", (void*)PointF_GetX);
+    engine->RegisterScriptFunction("PointF::set_Y", (void*)PointF_SetY);
+    engine->RegisterScriptFunction("PointF::get_Y", (void*)PointF_GetY);
+
 	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
@@ -1290,7 +1343,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("AgsBox2D::CreateDistanceJoint^7", (void*)agsbox2d_newDistanceJoint);
     engine->RegisterScriptFunction("AgsBox2D::CreateMotorJoint^4", (void*)agsbox2d_newMotorJoint);
     engine->RegisterScriptFunction("AgsBox2D::CreateMouseJoint^3", (void*)agsbox2d_newMouseJoint);
-    engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^12", (void*)agsbox2d_newPulleyJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^8", (void*)agsbox2d_newPulleyJoint);
     engine->RegisterScriptFunction("AgsBox2D::DestroyJoint^2", (void*)agsbox2d_DestroyJoint);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
