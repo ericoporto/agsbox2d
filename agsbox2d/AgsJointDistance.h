@@ -22,7 +22,7 @@ private:
     b2DistanceJoint* B2AgsJointDistance;
 public:
     AgsJointDistance(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 x1, float32 y1, float32 x2, float32 y2, bool collideConnected);
-    AgsJointDistance(b2DistanceJoint* distancejoint);
+    AgsJointDistance(int32 world_id, b2DistanceJoint* distancejoint);
     ~AgsJointDistance(void);
 
     void InitializeIfNeeded();

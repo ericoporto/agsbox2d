@@ -31,8 +31,12 @@ AgsJointDistance::AgsJointDistance(AgsWorld* agsworld,
     B2bodyB_ID = agsbody_b->B2BodyID;
 }
 
-AgsJointDistance::AgsJointDistance(b2DistanceJoint* distancejoint){
+AgsJointDistance::AgsJointDistance(int32 world_id, b2DistanceJoint* distancejoint){
     B2AgsJointDistance = distancejoint;
+    WorldID = world_id;
+    B2bodyA_ID = Book::b2BodyToID(WorldID, distancejoint->GetBodyA());
+    B2bodyB_ID = Book::b2BodyToID(WorldID, distancejoint->GetBodyB());
+    b2Joint_ID = Book::b2JointToID(WorldID, dynamic_cast<b2Joint*>(B2AgsJointDistance));
 }
 
 AgsJointDistance::~AgsJointDistance(void)
@@ -102,6 +106,8 @@ AgsJointDistanceReader AgsJointDistance_Reader;
 const char* AgsJointDistanceInterface::name = "JointDistance";
 
 //------------------------------------------------------------------------------
+#include "SerialHelper.h"
+using namespace SerialHelper;
 
 int AgsJointDistanceInterface::Dispose(const char* address, bool force)
 {
@@ -114,8 +120,16 @@ int AgsJointDistanceInterface::Dispose(const char* address, bool force)
 
 int AgsJointDistanceInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-    AgsJointDistance* arr = (AgsJointDistance*)address;
+    AgsJointDistance* agsJointDistance = (AgsJointDistance*)address;
     char* ptr = buffer;
+    char* end = buffer + bufsize;
+
+    b2Joint* b2joint = dynamic_cast<b2Joint*>( agsJointDistance->GetB2AgsJointDistance());
+    int32 world_id = agsJointDistance->WorldID;
+    int32 b2joint_id = Book::b2JointToID(world_id, b2joint);
+
+    ptr = IntToChar(world_id, ptr, end);
+    ptr = IntToChar(b2joint_id, ptr, end);
 
     return (ptr - buffer);
 }
@@ -124,11 +138,33 @@ int AgsJointDistanceInterface::Serialize(const char* address, char* buffer, int 
 
 void AgsJointDistanceReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-//	AgsShapeCircle* arr = new AgsShapeCircle(0,0);
+    char* ptr = (char*) serializedData;
 
-//	const char* ptr = serializedData;
+    int32 agsjointdistance_id = key;
+    int32 world_id;
+    int32 b2joint_id;
 
-//	engine->RegisterUnserializedObject(key, arr, &AgsShapeCircle_Interface);
+    ptr = CharToInt(world_id, ptr);
+    ptr = CharToInt(b2joint_id, ptr);
+
+    AgsWorld * world;
+    if (Book::isAgsWorldRegisteredByID(world_id)) {
+        world = Book::IDtoAgsWorld(world_id);
+        if(world == nullptr) throw;
+    }
+    else {
+        world = new AgsWorld(0, 0);
+        Book::RegisterAgsWorld(world_id, world);
+    }
+
+    b2Joint * b2joint = Book::IDtoB2Joint(world_id, b2joint_id);
+
+    AgsJointDistance* agsjoint = new AgsJointDistance(world_id, dynamic_cast<b2DistanceJoint*>(b2joint));
+    agsjoint->ID = agsjointdistance_id;
+    agsjoint->b2Joint_ID = b2joint_id;
+    Book::RegisterAgsJointDistance(agsjointdistance_id, agsjoint);
+
+	engine->RegisterUnserializedObject(key, agsjoint, &AgsJointDistance_Interface);
 }
 
 //..............................................................................

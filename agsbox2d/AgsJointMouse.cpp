@@ -35,8 +35,12 @@ AgsJointMouse::AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float32 x, 
     B2AgsJointMouse = dynamic_cast<b2MouseJoint *>(agsworld->B2AgsWorld->CreateJoint(&def));
 }
 
-AgsJointMouse::AgsJointMouse(b2MouseJoint* Mousejoint){
-    B2AgsJointMouse = Mousejoint;
+AgsJointMouse::AgsJointMouse(int32 world_id, b2MouseJoint* mousejoint){
+    B2AgsJointMouse = mousejoint;
+    WorldID = world_id;
+    B2bodyA_ID = Book::b2BodyToID(WorldID, mousejoint->GetBodyA());
+    B2bodyB_ID = Book::b2BodyToID(WorldID, mousejoint->GetBodyB());
+    b2Joint_ID = Book::b2JointToID(WorldID, dynamic_cast<b2Joint*>(B2AgsJointMouse));
 }
 
 
@@ -137,6 +141,8 @@ AgsJointMouseReader AgsJointMouse_Reader;
 const char* AgsJointMouseInterface::name = "JointMouse";
 
 //------------------------------------------------------------------------------
+#include "SerialHelper.h"
+using namespace SerialHelper;
 
 int AgsJointMouseInterface::Dispose(const char* address, bool force)
 {
@@ -149,8 +155,16 @@ int AgsJointMouseInterface::Dispose(const char* address, bool force)
 
 int AgsJointMouseInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-    AgsJointMouse* arr = (AgsJointMouse*)address;
+    AgsJointMouse* agsJointMouse = (AgsJointMouse*)address;
     char* ptr = buffer;
+    char* end = buffer + bufsize;
+
+    b2Joint* b2joint = dynamic_cast<b2Joint*>( agsJointMouse->GetB2AgsJointMouse());
+    int32 world_id = agsJointMouse->WorldID;
+    int32 b2joint_id = Book::b2JointToID(world_id, b2joint);
+
+    ptr = IntToChar(world_id, ptr, end);
+    ptr = IntToChar(b2joint_id, ptr, end);
 
     return (ptr - buffer);
 }
@@ -159,11 +173,33 @@ int AgsJointMouseInterface::Serialize(const char* address, char* buffer, int buf
 
 void AgsJointMouseReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-//	AgsShapeCircle* arr = new AgsShapeCircle(0,0);
+    char* ptr = (char*) serializedData;
 
-//	const char* ptr = serializedData;
+    int32 agsjointmouse_id = key;
+    int32 world_id;
+    int32 b2joint_id;
 
-//	engine->RegisterUnserializedObject(key, arr, &AgsShapeCircle_Interface);
+    ptr = CharToInt(world_id, ptr);
+    ptr = CharToInt(b2joint_id, ptr);
+
+    AgsWorld * world;
+    if (Book::isAgsWorldRegisteredByID(world_id)) {
+        world = Book::IDtoAgsWorld(world_id);
+        if(world == nullptr) throw;
+    }
+    else {
+        world = new AgsWorld(0, 0);
+        Book::RegisterAgsWorld(world_id, world);
+    }
+
+    b2Joint * b2joint = Book::IDtoB2Joint(world_id, b2joint_id);
+
+    AgsJointMouse* agsjoint = new AgsJointMouse(world_id, dynamic_cast<b2MouseJoint*>(b2joint));
+    agsjoint->ID = agsjointmouse_id;
+    agsjoint->b2Joint_ID = b2joint_id;
+    Book::RegisterAgsJointMouse(agsjointmouse_id, agsjoint);
+
+    engine->RegisterUnserializedObject(key, agsjoint, &AgsJointMouse_Interface);
 }
 
 //..............................................................................

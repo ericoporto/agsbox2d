@@ -48,8 +48,12 @@ AgsJointMotor::AgsJointMotor(AgsWorld* agsworld,
 
 }
 
-AgsJointMotor::AgsJointMotor(b2MotorJoint* Motorjoint){
-    B2AgsJointMotor = Motorjoint;
+AgsJointMotor::AgsJointMotor(int32 world_id, b2MotorJoint* motorjoint){
+    B2AgsJointMotor = motorjoint;
+    WorldID = world_id;
+    B2bodyA_ID = Book::b2BodyToID(WorldID, motorjoint->GetBodyA());
+    B2bodyB_ID = Book::b2BodyToID(WorldID, motorjoint->GetBodyB());
+    b2Joint_ID = Book::b2JointToID(WorldID, dynamic_cast<b2Joint*>(B2AgsJointMotor));
 }
 
 
@@ -167,6 +171,8 @@ AgsJointMotorReader AgsJointMotor_Reader;
 const char* AgsJointMotorInterface::name = "JointMotor";
 
 //------------------------------------------------------------------------------
+#include "SerialHelper.h"
+using namespace SerialHelper;
 
 int AgsJointMotorInterface::Dispose(const char* address, bool force)
 {
@@ -179,8 +185,16 @@ int AgsJointMotorInterface::Dispose(const char* address, bool force)
 
 int AgsJointMotorInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-    AgsJointMotor* arr = (AgsJointMotor*)address;
+    AgsJointMotor* agsJointMotor = (AgsJointMotor*)address;
     char* ptr = buffer;
+    char* end = buffer + bufsize;
+
+    b2Joint* b2joint = dynamic_cast<b2Joint*>( agsJointMotor->GetB2AgsJointMotor());
+    int32 world_id = agsJointMotor->WorldID;
+    int32 b2joint_id = Book::b2JointToID(world_id, b2joint);
+
+    ptr = IntToChar(world_id, ptr, end);
+    ptr = IntToChar(b2joint_id, ptr, end);
 
     return (ptr - buffer);
 }
@@ -189,11 +203,33 @@ int AgsJointMotorInterface::Serialize(const char* address, char* buffer, int buf
 
 void AgsJointMotorReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-//	AgsShapeCircle* arr = new AgsShapeCircle(0,0);
+    char* ptr = (char*) serializedData;
 
-//	const char* ptr = serializedData;
+    int32 agsjointmotor_id = key;
+    int32 world_id;
+    int32 b2joint_id;
 
-//	engine->RegisterUnserializedObject(key, arr, &AgsShapeCircle_Interface);
+    ptr = CharToInt(world_id, ptr);
+    ptr = CharToInt(b2joint_id, ptr);
+
+    AgsWorld * world;
+    if (Book::isAgsWorldRegisteredByID(world_id)) {
+        world = Book::IDtoAgsWorld(world_id);
+        if(world == nullptr) throw;
+    }
+    else {
+        world = new AgsWorld(0, 0);
+        Book::RegisterAgsWorld(world_id, world);
+    }
+
+    b2Joint * b2joint = Book::IDtoB2Joint(world_id, b2joint_id);
+
+    AgsJointMotor* agsjoint = new AgsJointMotor(world_id, dynamic_cast<b2MotorJoint*>(b2joint));
+    agsjoint->ID = agsjointmotor_id;
+    agsjoint->b2Joint_ID = b2joint_id;
+    Book::RegisterAgsJointMotor(agsjointmotor_id, agsjoint);
+
+    engine->RegisterUnserializedObject(key, agsjoint, &AgsJointMotor_Interface);
 }
 
 //..............................................................................

@@ -23,7 +23,7 @@ private:
 public:
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 correction_factor, bool collide_connected);
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);
-    AgsJointMotor(b2MotorJoint* Motorjoint);
+    AgsJointMotor(int32 world_id, b2MotorJoint* Motorjoint);
     ~AgsJointMotor(void);
 
     void InitializeIfNeeded();

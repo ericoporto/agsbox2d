@@ -11,57 +11,53 @@
 #include "Book.h"
 #include "AgsWorld.h"
 
+AgsJoint::AgsJoint(AgsWorld* agsworld) {
+    B2AgsJoint = nullptr;
+}
 
-AgsJoint::AgsJoint(b2Joint* b2joint) {
-
+AgsJoint::AgsJoint(int world_id, b2Joint* b2joint) {
+    WorldID = world_id;
+    B2AgsJoint = b2joint;
+    b2Joint_ID = Book::b2JointToID(WorldID, b2joint);
+    if(B2AgsJoint == nullptr){
+        InitializeIfNeeded();
+    }
 }
 
 AgsJoint::AgsJoint(AgsJointDistance* ags_joint_distance) {
-    JointDistance = ags_joint_distance;
-    JointMotor = nullptr;
-    JointMouse = nullptr;
-    JointPulley = nullptr;
     WorldID = ags_joint_distance->WorldID;
     B2bodyA_ID = ags_joint_distance->B2bodyA_ID;
     B2bodyB_ID = ags_joint_distance->B2bodyB_ID;
 
     B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_distance->GetB2AgsJointDistance());
+    b2Joint_ID = Book::b2JointToID(WorldID, B2AgsJoint);
 }
 
 AgsJoint::AgsJoint(AgsJointMotor* ags_joint_motor) {
-    JointMotor = ags_joint_motor;
-    JointDistance = nullptr;
-    JointMouse = nullptr;
-    JointPulley = nullptr;
     WorldID = ags_joint_motor->WorldID;
     B2bodyA_ID = ags_joint_motor->B2bodyA_ID;
     B2bodyB_ID = ags_joint_motor->B2bodyB_ID;
 
     B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_motor->GetB2AgsJointMotor());
+    b2Joint_ID = Book::b2JointToID(WorldID, B2AgsJoint);
 }
 
 AgsJoint::AgsJoint(AgsJointMouse* ags_joint_mouse) {
-    JointMouse = ags_joint_mouse;
-    JointDistance = nullptr;
-    JointMotor = nullptr;
-    JointPulley = nullptr;
     WorldID = ags_joint_mouse->WorldID;
     B2bodyA_ID = ags_joint_mouse->B2bodyA_ID;
     B2bodyB_ID = ags_joint_mouse->B2bodyB_ID;
 
     B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_mouse->GetB2AgsJointMouse());
+    b2Joint_ID = Book::b2JointToID(WorldID, B2AgsJoint);
 }
 
 AgsJoint::AgsJoint(AgsJointPulley* ags_joint_pulley) {
-    JointPulley = ags_joint_pulley;
-    JointDistance = nullptr;
-    JointMotor = nullptr;
-    JointMouse = nullptr;
     WorldID = ags_joint_pulley->WorldID;
     B2bodyA_ID = ags_joint_pulley->B2bodyA_ID;
     B2bodyB_ID = ags_joint_pulley->B2bodyB_ID;
 
     B2AgsJoint = dynamic_cast<b2Joint *>(ags_joint_pulley->GetB2AgsJointPulley());
+    b2Joint_ID = Book::b2JointToID(WorldID, B2AgsJoint);
 }
 
 AgsJoint::~AgsJoint(void)
@@ -174,7 +170,11 @@ int AgsJointInterface::Serialize(const char* address, char* buffer, int bufsize)
     char* ptr = buffer;
     char* end = buffer + bufsize;
 
-    //ptr = b2ShapeToChar(shape->B2AgsShape, ptr, end);
+    int32 world_id = agsjoint->GetAgsWorld()->ID;
+    int32 b2joint_id = Book::b2JointToID(world_id, agsjoint->GetB2AgsJoint());
+
+    ptr = IntToChar(world_id, ptr, end);
+    ptr = IntToChar(b2joint_id, ptr, end);
 
     return (ptr - buffer);
 }
@@ -184,14 +184,30 @@ int AgsJointInterface::Serialize(const char* address, char* buffer, int bufsize)
 void AgsJointReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
     char* ptr = (char*) serializedData;
-    int joint_id = key;
 
-    b2Joint * joint = nullptr;
+    int32 agsjoint_id = key;
+    int32 world_id;
+    int32 b2joint_id;
 
-   // ptr = CharTob2Shape(&shape, ptr);
-    AgsJoint* agsjoint = new AgsJoint(joint);
-    agsjoint->ID = joint_id;
-    //Book::RegisterAgsShape(joint_id, agsjoint);
+    ptr = CharToInt(world_id, ptr);
+    ptr = CharToInt(b2joint_id, ptr);
+
+    AgsWorld * world;
+    if (Book::isAgsWorldRegisteredByID(world_id)) {
+        world = Book::IDtoAgsWorld(world_id);
+        if(world == nullptr) throw;
+    }
+    else {
+        world = new AgsWorld(0, 0);
+        Book::RegisterAgsWorld(world_id, world);
+    }
+
+    b2Joint * b2joint = Book::IDtoB2Joint(world_id, b2joint_id);
+
+    AgsJoint* agsjoint = new AgsJoint(world_id, b2joint);
+    agsjoint->ID = agsjoint_id;
+    agsjoint->b2Joint_ID = b2joint_id;
+    Book::RegisterAgsJoint(agsjoint_id, agsjoint);
 
     engine->RegisterUnserializedObject(key, agsjoint, &AgsJoint_Interface);
 }

@@ -26,7 +26,7 @@ public:
                    float32 anchor_a_x, float32 anchor_a_y, float32 anchor_b_x, float32 anchor_b_y,
                    float32 ratio, bool collide_connected
     );
-    AgsJointPulley(b2PulleyJoint* Pulleyjoint);
+    AgsJointPulley(int32 world_id, b2PulleyJoint* pulleyjoint);
     ~AgsJointPulley(void);
 
     void InitializeIfNeeded();

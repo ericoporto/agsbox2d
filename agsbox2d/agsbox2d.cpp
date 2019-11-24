@@ -603,14 +603,15 @@ AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody
     AgsJointDistance* agsJointDistance = new AgsJointDistance(
             world, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
 
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointDistance->b2Joint_ID = b2joint_id;
+
     AgsJoint* joint = new AgsJoint(agsJointDistance);
 
     joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
     Book::RegisterAgsJoint(joint->ID, joint);
 
-    int b2joint_id = Book::GetNewJointID(world->ID);
     joint->b2Joint_ID = b2joint_id;
-    agsJointDistance->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -626,14 +627,15 @@ AgsJoint* agsbox2d_newMotorJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* a
     AgsJointMotor* agsJointMotor = new AgsJointMotor(
             world, agsbody_a, agsbody_b, fcorrection_factor, bcollide_connected);
 
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointMotor->b2Joint_ID = b2joint_id;
+
     AgsJoint* joint = new AgsJoint(agsJointMotor);
 
     joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
     Book::RegisterAgsJoint(joint->ID, joint);
 
-    int b2joint_id = Book::GetNewJointID(world->ID);
     joint->b2Joint_ID = b2joint_id;
-    agsJointMotor->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -647,14 +649,15 @@ AgsJoint* agsbox2d_newMouseJoint(AgsWorld* world, AgsBody* agsbody_a,
     AgsJointMouse* agsJointMouse = new AgsJointMouse(
             world, agsbody_a, fx, fy);
 
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointMouse->b2Joint_ID = b2joint_id;
+
     AgsJoint* joint = new AgsJoint(agsJointMouse);
 
     joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
     Book::RegisterAgsJoint(joint->ID, joint);
 
-    int b2joint_id = Book::GetNewJointID(world->ID);
     joint->b2Joint_ID = b2joint_id;
-    agsJointMouse->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -683,12 +686,13 @@ AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* 
 
     AgsJoint* joint = new AgsJoint(agsJointPulley);
 
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointPulley->b2Joint_ID = b2joint_id;
+
     joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
     Book::RegisterAgsJoint(joint->ID, joint);
 
-    int b2joint_id = Book::GetNewJointID(world->ID);
     joint->b2Joint_ID = b2joint_id;
-    agsJointPulley->b2Joint_ID = b2joint_id;
     Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
 
     return joint;
@@ -1173,28 +1177,40 @@ uint32_t AgsJointPulley_GetRatio (AgsJointPulley* self) {
 #pragma region AgsJoint_ScriptAPI
 
 AgsJointDistance* AgsJoint_AsDistance (AgsJoint* self) {
-    AgsJointDistance* agsJointDistance = self->JointDistance;
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_distanceJoint)
+        return nullptr;
+
+    AgsJointDistance* agsJointDistance = new AgsJointDistance(self->GetAgsWorld()->ID, dynamic_cast<b2DistanceJoint*>(self->GetB2AgsJoint()));
     agsJointDistance->ID = engine->RegisterManagedObject(agsJointDistance, &AgsJointDistance_Interface);
     Book::RegisterAgsJointDistance(agsJointDistance->ID, agsJointDistance);
     return agsJointDistance;
 }
 
 AgsJointMotor* AgsJoint_AsMotor (AgsJoint* self) {
-    AgsJointMotor* agsJointMotor = self->JointMotor;
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_motorJoint)
+        return nullptr;
+
+    AgsJointMotor* agsJointMotor = new AgsJointMotor(self->GetAgsWorld()->ID, dynamic_cast<b2MotorJoint*>(self->GetB2AgsJoint()));
     agsJointMotor->ID = engine->RegisterManagedObject(agsJointMotor, &AgsJointMotor_Interface);
     Book::RegisterAgsJointMotor(agsJointMotor->ID, agsJointMotor);
     return agsJointMotor;
 }
 
 AgsJointMouse* AgsJoint_AsMouse (AgsJoint* self) {
-    AgsJointMouse* agsJointMouse = self->JointMouse;
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_mouseJoint)
+        return nullptr;
+
+    AgsJointMouse* agsJointMouse = new AgsJointMouse(self->GetAgsWorld()->ID, dynamic_cast<b2MouseJoint*>(self->GetB2AgsJoint()));
     agsJointMouse->ID = engine->RegisterManagedObject(agsJointMouse, &AgsJointMouse_Interface);
     Book::RegisterAgsJointMouse(agsJointMouse->ID, agsJointMouse);
     return agsJointMouse;
 }
 
 AgsJointPulley* AgsJoint_AsPulley (AgsJoint* self) {
-    AgsJointPulley* agsJointPulley = self->JointPulley;
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_pulleyJoint)
+        return nullptr;
+
+    AgsJointPulley* agsJointPulley = new AgsJointPulley(self->GetAgsWorld()->ID, dynamic_cast<b2PulleyJoint*>(self->GetB2AgsJoint()));
     agsJointPulley->ID = engine->RegisterManagedObject(agsJointPulley, &AgsJointPulley_Interface);
     Book::RegisterAgsJointPulley(agsJointPulley->ID, agsJointPulley);
     return agsJointPulley;

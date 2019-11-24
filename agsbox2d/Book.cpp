@@ -98,7 +98,7 @@ void Book::DisposeWorldIfNeeded(){
 
 
 int32 Book::b2BodyToID(int32 world_id, b2Body* body){
-    if (i()->B2BodiesByPointer[world_id]->count(body) == 0) {
+    if ( i()->B2BodiesByPointer.empty() || i()->B2BodiesByPointer.count(world_id) == 0 || i()->B2BodiesByPointer[world_id]->count(body) == 0) {
         return -1;
     }
 
@@ -106,7 +106,7 @@ int32 Book::b2BodyToID(int32 world_id, b2Body* body){
 }
 
 b2Body* Book::IDtoB2Body(int32 world_id, int32 body_id){
-    if (i()->B2BodiesByID[world_id]->count(body_id) == 0) {
+    if ( i()->B2BodiesByID.empty()  || i()->B2BodiesByID.count(world_id) == 0 || i()->B2BodiesByID[world_id]->count(body_id) == 0) {
         return nullptr;
     }
 
@@ -180,7 +180,7 @@ bool Book::GetBodiesEmpty(int32 world_id){
 // Joint related functions
 
 int32 Book::b2JointToID(int32 world_id, b2Joint* joint){
-    if (i()->B2JointByPointer[world_id]->count(joint) == 0) {
+    if ( i()->B2JointByPointer.empty() || i()->B2JointByPointer.count(world_id) == 0 || i()->B2JointByPointer[world_id]->count(joint) == 0) {
         return -1;
     }
 
@@ -188,7 +188,7 @@ int32 Book::b2JointToID(int32 world_id, b2Joint* joint){
 }
 
 b2Joint* Book::IDtoB2Joint(int32 world_id, int32 joint_id){
-    if (i()->B2JointByID[world_id]->count(joint_id) == 0) {
+    if ( i()->B2JointByID.empty() || i()->B2JointByID.count(world_id) == 0 || i()->B2JointByID[world_id]->count(joint_id) == 0) {
         return nullptr;
     }
 

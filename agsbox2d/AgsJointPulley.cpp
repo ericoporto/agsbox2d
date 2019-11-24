@@ -41,9 +41,12 @@ AgsJointPulley::AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* 
     B2bodyB_ID = agsbody_b->B2BodyID;
 }
 
-AgsJointPulley::AgsJointPulley(b2PulleyJoint* Pulleyjoint){
-    B2AgsJointPulley = Pulleyjoint;
-
+AgsJointPulley::AgsJointPulley(int32 world_id, b2PulleyJoint* pulleyjoint){
+    B2AgsJointPulley = pulleyjoint;
+    WorldID = world_id;
+    B2bodyA_ID = Book::b2BodyToID(WorldID, pulleyjoint->GetBodyA());
+    B2bodyB_ID = Book::b2BodyToID(WorldID, pulleyjoint->GetBodyB());
+    b2Joint_ID = Book::b2JointToID(WorldID, dynamic_cast<b2Joint*>(B2AgsJointPulley));
 }
 
 
@@ -102,6 +105,8 @@ AgsJointPulleyReader AgsJointPulley_Reader;
 const char* AgsJointPulleyInterface::name = "JointPulley";
 
 //------------------------------------------------------------------------------
+#include "SerialHelper.h"
+using namespace SerialHelper;
 
 int AgsJointPulleyInterface::Dispose(const char* address, bool force)
 {
@@ -114,8 +119,16 @@ int AgsJointPulleyInterface::Dispose(const char* address, bool force)
 
 int AgsJointPulleyInterface::Serialize(const char* address, char* buffer, int bufsize)
 {
-    AgsJointPulley* arr = (AgsJointPulley*)address;
+    AgsJointPulley* agsJointPulley = (AgsJointPulley*)address;
     char* ptr = buffer;
+    char* end = buffer + bufsize;
+
+    b2Joint* b2joint = dynamic_cast<b2Joint*>( agsJointPulley->GetB2AgsJointPulley());
+    int32 world_id = agsJointPulley->WorldID;
+    int32 b2joint_id = Book::b2JointToID(world_id, b2joint);
+
+    ptr = IntToChar(world_id, ptr, end);
+    ptr = IntToChar(b2joint_id, ptr, end);
 
     return (ptr - buffer);
 }
@@ -124,11 +137,33 @@ int AgsJointPulleyInterface::Serialize(const char* address, char* buffer, int bu
 
 void AgsJointPulleyReader::Unserialize(int key, const char* serializedData, int dataSize)
 {
-//	AgsShapeCircle* arr = new AgsShapeCircle(0,0);
+    char* ptr = (char*) serializedData;
 
-//	const char* ptr = serializedData;
+    int32 agsjointpulley_id = key;
+    int32 world_id;
+    int32 b2joint_id;
 
-//	engine->RegisterUnserializedObject(key, arr, &AgsShapeCircle_Interface);
+    ptr = CharToInt(world_id, ptr);
+    ptr = CharToInt(b2joint_id, ptr);
+
+    AgsWorld * world;
+    if (Book::isAgsWorldRegisteredByID(world_id)) {
+        world = Book::IDtoAgsWorld(world_id);
+        if(world == nullptr) throw;
+    }
+    else {
+        world = new AgsWorld(0, 0);
+        Book::RegisterAgsWorld(world_id, world);
+    }
+
+    b2Joint * b2joint = Book::IDtoB2Joint(world_id, b2joint_id);
+
+    AgsJointPulley* agsjoint = new AgsJointPulley(world_id, dynamic_cast<b2PulleyJoint*>(b2joint));
+    agsjoint->ID = agsjointpulley_id;
+    agsjoint->b2Joint_ID = b2joint_id;
+    Book::RegisterAgsJointPulley(agsjointpulley_id, agsjoint);
+
+    engine->RegisterUnserializedObject(key, agsjoint, &AgsJointPulley_Interface);
 }
 
 //..............................................................................

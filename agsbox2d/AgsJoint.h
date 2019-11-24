@@ -43,7 +43,8 @@ class AgsJoint
     b2Joint* B2AgsJoint;
 public:
 
-    AgsJoint(b2Joint* b2joint);
+    AgsJoint(AgsWorld* agsworld);
+    AgsJoint(int world_id, b2Joint* b2joint);
 
     AgsJoint(AgsJointDistance* ags_joint_distance);
     AgsJoint(AgsJointMotor* ags_joint_motor);
@@ -54,11 +55,6 @@ public:
     void InitializeIfNeeded();
 
     b2Joint* GetB2AgsJoint();
-
-    AgsJointDistance* JointDistance;
-    AgsJointMotor* JointMotor;
-    AgsJointMouse* JointMouse;
-    AgsJointPulley* JointPulley;
 
     int32 ID;
     int32 b2Joint_ID;

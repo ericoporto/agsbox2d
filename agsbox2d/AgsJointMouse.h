@@ -22,7 +22,7 @@ private:
     b2MouseJoint* B2AgsJointMouse;
 public:
     AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float x, float y);
-    AgsJointMouse(b2MouseJoint* Mousejoint);
+    AgsJointMouse(int32 world_id, b2MouseJoint* Mousejoint);
     ~AgsJointMouse(void);
 
     void InitializeIfNeeded();
