@@ -53,7 +53,7 @@ private:
     std::unordered_map<int32, AgsJointMouse*> MapAgsJointMouse;
     std::unordered_map<int32, AgsJointPulley*> MapAgsJointPulley;
 
-	uint32 BodyIDCount;
+    uint32 BodyIDCount;
     uint32 JointIDCount;
     uint32 FixtureIDCount;
 

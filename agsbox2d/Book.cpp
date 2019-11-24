@@ -20,6 +20,8 @@
 Book::Book()
 {
     BodyIDCount = 0;
+    JointIDCount = 0;
+    FixtureIDCount = 0;
 }
 
 Book::~Book()

@@ -23,6 +23,7 @@ AgsBody::AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype) {
 
 AgsBody::AgsBody(bool destroyed) {
 	IsDestroyed = destroyed;
+    B2AgsBody = nullptr;
 }
 
 void AgsBody::InitializeIfNeeded(){
@@ -275,6 +276,7 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
 	AgsWorld * world;
 	if (Book::isAgsWorldRegisteredByID(world_id)) {
 		world = Book::IDtoAgsWorld(world_id);
+		if(world == nullptr) throw;
 	}
 	else {
 		world = new AgsWorld(0, 0);
@@ -289,7 +291,7 @@ void AgsBodyReader::Unserialize(int key, const char* serializedData, int dataSiz
         int32 b2body_id;
         ptr = CharToInt(b2body_id, ptr);
 
-        body = new AgsBody();
+        body = new AgsBody(false);
 		body->ID = body_id;
 		body->B2BodyID = b2body_id;
 		body->World = world;

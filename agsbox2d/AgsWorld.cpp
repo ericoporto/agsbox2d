@@ -206,7 +206,7 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 	else {
 		//printf("   --->>  created world %d\n", world_id);
 		world = new AgsWorld(0, 0);
-		world-> ID = world_id;
+		world->ID = world_id;
 		Book::RegisterAgsWorld(world_id, world);
 	}
 
@@ -257,13 +257,19 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
             int joint_id;
             int body_a_id;
             int body_b_id;
+            b2JointDef* b2jointdef;
             ptr = CharToInt(joint_id, ptr);
             ptr = CharToInt(body_a_id, ptr);
             ptr = CharToInt(body_b_id, ptr);
-            b2JointDef* b2jointdef;
             ptr = CharTob2JointDef(b2jointdef, ptr);
+
             b2jointdef->bodyA = Book::IDtoB2Body(world->ID, body_a_id);
             b2jointdef->bodyB = Book::IDtoB2Body(world->ID, body_b_id);
+
+            if(b2jointdef->type == b2JointType::e_mouseJoint) {
+                b2jointdef->bodyA = world->GetGroundB2Body();
+                b2jointdef->bodyB = Book::IDtoB2Body(world->ID, body_a_id);
+            }
 
             b2Joint* b2joint = world->B2AgsWorld->CreateJoint(b2jointdef);
 

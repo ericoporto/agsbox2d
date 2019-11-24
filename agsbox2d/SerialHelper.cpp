@@ -449,16 +449,19 @@ namespace SerialHelper {
             b2jointdef = mouseJointDef;
 
             b2Vec2 target;
+            b2Vec2 anchorB;
             float32 maxForce;
             float32 frequency;
             float32 dampingRatio;
 
             buf = CharTob2Vec2(target, buf);
+            buf = CharTob2Vec2(anchorB, buf);
             buf = CharToFloat( maxForce ,buf);
             buf = CharToFloat( frequency ,buf);
             buf = CharToFloat( dampingRatio ,buf);
 
             mouseJointDef->target = target;
+
             mouseJointDef->maxForce = maxForce;
             mouseJointDef->frequencyHz = frequency;
             mouseJointDef->dampingRatio = dampingRatio;
