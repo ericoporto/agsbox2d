@@ -174,25 +174,25 @@ You don't need to keep the pointer to the shape attached to a body through a
 fixture, since the body will hold a copy of the shape. Similarly, you also
 don't need to keep a pointer to the fixture, because the body will hold it too.
 
-#### `Joint* CreateDistanceJoint(Body* bodyA, Body* bodyB, float a_x, float a_y, float b_x, float b_y, bool collideConnected = 0)`
+#### `Joint* AgsBox2D.CreateDistanceJoint(Body* bodyA, Body* bodyB, float a_x, float a_y, float b_x, float b_y, bool collideConnected = 0)`
 
 Create Distance Joint, pass anchors on bodies A and B using world coordinates. The two bodies are assumed to be in place when this joint is created. 
 
 This joint constrains the distance between two points on two bodies to be constant. The first anchor point is connected to the first body and the second to the second body, and the points define the length of the distance joint.
 
-#### `Joint* CreateMotorJoint(Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0)`
+#### `Joint* AgsBox2D.CreateMotorJoint(Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0)`
 
 Create Motor Joint. This is a joint between two bodies which controls the relative motion between them.
                     
 Position and rotation offsets can be specified once the MotorJoint has been created, as well as the maximum motor force and torque that will be be applied to reach the target offsets.
 
-#### `Joint* CreateMouseJoint(Body* bodyA, float x, float y)`
+#### `Joint* AgsBox2D.CreateMouseJoint(Body* bodyA, float x, float y)`
 
 Create Mouse Joint between body and a target point in the world. To make it follow the mouse, the fixed point must be updated every time-step.
 
 The advantage of using a MouseJoint instead of just changing a body position directly is that collisions and reactions to other joints are handled by the physics engine.
 
-#### `Joint* CreatePulleyJoint(Body* bodyA, Body* bodyB, PointF* groundAnchorA, PointF* groundAnchorB, PointF* localAnchorA, PointF* localAnchorB, float ratio, bool collideConnected = 0)`
+#### `Joint* AgsBox2D.CreatePulleyJoint(Body* bodyA, Body* bodyB, PointF* groundAnchorA, PointF* groundAnchorB, PointF* localAnchorA, PointF* localAnchorB, float ratio, bool collideConnected = 0)`
 
 Creates a PulleyJoint to join two bodies to each other and the ground.
 
@@ -200,7 +200,7 @@ The pulley joint simulates a pulley with an optional block and tackle. If the ra
 
 Pulley joints can behave unpredictably if one side is fully extended. It is recommended that the method setMaxLengths  be used to constrain the maximum lengths each side can attain.
 
-#### `void AgsBox2D.DestroyJoint(World* world,  Joint* body)`
+#### `void AgsBox2D.AgsBox2D.DestroyJoint(World* world,  Joint* body)`
 
 Removes a joint from the world, it should no longer return true to isValid.
 

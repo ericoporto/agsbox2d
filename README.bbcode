@@ -1,6 +1,6 @@
-[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.1.0 [/b][/color]
+[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.3.0 [/b][/color]
 
-[url=https://github.com/ericoporto/agsbox2d/releases/download/0.1.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.1.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.1.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.1.0/agsbox2d_demo_windows.zip]Demo Windows[/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.1.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url]
+[url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
 
 [url=https://dev.azure.com/ericoporto/agsbox2d/_build/latest?definitionId=11&branchName=master][img]https://dev.azure.com/ericoporto/agsbox2d/_apis/build/status/ericoporto.agsbox2d?branchName=master[/img][/url]
 
@@ -19,16 +19,16 @@ Still, if you want to experiment with it and report your findings, this post sho
 
 [b][size=12pt]Usage example[/size][/b]
 
-Below we will do a very simple example that creates a ground, and adds two boxes and a ball. The ball is controlled by keyboard input. The game is supposed 320x200 in this example.
+Below we will do a very simple example that creates a ground, and adds a box and a ball. The ball is controlled by keyboard input. The game is supposed 320x200 in this example.
 
 [code]// room script file
 World* world;
 Overlay* ov;
 
 struct Physical {
-  Body* body;
-  Shape* shape;
-  Fixture* fixture;
+  Body* body;
+  Shape* shape;
+  Fixture* fixture;
 };
 
 Physical ground;
@@ -36,37 +36,37 @@ Physical ball;
 
 function room_Load()
 {
-  if(world == null){
-    AgsBox2D.SetMeter(32.0);
-    world = AgsBox2D.CreateWorld(0.0, 9.8*AgsBox2D.GetMeter());
-   
-    ground.body = AgsBox2D.CreateBody(world, 160.0, 160.0, eBodyStatic);
-    ground.shape = AgsBox2D.CreateRectangleShape(320.0, 40.0);
-    ground.fixture = AgsBox2D.CreateFixture(ground.body, ground.shape);
+  if(world == null){
+    AgsBox2D.SetMeter(32.0);
+    world = AgsBox2D.CreateWorld(0.0, 9.8*AgsBox2D.GetMeter());
 
-    ball.body = AgsBox2D.CreateBody(world, 160.0, 40.0, eBodyDynamic);
-    ball.shape = AgsBox2D.CreateCircleShape(20.0);
-    ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0);
-    ball.fixture.Restitution = 0.5;
-   
-    AgsBox2D.CreateFixture(AgsBox2D.CreateBody(world, 80.0, 60.0, eBodyDynamic),
-                           AgsBox2D.CreateRectangleShape(30.0, 20.0), 5.0);
-  }
+    ground.body = AgsBox2D.CreateBody(world, 160.0, 160.0, eBodyStatic);
+    ground.shape = AgsBox2D.CreateRectangleShape(320.0, 40.0);
+    ground.fixture = AgsBox2D.CreateFixture(ground.body, ground.shape);
+
+    ball.body = AgsBox2D.CreateBody(world, 160.0, 40.0, eBodyDynamic);
+    ball.shape = AgsBox2D.CreateCircleShape(20.0);
+    ball.fixture = AgsBox2D.CreateFixture(ball.body, ball.shape, 1.0);
+    ball.fixture.Restitution = 0.5;
+
+    AgsBox2D.CreateFixture(AgsBox2D.CreateBody(world, 80.0, 60.0, eBodyDynamic),
+                           AgsBox2D.CreateRectangleShape(30.0, 20.0), 5.0);
+  }
 }
 
 function room_RepExec()
 {
-  if(IsKeyPressed(eKeyLeftArrow)) ball.body.ApplyForce(-500.0, 0.0);
-  if(IsKeyPressed(eKeyRightArrow)) ball.body.ApplyForce(500.0, 0.0);
-  if(IsKeyPressed(eKeyUpArrow) && ball.body.IsTouching(ground.body)){
-    ball.body.ApplyForce(0.0, -6000.0);
-    ball.body.SetLinearVelocity(0.0, 0.0);
-  }
- 
-  if(ov!=null && ov.Valid) ov.Remove(); 
-  ov = Overlay.CreateGraphical(0, 0, world.GetDebugSprite(), true);
- 
-  world.Step(1.0/IntToFloat(GetGameSpeed()), 8, 3);
+  if(IsKeyPressed(eKeyLeftArrow)) ball.body.ApplyForce(-500.0, 0.0);
+  if(IsKeyPressed(eKeyRightArrow)) ball.body.ApplyForce(500.0, 0.0);
+  if(IsKeyPressed(eKeyUpArrow) && ball.body.IsTouching(ground.body)){
+    ball.body.ApplyForce(0.0, -6000.0);
+    ball.body.SetLinearVelocity(0.0, 0.0);
+  }
+
+  if(ov!=null && ov.Valid) ov.Remove();
+  ov = Overlay.CreateGraphical(0, 0, world.GetDebugSprite(), true);
+
+  world.Step(1.0/IntToFloat(GetGameSpeed()), 8, 3);
 }[/code]
 
 [b][size=12pt]Script API[/size][/b]
@@ -97,7 +97,7 @@ A positive gravityY is directed to ground, and a negative gravityY is directed u
 Similarly, a positive gravityX is directed to right and a negative gravityX is directed to left.
 
 [/li]
-[li][b][tt]Body* AgsBox2D.CreateBody(World* world,  float x, float y, BodyType bodytype)[/tt][/b]
+[li][b][tt]Body* AgsBox2D.CreateBody(World* world,  float x, float y, BodyType bodytype)[/tt][/b]
 Creates a body object in the world, at specified x and y positions.
 These positions correspond to the center of the body.
 
@@ -121,18 +121,18 @@ You don't need to keep the returned pointer if you aren't going to need to acces
 The specifics on a body form and mass are defined by using a Shape and Fixture.
 
 [/li]
-[li][b][tt]void AgsBox2D.DestroyBody(World* world,  Body* body)[/tt][/b]
+[li][b][tt]void AgsBox2D.DestroyBody(World* world,  Body* body)[/tt][/b]
 Removes a body from the world, and marks it with the property IsDestroyed true.
 
 [/li]
-[li][b][tt]Shape* AgsBox2D.CreateRectangleShape(float w,  float h,  float x=0, float y=0)[/tt][/b]
+[li][b][tt]Shape* AgsBox2D.CreateRectangleShape(float w,  float h,  float x=0, float y=0)[/tt][/b]
 Creates a RectangleShape with Width w and Height h, and returns a Shape object.
 
 You can also change it's relative center which will be mapped to the body center.
 An x of 0.0 and y of 0.0, which are defaults, maps to the shape center.
 
 [/li]
-[li][b][tt]Shape* AgsBox2D.CreateCircleShape(float radius,  float x=0, float y=0)[/tt][/b]
+[li][b][tt]Shape* AgsBox2D.CreateCircleShape(float radius,  float x=0, float y=0)[/tt][/b]
 Creates a Circle shape, and similar to RectangleShape, you can also translate it's center.
 
 [/li]
@@ -144,6 +144,60 @@ You should always pass finite non-zero densities for dynamic bodies.
 You don't need to keep the pointer to the shape attached to a body through a fixture, since the body will hold a copy of the shape.
 Similarly, you also don't need to keep a pointer to the fixture, because the body will hold it too.
 
+[/li]
+[li][b][tt]Joint* AgsBox2D.CreateDistanceJoint(Body* bodyA, Body* bodyB, float a_x, float a_y, float b_x, float b_y, bool collideConnected = 0)[/tt][/b]
+
+Create Distance Joint, pass anchors on bodies A and B using world coordinates. The two bodies are assumed to be in place when this joint is created.
+
+This joint constrains the distance between two points on two bodies to be constant. The first anchor point is connected to the first body and the second to the second body, and the points define the length of the distance joint.
+
+[/li]
+[li][b][tt]Joint* AgsBox2D.CreateMotorJoint(Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0)[/tt][/b]
+
+Create Motor Joint. This is a joint between two bodies which controls the relative motion between them.
+
+Position and rotation offsets can be specified once the MotorJoint has been created, as well as the maximum motor force and torque that will be be applied to reach the target offsets.
+
+[/li]
+[li][b][tt]Joint* AgsBox2D.CreateMouseJoint(Body* bodyA, float x, float y)[/tt][/b]
+
+Create Mouse Joint between body and a target point in the world. To make it follow the mouse, the fixed point must be updated every time-step.
+
+The advantage of using a MouseJoint instead of just changing a body position directly is that collisions and reactions to other joints are handled by the physics engine.
+
+[/li]
+[li][b][tt]Joint* AgsBox2D.CreatePulleyJoint(Body* bodyA, Body* bodyB, PointF* groundAnchorA, PointF* groundAnchorB, PointF* localAnchorA, PointF* localAnchorB, float ratio, bool collideConnected = 0)[/tt][/b]
+
+Creates a PulleyJoint to join two bodies to each other and the ground.
+
+The pulley joint simulates a pulley with an optional block and tackle. If the ratio parameter has a value different from one, then the simulated rope extends faster on one side than the other. In a pulley joint the total length of the simulated rope is the constant length1 + ratio * length2, which is set when the pulley joint is created.
+
+Pulley joints can behave unpredictably if one side is fully extended. It is recommended that the method setMaxLengths  be used to constrain the maximum lengths each side can attain.
+
+[/li]
+[li][b][tt]void AgsBox2D.DestroyJoint(World* world,  Joint* body)[/tt][/b]
+
+Removes a joint from the world, it should no longer return true to isValid.
+
+[/li]
+[/list]
+
+
+[i][b]PointF[/b][/i]
+
+[list]
+[li][b][tt]PointF* PointF.Create(float x, float y)[/tt][/b]
+Creates a PointF object with x and y values.
+
+[/li]
+[li][b][tt]float PointF.X[/tt][/b]
+The X coordinate property of a PointF.
+
+[/li]
+[li][b][tt]float PointF.Y[/tt][/b]
+The Y coordinate property of a PointF.
+
+[/li]
 [/list]
 
 [i][b]Body[/b][/i]
@@ -191,7 +245,7 @@ Returns true if it's destroyed by [tt]AgsBox2D.DestroyBody()[/tt].
 [/li]
 [li][b][tt]float Body.LinearDamping[/tt][/b]
 The LinearDamping property of a body. Damping occurs independently from contact and is different than friction.
-Normally  the value for damping is between [tt]0.0[/tt] and [tt]0.1[/tt].
+Normally  the value for damping is between [tt]0.0[/tt] and [tt]0.1[/tt].
 
 [/li]
 [li][b][tt]float Body.AngularDamping[/tt][/b]
@@ -251,7 +305,7 @@ Once a world is destroyed, the previous pointers (Bodies, Fixtures, ...) will be
 [li][b][tt]void World.Step(float dt, int velocityIteractions = 8, int positionIteractions = 3)[/tt][/b]
 Advances a step in the World physics simulation of [tt]dt[/tt] seconds.
 
-Because AGS uses fixed game steps, a good value is  [tt]dt = 1.0/IntToFloat(GetGameSpeed())[/tt].
+Because AGS uses fixed game steps, a good value is  [tt]dt = 1.0/IntToFloat(GetGameSpeed())[/tt].
 
 velocityIteractions and positionIteractions relates to how Box2D simulates the world, so for information on these values I recommend looking into Box2D own documentation.
 
@@ -302,6 +356,149 @@ Box2D uses the square root of the multiplication of two contacting fixtures to c
 Restitution is used to make objects bounce, and is usually a value between [tt]0.0[/tt] and [tt]1.0[/tt]. A value of [tt]0.0[/tt] means the object won't bounce, and a value of [tt]1.0[/tt] means the object velocity will be exactly reflected.
 
 [/li]
+[/list]
+
+
+[i][b]Joint[/b][/i]
+Joints are used to link a body to another to create relative movements.
+
+[list]
+
+[li][b][tt]JointDistance* Joint.AsDistance[/tt][/b]
+If this joint is a distance joint, returns the JointDistance interface; otherwise null.
+
+[/li]
+[li][b][tt]JointMotor* Joint.AsMotor[/tt][/b]
+If this joint is a motor joint, returns the JointMotor interface; otherwise null.
+
+[/li]
+[li][b][tt]JointMouse* Joint.AsMouse[/tt][/b]
+If this joint is a mouse joint, returns the JointMouse interface; otherwise null.
+
+[/li]
+[li][b][tt]JointPulley* Joint.AsPulley[/tt][/b]
+If this joint is a pulley joint, returns the JointPulley interface; otherwise null.
+
+[/li]
+[li][b][tt]bool Joint.IsValid[/tt][/b]
+If this joint is valid, returns true.
+
+[/li]
+[li][b][tt]bool Joint.IsActive[/tt][/b]
+If this joint is active, returns true.
+
+[/li]
+[li][b][tt]Body* Joint.BodyA[/tt][/b]
+Returns Body A if it's defined, otherwise null, for this joint.
+
+[/li]
+[li][b][tt]Body* Joint.BodyB[/tt][/b]
+Returns Body B if it's defined, otherwise null, for this joint.
+
+[/li]
+[li][b][tt]JointType Joint.Type[/tt][/b]
+Returns this joint type.
+[/li]
+[/list]
+
+
+[i][b]JointDistance[/b][/i]
+
+[list]
+
+[li][b][tt]float JointDistance.Length[/tt][/b]
+The equilibrium distance between the two Bodies.
+
+[/li]
+[li][b][tt]float JointDistance.DampingRatio[/tt][/b]
+The damping ratio, typically between 0 and 1. At 1, the damping is critical.
+
+[/li]
+[li][b][tt]float JointDistance.Frequency[/tt][/b]
+The frequency of a harmonic oscillator. Should be smaller than half the frame rate.
+
+[/li]
+[/list]
+
+
+[i][b]JointMotor[/b][/i]
+
+[list]
+
+[li][b][tt]void JointMotor.SetLinearOffset(float fx, float fy)[/tt][/b]
+Sets the target linear offset between the two bodies the joint is attached to.
+
+[/li]
+[li][b][tt]float JointMotor.LinearOffsetX[/tt][/b]
+The target linear offset X axis between the two bodies the joint is attached to.
+
+[/li]
+[li][b][tt]float JointMotor.LinearOffsetY[/tt][/b]
+The target linear offset Y axis between the two bodies the joint is attached to.
+
+[/li]
+[li][b][tt]float JointMotor.AngularOffset[/tt][/b]
+The target angular offset between the two bodies the joint is attached to.
+
+[/li]
+[li][b][tt]float JointMotor.MaxForce[/tt][/b]
+The Maximum Force applied to reach target position.
+
+[/li]
+[li][b][tt]float JointMotor.MaxTorque[/tt][/b]
+The Maximum Torque applied to reach target rotation.
+
+[/li]
+[/list]
+
+
+[i][b]JointMouse[/b][/i]
+
+[list]
+
+[li][b][tt]void JointMouse.SetTarget(float fx, float fy)[/tt][/b]
+Sets the target point.
+
+[/li]
+[li][b][tt]float JointMouse.TargetX[/tt][/b]
+The target point X axis.
+
+[/li]
+[li][b][tt]float JointMouse.TargetY[/tt][/b]
+The target point Y axis.
+
+[/li]
+[li][b][tt]float JointMouse.DampingRatio[/tt][/b]
+The damping ratio, typically between 0 and 1. At 1, the damping is critical.
+
+[/li]
+[li][b][tt]float JointMouse.Frequency[/tt][/b]
+The frequency of a harmonic oscillator. Should be smaller than half the frame rate.
+
+[/li]
+[li][b][tt]float JointMouse.MaxForce[/tt][/b]
+The Maximum Force applied to reach target position.
+
+[/li]
+[/list]
+
+
+[i][b]JointPulley[/b][/i]
+
+[list]
+
+[li][b][tt]float JointPulley.LengthA[/tt][/b]
+The current length of the segment attached to the first body.
+
+[/li]
+[li][b][tt]float JointPulley.LengthB[/tt][/b]
+The current length of the segment attached to the second body.
+
+[/li]
+[li][b][tt]float JointPulley.Ratio[/tt][/b]
+The pulley ratio.
+
+[/li]
 [/list][/spoiler]
 
 [b][size=12pt]Download AgsBox2D[/size][/b]
@@ -313,8 +510,8 @@ Restitution is used to make objects bounce, and is usually a value between [tt]0
 [spoiler]
 AgsBox2D both Makefile and the VS Solution file, expects to find [url=https://github.com/adventuregamestudio/ags]Adventure Game Studio source code[/url] in a folder [tt]../ags/[/tt]. After you do this, you need to clone this source code.
 
-[code]  ~/git/ags/
-  ~/git/agsbox2d/[/code]
+[code]  ~/git/ags/
+  ~/git/agsbox2d/[/code]
 Navigate then to the directory where you cloned this repository.
 
 On Windows, you can load the solution on the root of it's directory and load it on Visual Studio. It should work with VS 2015, 2017 and 2019. You will need v140 tools (VS should promptly warn you to install if you don't have it).
@@ -324,6 +521,6 @@ On Linux and MacOS, navigate to [tt]agsbox2d/[/tt] inside the directory and type
 
 [b][size=12pt]License and Author[/size][/b]
 
-AgsBox2D is made by Érico Vieira Porto provided with Z-Lib [url=LICENSE]LICENSE[/url].
+AgsBox2D is made by eri0o provided with Z-Lib [url=https://github.com/ericoporto/agsbox2d/blob/master/LICENSE]LICENSE[/url].
 
-Box2D itself is made by Erin Catto and is provided with a Z-Lib [url=Box2D/Box2D/LICENSE]LICENSE[/url] too.
+Box2D itself is made by Erin Catto and is provided with a Z-Lib [url=https://github.com/ericoporto/agsbox2d/blob/master/Box2D/Box2D/LICENSE]LICENSE[/url] too.

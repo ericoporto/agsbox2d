@@ -257,7 +257,7 @@ int32 Book::GetJointCount(int32 world_id){
 
 
 int32 Book::b2FixtureToID(int32 world_id, b2Fixture* fixture){
-    if (i()->B2FixtureByPointer[world_id]->count(fixture) == 0) {
+    if (i()->B2FixtureByPointer.empty() || i()->B2FixtureByPointer.count(world_id) == 0 || i()->B2FixtureByPointer[world_id]->count(fixture) == 0) {
         return -1;
     }
 
@@ -265,7 +265,7 @@ int32 Book::b2FixtureToID(int32 world_id, b2Fixture* fixture){
 }
 
 b2Fixture* Book::IDtoB2Fixture(int32 world_id, int32 fixture_id){
-    if (i()->B2FixtureByID[world_id]->count(fixture_id) == 0) {
+    if (i()->B2FixtureByID.empty() || i()->B2FixtureByID.count(world_id) == 0 ||  i()->B2FixtureByID[world_id]->count(fixture_id) == 0) {
         return nullptr;
     }
 

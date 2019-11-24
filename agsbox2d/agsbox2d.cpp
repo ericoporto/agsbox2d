@@ -403,11 +403,11 @@ void AGS_EditorProperties(HWND parent)                        //*** optional ***
 {
         // User has chosen to view the Properties of the plugin
         // We could load up an options dialog or something here instead
-/*	MessageBox(parent,
-             L"agsfastwfc v1.0 By Calin Leafshade",
+	MessageBox(parent,
+             L"agsbox2d v0.3.0 By eri0o",
              L"About",
          MB_OK | MB_ICONINFORMATION);
- */
+
 }
 
 //------------------------------------------------------------------------------
