@@ -1460,14 +1460,18 @@ void AGS_EngineShutdown()
 
 //------------------------------------------------------------------------------
 
+bool do_only_once = false;
 int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
 {
   if(event==AGSE_PRESCREENDRAW){
   	//initialize debug
-    int screenWidth, screenHeight, colDepth;
-    engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
-    debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
-    printf("\nagsbox2d 0.2.0\n");
+  	if(!do_only_once) {
+        int screenWidth, screenHeight, colDepth;
+        engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
+        debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
+        printf("\nagsbox2d 0.2.0\n");
+        do_only_once = true;
+    }
   }
 
 /*
