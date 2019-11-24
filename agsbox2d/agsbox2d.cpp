@@ -335,16 +335,16 @@ const char *ourScriptHeader =
 "  import static Fixture* CreateFixture(Body* body, Shape* shape, float density=0); \r\n"
 "  \r\n"
 "  /// Create Distance Joint. \r\n"
-"  import static Joint* CreateDistanceJoint(World* world, Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collideConnected = 0); \r\n"
+"  import static Joint* CreateDistanceJoint(Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collideConnected = 0); \r\n"
 "  \r\n"
 "  /// Create Motor Joint. \r\n"
-"  import static Joint* CreateMotorJoint(World* world, Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0); \r\n"
+"  import static Joint* CreateMotorJoint(Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0); \r\n"
 "  \r\n"
 "  /// Create Mouse Joint between body and a target point. \r\n"
-"  import static Joint* CreateMouseJoint(World* world, Body* bodyA, float x, float y); \r\n"
+"  import static Joint* CreateMouseJoint(Body* bodyA, float x, float y); \r\n"
 "  \r\n"
 "  /// Create Pulley Joint. \r\n"
-"  import static Joint* CreatePulleyJoint(World* world, Body* bodyA, Body* bodyB, float gAnchorAX, float gAnchorAY, float gAnchorBX, float gAnchorBY, float AnchorAX, float AnchorAY, float AnchorBX, float AnchorBY, float ratio, bool collideConnected = 0); \r\n"
+"  import static Joint* CreatePulleyJoint(Body* bodyA, Body* bodyB, float gAnchorAX, float gAnchorAY, float gAnchorBX, float gAnchorBY, float AnchorAX, float AnchorAY, float AnchorBX, float AnchorBY, float ratio, bool collideConnected = 0); \r\n"
 "  \r\n"
 "  /// Removes a joint from the world, and marks it as invalid. \r\n"
 "  import static void DestroyJoint(World* world, Joint* joint);  \r\n"
@@ -591,7 +591,7 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	return fixture;
 }
 
-AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
+AgsJoint* agsbox2d_newDistanceJoint(AgsBody* agsbody_a, AgsBody* agsbody_b,
                                     uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2,
                                     int32 collide_connected) {
     float32 fx1 = ToNormalFloat(x1);
@@ -599,6 +599,7 @@ AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody
     float32 fx2 = ToNormalFloat(x2);
     float32 fy2 = ToNormalFloat(y2);
     bool bcollide_connected = collide_connected != 0;
+    AgsWorld* world = Book::IDtoAgsWorld(agsbody_a->World->ID);
 
     AgsJointDistance* agsJointDistance = new AgsJointDistance(
             world, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
@@ -617,12 +618,13 @@ AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody
     return joint;
 }
 
-AgsJoint* agsbox2d_newMotorJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
+AgsJoint* agsbox2d_newMotorJoint(AgsBody* agsbody_a, AgsBody* agsbody_b,
                                  uint32_t correction_factor,
                                  int32 collide_connected) {
 
     float32 fcorrection_factor = ToNormalFloat(correction_factor);
     bool bcollide_connected = collide_connected != 0;
+    AgsWorld* world = Book::IDtoAgsWorld(agsbody_a->World->ID);
 
     AgsJointMotor* agsJointMotor = new AgsJointMotor(
             world, agsbody_a, agsbody_b, fcorrection_factor, bcollide_connected);
@@ -641,10 +643,11 @@ AgsJoint* agsbox2d_newMotorJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* a
     return joint;
 }
 
-AgsJoint* agsbox2d_newMouseJoint(AgsWorld* world, AgsBody* agsbody_a,
+AgsJoint* agsbox2d_newMouseJoint(AgsBody* agsbody_a,
                                 uint32_t x, uint32_t y) {
     float32 fx = ToNormalFloat(x);
     float32 fy = ToNormalFloat(y);
+    AgsWorld* world = Book::IDtoAgsWorld(agsbody_a->World->ID);
 
     AgsJointMouse* agsJointMouse = new AgsJointMouse(
             world, agsbody_a, fx, fy);
@@ -663,7 +666,7 @@ AgsJoint* agsbox2d_newMouseJoint(AgsWorld* world, AgsBody* agsbody_a,
     return joint;
 }
 
-AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
+AgsJoint* agsbox2d_newPulleyJoint(AgsBody* agsbody_a, AgsBody* agsbody_b,
                                   uint32_t ground_anchor_a_x, uint32_t ground_anchor_a_y, uint32_t ground_anchor_b_x, uint32_t ground_anchor_b_y,
                                   uint32_t anchor_a_x, uint32_t anchor_a_y, uint32_t anchor_b_x, uint32_t anchor_b_y,
                                   uint32_t ratio, int32 collide_connected) {
@@ -677,6 +680,7 @@ AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* 
     float32 fanchor_b_y = ToNormalFloat(anchor_b_y);
     float32 fratio = ToNormalFloat(ratio);
     bool bcollide_connected = collide_connected != 0;
+    AgsWorld* world = Book::IDtoAgsWorld(agsbody_a->World->ID);
 
     AgsJointPulley* agsJointPulley = new AgsJointPulley(
             world, agsbody_a, agsbody_b,
@@ -1283,10 +1287,10 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
-    engine->RegisterScriptFunction("AgsBox2D::CreateDistanceJoint^8", (void*)agsbox2d_newDistanceJoint);
-    engine->RegisterScriptFunction("AgsBox2D::CreateMotorJoint^5", (void*)agsbox2d_newMotorJoint);
-    engine->RegisterScriptFunction("AgsBox2D::CreateMouseJoint^4", (void*)agsbox2d_newMouseJoint);
-    engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^13", (void*)agsbox2d_newPulleyJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateDistanceJoint^7", (void*)agsbox2d_newDistanceJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateMotorJoint^4", (void*)agsbox2d_newMotorJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateMouseJoint^3", (void*)agsbox2d_newMouseJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^12", (void*)agsbox2d_newPulleyJoint);
     engine->RegisterScriptFunction("AgsBox2D::DestroyJoint^2", (void*)agsbox2d_DestroyJoint);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
