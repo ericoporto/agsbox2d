@@ -139,6 +139,73 @@ namespace SerialHelper {
 		return buf;
 	}
 
+
+    char* b2JointToChar(b2Joint* b2joint, char* buf, char* end) {
+        bool collide_connected = b2joint->GetCollideConnected();
+        int joint_type = b2joint->GetType();
+
+        buf = IntToChar( joint_type, buf, end);
+	    buf = BoolToChar(collide_connected, buf, end);
+
+        b2Body* bodyA = b2joint->GetBodyA();
+        b2Body* bodyB = b2joint->GetBodyB();
+
+        if(b2joint->GetType() == b2JointType::e_revoluteJoint) {
+            b2RevoluteJoint* revoluteJoint = dynamic_cast<b2RevoluteJoint*>(b2joint);
+
+            buf = b2Vec2ToChar(bodyA->GetLocalPoint(revoluteJoint->GetAnchorA()), buf, end);
+            buf = b2Vec2ToChar(bodyB->GetLocalPoint(revoluteJoint->GetAnchorB()), buf, end);
+            buf = FloatToChar(bodyB->GetAngle() - bodyA->GetAngle() - revoluteJoint->GetJointAngle(), buf, end);
+            buf = FloatToChar(revoluteJoint->GetJointSpeed(), buf, end);
+            buf = BoolToChar(revoluteJoint->IsLimitEnabled(), buf, end);
+            buf = FloatToChar(revoluteJoint->GetLowerLimit(), buf, end);
+            buf = FloatToChar(revoluteJoint->GetUpperLimit(), buf, end);
+            buf = BoolToChar(revoluteJoint->IsMotorEnabled(), buf, end);
+            buf = FloatToChar(revoluteJoint->GetMotorSpeed(), buf, end);
+            buf = FloatToChar(revoluteJoint->GetMaxMotorTorque(), buf, end);
+
+        } else if(b2joint->GetType() == b2JointType::e_distanceJoint) {
+            b2DistanceJoint* distanceJoint = dynamic_cast<b2DistanceJoint*>(b2joint);
+
+            buf = b2Vec2ToChar(bodyA->GetLocalPoint(distanceJoint->GetAnchorA()), buf, end);
+            buf = b2Vec2ToChar(bodyB->GetLocalPoint(distanceJoint->GetAnchorB()), buf, end);
+            buf = FloatToChar(distanceJoint->GetLength(), buf, end);
+            buf = FloatToChar(distanceJoint->GetFrequency(), buf, end);
+            buf = FloatToChar(distanceJoint->GetDampingRatio(), buf, end);
+
+        } else if(b2joint->GetType() == b2JointType::e_pulleyJoint) {
+            b2PulleyJoint* pulleyJoint = dynamic_cast<b2PulleyJoint*>(b2joint);
+
+            buf = b2Vec2ToChar(pulleyJoint->GetGroundAnchorA(), buf, end);
+            buf = b2Vec2ToChar(pulleyJoint->GetGroundAnchorB(), buf, end);
+            buf = b2Vec2ToChar(bodyA->GetLocalPoint(pulleyJoint->GetAnchorA()), buf, end);
+            buf = b2Vec2ToChar(bodyB->GetLocalPoint(pulleyJoint->GetAnchorB()), buf, end);
+            buf = FloatToChar((pulleyJoint->GetGroundAnchorA() - pulleyJoint->GetAnchorA()).Length(), buf, end);
+            buf = FloatToChar((pulleyJoint->GetGroundAnchorB() - pulleyJoint->GetAnchorB()).Length(), buf, end);
+            buf = FloatToChar(pulleyJoint->GetRatio(), buf, end);
+
+        } else if(b2joint->GetType() == b2JointType::e_mouseJoint) {
+            b2MouseJoint* mouseJoint = dynamic_cast<b2MouseJoint*>(b2joint);
+
+            buf = b2Vec2ToChar(mouseJoint->GetTarget(), buf, end);
+            buf = b2Vec2ToChar(mouseJoint->GetAnchorB(), buf, end);
+            buf = FloatToChar(mouseJoint->GetMaxForce(), buf, end);
+            buf = FloatToChar(mouseJoint->GetFrequency(), buf, end);
+            buf = FloatToChar(mouseJoint->GetDampingRatio(), buf, end);
+
+        } else if(b2joint->GetType() == b2JointType::e_motorJoint) {
+            b2MotorJoint* motorJoint = dynamic_cast<b2MotorJoint*>(b2joint);
+
+            buf = b2Vec2ToChar(motorJoint->GetLinearOffset(), buf, end);
+            buf = FloatToChar(motorJoint->GetAngularOffset(), buf, end);
+            buf = FloatToChar(motorJoint->GetMaxForce(), buf, end);
+            buf = FloatToChar(motorJoint->GetMaxTorque(), buf, end);
+            buf = FloatToChar(motorJoint->GetCorrectionFactor(), buf, end);
+        }
+
+        return buf;
+	}
+
 	char* CharToBool(bool &b, char* buf) {
 		if (*buf == 0) {
 			b = false;
@@ -314,5 +381,119 @@ namespace SerialHelper {
 	  }
 
 		return buf;
+	}
+
+    char* CharTob2JointDef(b2JointDef *b2jointdef, char* buf) {
+        int32 jointType;
+        bool collide_connected;
+
+        buf = CharToInt(jointType, buf);
+        buf = CharToBool(collide_connected, buf);
+
+        if(jointType == b2JointType::e_revoluteJoint) {
+            b2RevoluteJointDef* revoluteJointDef = new b2RevoluteJointDef;
+            b2jointdef = revoluteJointDef;
+
+        } else if(jointType == b2JointType::e_distanceJoint) {
+            b2DistanceJointDef* distanceJointDef = new b2DistanceJointDef;
+            b2jointdef = distanceJointDef;
+
+            b2Vec2 localAnchorA;
+            b2Vec2 localAnchorB;
+            float32 length;
+            float32 frequency;
+            float32 dampingRatio;
+
+            buf = CharTob2Vec2(localAnchorA, buf);
+            buf = CharTob2Vec2(localAnchorB, buf);
+            buf = CharToFloat( length ,buf);
+            buf = CharToFloat( frequency ,buf);
+            buf = CharToFloat( dampingRatio ,buf);
+
+            distanceJointDef->localAnchorA = localAnchorA;
+            distanceJointDef->localAnchorB = localAnchorB;
+            distanceJointDef->length = length;
+            distanceJointDef->frequencyHz = frequency;
+            distanceJointDef->dampingRatio = dampingRatio;
+
+        } else if(jointType == b2JointType::e_pulleyJoint) {
+            b2PulleyJointDef* pulleyJointDef = new b2PulleyJointDef;
+            b2jointdef = pulleyJointDef;
+
+            b2Vec2 groundAnchorA;
+            b2Vec2 groundAnchorB;
+            b2Vec2 localAnchorA;
+            b2Vec2 localAnchorB;
+            float32 lengthA;
+            float32 lengthB;
+            float32 ratio;
+
+            buf = CharTob2Vec2(groundAnchorA, buf);
+            buf = CharTob2Vec2(groundAnchorB, buf);
+            buf = CharTob2Vec2(localAnchorA, buf);
+            buf = CharTob2Vec2(localAnchorB, buf);
+            buf = CharToFloat( lengthA ,buf);
+            buf = CharToFloat( lengthB ,buf);
+            buf = CharToFloat( ratio ,buf);
+
+            pulleyJointDef->groundAnchorA = groundAnchorA;
+            pulleyJointDef->groundAnchorB = groundAnchorB;
+            pulleyJointDef->localAnchorA = localAnchorA;
+            pulleyJointDef->localAnchorB = localAnchorB;
+            pulleyJointDef->lengthA = lengthA;
+            pulleyJointDef->lengthB = lengthB;
+            pulleyJointDef->ratio = ratio;
+
+        } else if(jointType == b2JointType::e_mouseJoint) {
+            b2MouseJointDef* mouseJointDef = new b2MouseJointDef;
+            b2jointdef = mouseJointDef;
+
+            b2Vec2 target;
+            b2Vec2 anchorB;
+            float32 maxForce;
+            float32 frequency;
+            float32 dampingRatio;
+
+            buf = CharTob2Vec2(target, buf);
+            buf = CharTob2Vec2(anchorB, buf);
+            buf = CharToFloat( maxForce ,buf);
+            buf = CharToFloat( frequency ,buf);
+            buf = CharToFloat( dampingRatio ,buf);
+
+            mouseJointDef->target = target;
+
+            mouseJointDef->maxForce = maxForce;
+            mouseJointDef->frequencyHz = frequency;
+            mouseJointDef->dampingRatio = dampingRatio;
+
+        } else if(jointType == b2JointType::e_motorJoint) {
+            b2MotorJointDef* motorJointDef = new b2MotorJointDef;
+            b2jointdef = motorJointDef;
+
+            b2Vec2 linearOffset;
+            float32 angularOffset;
+            float32 maxForce;
+            float32 maxTorque;
+            float32 correctionFactor;
+
+            buf = CharTob2Vec2(linearOffset, buf);
+            buf = CharToFloat( angularOffset ,buf);
+            buf = CharToFloat( maxForce ,buf);
+            buf = CharToFloat( maxTorque ,buf);
+            buf = CharToFloat( correctionFactor ,buf);
+
+            motorJointDef->linearOffset = linearOffset;
+            motorJointDef->angularOffset = angularOffset;
+            motorJointDef->maxForce = maxForce;
+            motorJointDef->maxTorque = maxTorque;
+            motorJointDef->correctionFactor = correctionFactor;
+        }
+
+        if(b2jointdef) {
+            b2jointdef->collideConnected = collide_connected;
+        }
+
+
+        return buf;
 	}
 }

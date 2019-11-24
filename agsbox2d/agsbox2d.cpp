@@ -42,6 +42,11 @@
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
 #include "AgsFixture.h"
+#include "AgsJoint.h"
+#include "AgsJointDistance.h"
+#include "AgsJointMotor.h"
+#include "AgsJointMouse.h"
+#include "AgsJointPulley.h"
 #include "Book.h"
 
 #include "DebugDraw.h"
@@ -62,6 +67,21 @@ const char *ourScriptHeader =
 "  eBodyStatic=0, \r\n"
 "  eBodyKinematic=1, \r\n"
 "  eBodyDynamic=2, \r\n"
+"}; \r\n"
+" \r\n"
+"enum JointType { \r\n"
+"  eJointUnknown=0, \r\n"
+"  eJointRevolute=1, \r\n"
+"  eJointPrismatic=2, \r\n"
+"  eJointDistance=3, \r\n"
+"  eJointPulley=4, \r\n"
+"  eJointMouse=5, \r\n"
+"  eJointGear=6, \r\n"
+"  eJointWheel=7, \r\n"
+"  eJointWeld=8, \r\n"
+"  eJointFriction=9, \r\n"
+"  eJointRope=10, \r\n"
+"  eJointMotor=11, \r\n"
 "}; \r\n"
 " \r\n"
 "builtin managed struct Body { \r\n"
@@ -177,6 +197,115 @@ const char *ourScriptHeader =
 "  /// Usually a value between 0.0 and 1.0 to make objects bounce. \r\n"
 "  import attribute float Restitution; \r\n"
 "  \r\n"
+"  /// Returns Bodyif it's defined for this fixture, otherwise null. \r\n"
+"  readonly import attribute Body* Body; \r\n"
+"  \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct JointDistance; \r\n"
+"builtin managed struct JointMotor; \r\n"
+"builtin managed struct JointMouse; \r\n"
+"builtin managed struct JointPulley; \r\n"
+" \r\n"
+"builtin managed struct Joint { \r\n"
+"  \r\n"
+"  /// If this joint is a distance joint, returns the JointDistance interface; otherwise null. \r\n"
+"  readonly import attribute JointDistance* AsDistance;  // $AUTOCOMPLETENOINHERIT$  \r\n"
+"  \r\n"
+"  /// If this joint is a motor joint, returns the JointMotor interface; otherwise null. \r\n"
+"  readonly import attribute JointMotor* AsMotor;  // $AUTOCOMPLETENOINHERIT$  \r\n"
+"  \r\n"
+"  /// If this joint is a mouse joint, returns the JointMouse interface; otherwise null. \r\n"
+"  readonly import attribute JointMouse* AsMouse;  // $AUTOCOMPLETENOINHERIT$  \r\n"
+"  \r\n"
+"  /// If this joint is a pulley joint, returns the JointPulley interface; otherwise null. \r\n"
+"  readonly import attribute JointPulley* AsPulley;  // $AUTOCOMPLETENOINHERIT$  \r\n"
+"  \r\n"
+"  /// If this joint is valid, returns true. \r\n"
+"  readonly import attribute bool IsValid; \r\n"
+"  \r\n"
+"  /// If this joint is active, returns true. \r\n"
+"  readonly import attribute bool IsActive; \r\n"
+"  \r\n"
+"  /// Returns Body A if it's defined, otherwise null, for this joint. \r\n"
+"  readonly import attribute Body* BodyA; \r\n"
+"  \r\n"
+"  /// Returns Body B if it's defined, otherwise null, for this joint. \r\n"
+"  readonly import attribute Body* BodyB; \r\n"
+"  \r\n"
+"  /// Returns this joint type. \r\n"
+"  readonly import attribute JointType Type;  // $AUTOCOMPLETENOINHERIT$  \r\n"
+"  \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct JointDistance extends Joint { \r\n"
+"  \r\n"
+"  /// The equilibrium distance between the two Bodies. \r\n"
+"  import attribute float Length; \r\n"
+"  \r\n"
+"  /// The damping ratio, typically between 0 and 1. At 1, the damping is critical. \r\n"
+"  import attribute float DampingRatio; \r\n"
+"  \r\n"
+"  /// The frequency of a harmonic oscillator. Should be smaller than half the frame rate. \r\n"
+"  import attribute float Frequency; \r\n"
+"  \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct JointMotor extends Joint { \r\n"
+"  \r\n"
+"  /// Sets the target linear offset between the two bodies the joint is attached to. \r\n"
+"  import void SetLinearOffset(float fx, float fy); \r\n"
+"  \r\n"
+"  /// The target linear offset X axis between the two bodies the joint is attached to. \r\n"
+"  import attribute float LinearOffsetX; \r\n"
+"  \r\n"
+"  /// The target linear offset Y axis between the two bodies the joint is attached to. \r\n"
+"  import attribute float LinearOffsetY; \r\n"
+"  \r\n"
+"  /// The target angular offset between the two bodies the joint is attached to. \r\n"
+"  import attribute float AngularOffset; \r\n"
+"  \r\n"
+"  /// The Maximum Force applied to reach target position. \r\n"
+"  import attribute float MaxForce; \r\n"
+"  \r\n"
+"  /// The Maximum Torque applied to reach target rotation. \r\n"
+"  import attribute float MaxTorque; \r\n"
+"  \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct JointMouse extends Joint { \r\n"
+"  \r\n"
+"  /// Sets the target point. \r\n"
+"  import void SetTarget(float fx, float fy); \r\n"
+"  \r\n"
+"  /// The target point X axis. \r\n"
+"  readonly import attribute float TargetX; \r\n"
+"  \r\n"
+"  /// The target point Y axis. \r\n"
+"  readonly import attribute float TargetY; \r\n"
+"  \r\n"
+"  /// The damping ratio, typically between 0 and 1. At 1, the damping is critical. \r\n"
+"  import attribute float DampingRatio; \r\n"
+"  \r\n"
+"  /// The frequency of a harmonic oscillator. Should be smaller than half the frame rate. \r\n"
+"  import attribute float Frequency; \r\n"
+"  \r\n"
+"  /// The Maximum Force applied to reach target position. \r\n"
+"  import attribute float MaxForce; \r\n"
+"  \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct JointPulley extends Joint { \r\n"
+"  \r\n"
+"  /// The current length of the segment attached to the first body. \r\n"
+"  readonly import attribute float LengthA; \r\n"
+"  \r\n"
+"  /// The current length of the segment attached to the second body. \r\n"
+"  readonly import attribute float LengthB; \r\n"
+"  \r\n"
+"  /// The pulley ratio. \r\n"
+"  readonly import attribute float Ratio; \r\n"
+"  \r\n"
 "}; \r\n"
 " \r\n"
 "builtin struct AgsBox2D { \r\n"
@@ -204,6 +333,21 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
 "  import static Fixture* CreateFixture(Body* body, Shape* shape, float density=0); \r\n"
+"  \r\n"
+"  /// Create Distance Joint. \r\n"
+"  import static Joint* CreateDistanceJoint(World* world, Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collideConnected = 0); \r\n"
+"  \r\n"
+"  /// Create Motor Joint. \r\n"
+"  import static Joint* CreateMotorJoint(World* world, Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0); \r\n"
+"  \r\n"
+"  /// Create Mouse Joint between body and a target point. \r\n"
+"  import static Joint* CreateMouseJoint(World* world, Body* bodyA, float x, float y); \r\n"
+"  \r\n"
+"  /// Create Pulley Joint. \r\n"
+"  import static Joint* CreatePulleyJoint(World* world, Body* bodyA, Body* bodyB, float gAnchorAX, float gAnchorAY, float gAnchorBX, float gAnchorBY, float AnchorAX, float AnchorAY, float AnchorBX, float AnchorBY, float ratio, bool collideConnected = 0); \r\n"
+"  \r\n"
+"  /// Removes a joint from the world, and marks it as invalid. \r\n"
+"  import static void DestroyJoint(World* world, Joint* joint);  \r\n"
 "  \r\n"
 "}; \r\n";
 
@@ -286,6 +430,56 @@ void AGS_EditorLoadGame(char *buffer, int bufsize)            //*** optional ***
 IAGSEngine* engine;
 
 AgsDebugDraw debugDraw;  // Declare an instance of our DebugDraw class so we can actually use it
+
+AgsBody* FindAgsBodyFromB2Body(b2World* world, int32 world_id, b2Body* b2body) {
+    // body was null in the first place
+    if(b2body == nullptr)
+        return nullptr;
+
+    int32 b2body_id = Book::b2BodyToID(world_id,b2body);
+
+    // body is not from this world
+    if(b2body_id < 0)
+        return nullptr;
+
+    // we found an already registered AgsBody
+    AgsBody* agsbody = Book::b2bodyIDtoAgsBody(b2body_id, world_id);
+    if(agsbody != nullptr)
+        return agsbody;
+
+    // we didn't find an already registered AgsBody, so let's create one
+    AgsBody* body = new AgsBody();
+    body->ID = engine->RegisterManagedObject(body, &AgsBody_Interface);
+    body->B2BodyID = b2body_id;
+    body->World = Book::IDtoAgsWorld(world_id);
+
+    Book::RegisterAgsBody(body->ID, body);
+    return body;
+}
+
+AgsFixture* FindAgsFixtureFromB2Fixture(b2World* world, int32 world_id, b2Fixture* b2fixture) {
+    // fixture was null in the first place
+    if(b2fixture == nullptr)
+        return nullptr;
+
+    int32 b2fixture_id = Book::b2FixtureToID(world_id,b2fixture);
+
+    // fixture is not from this world
+    if(b2fixture_id < 0)
+        return nullptr;
+
+    // we found an already registered AgsFixture
+    AgsFixture* agsfixture = Book::b2FixtureIDtoAgsFixture(b2fixture_id, world_id);
+    if(agsfixture != nullptr)
+        return agsfixture;
+
+    // we didn't find an already registered AgsFixture, so let's create one
+    AgsFixture* fixture = new AgsFixture(world_id,  Book::b2BodyToID(world_id, b2fixture->GetBody()), b2fixture_id);
+    fixture->ID = engine->RegisterManagedObject(fixture, &AgsFixture_Interface);
+
+    Book::RegisterAgsFixture(fixture->ID, fixture);
+    return fixture;
+}
 
 //-----------------------------------------------------------------------------
 #pragma region agsbox2d_ScriptAPI
@@ -391,8 +585,126 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	fixture->ID = engine->RegisterManagedObject(fixture, &AgsFixture_Interface);
 	Book::RegisterAgsFixture(fixture->ID, fixture);
 
+    int b2fixture_id = Book::GetNewFixtureID(body->World->ID);
+    Book::RegisterFixtureFromWorld(fixture->GetB2AgsFixture(), b2fixture_id, body->World->ID);
+
 	return fixture;
 }
+
+AgsJoint* agsbox2d_newDistanceJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                                    uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2,
+                                    int32 collide_connected) {
+    float32 fx1 = ToNormalFloat(x1);
+    float32 fy1 = ToNormalFloat(y1);
+    float32 fx2 = ToNormalFloat(x2);
+    float32 fy2 = ToNormalFloat(y2);
+    bool bcollide_connected = collide_connected != 0;
+
+    AgsJointDistance* agsJointDistance = new AgsJointDistance(
+            world, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
+
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointDistance->b2Joint_ID = b2joint_id;
+
+    AgsJoint* joint = new AgsJoint(agsJointDistance);
+
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
+
+    joint->b2Joint_ID = b2joint_id;
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
+}
+
+AgsJoint* agsbox2d_newMotorJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                                 uint32_t correction_factor,
+                                 int32 collide_connected) {
+
+    float32 fcorrection_factor = ToNormalFloat(correction_factor);
+    bool bcollide_connected = collide_connected != 0;
+
+    AgsJointMotor* agsJointMotor = new AgsJointMotor(
+            world, agsbody_a, agsbody_b, fcorrection_factor, bcollide_connected);
+
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointMotor->b2Joint_ID = b2joint_id;
+
+    AgsJoint* joint = new AgsJoint(agsJointMotor);
+
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
+
+    joint->b2Joint_ID = b2joint_id;
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
+}
+
+AgsJoint* agsbox2d_newMouseJoint(AgsWorld* world, AgsBody* agsbody_a,
+                                uint32_t x, uint32_t y) {
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+
+    AgsJointMouse* agsJointMouse = new AgsJointMouse(
+            world, agsbody_a, fx, fy);
+
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointMouse->b2Joint_ID = b2joint_id;
+
+    AgsJoint* joint = new AgsJoint(agsJointMouse);
+
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
+
+    joint->b2Joint_ID = b2joint_id;
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
+}
+
+AgsJoint* agsbox2d_newPulleyJoint(AgsWorld* world, AgsBody* agsbody_a, AgsBody* agsbody_b,
+                                  uint32_t ground_anchor_a_x, uint32_t ground_anchor_a_y, uint32_t ground_anchor_b_x, uint32_t ground_anchor_b_y,
+                                  uint32_t anchor_a_x, uint32_t anchor_a_y, uint32_t anchor_b_x, uint32_t anchor_b_y,
+                                  uint32_t ratio, int32 collide_connected) {
+    float32 fground_anchor_a_x = ToNormalFloat(ground_anchor_a_x);
+    float32 fground_anchor_a_y = ToNormalFloat(ground_anchor_a_y);
+    float32 fground_anchor_b_x = ToNormalFloat(ground_anchor_b_x);
+    float32 fground_anchor_b_y = ToNormalFloat(ground_anchor_b_y);
+    float32 fanchor_a_x = ToNormalFloat(anchor_a_x);
+    float32 fanchor_a_y = ToNormalFloat(anchor_a_y);
+    float32 fanchor_b_x = ToNormalFloat(anchor_b_x);
+    float32 fanchor_b_y = ToNormalFloat(anchor_b_y);
+    float32 fratio = ToNormalFloat(ratio);
+    bool bcollide_connected = collide_connected != 0;
+
+    AgsJointPulley* agsJointPulley = new AgsJointPulley(
+            world, agsbody_a, agsbody_b,
+            fground_anchor_a_x, fground_anchor_a_y, fground_anchor_b_x, fground_anchor_b_y,
+            fanchor_a_x, fanchor_a_y, fanchor_b_x, fanchor_b_y,
+            fratio, bcollide_connected);
+
+    AgsJoint* joint = new AgsJoint(agsJointPulley);
+
+    int b2joint_id = Book::GetNewJointID(world->ID);
+    agsJointPulley->b2Joint_ID = b2joint_id;
+
+    joint->ID = engine->RegisterManagedObject(joint, &AgsJoint_Interface);
+    Book::RegisterAgsJoint(joint->ID, joint);
+
+    joint->b2Joint_ID = b2joint_id;
+    Book::RegisterJointFromWorld(joint->GetB2AgsJoint(), b2joint_id, world->ID);
+
+    return joint;
+}
+
+void agsbox2d_DestroyJoint(AgsWorld* world, AgsJoint* joint) {
+    if (world == nullptr)
+        return;
+
+    world->DestroyJoint(joint);
+}
+
 
 #pragma endregion // agsbox2d_ScriptAPI
 //-----------------------------------------------------------------------------
@@ -410,7 +722,7 @@ void AgsWorld_Step(AgsWorld* self, uint32_t dt, int32 velocityIterations, int32 
 int32 AgsWorld_GetDebugSprite(AgsWorld* self, int32 camera_x, int32 camera_y) {
 	debugDraw.ClearSprite();
 	debugDraw.GetSurfaceForDebugDraw(camera_x, camera_y);
-	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit);
+	debugDraw.SetFlags(b2Draw::e_centerOfMassBit | b2Draw::e_shapeBit | b2Draw::e_jointBit | b2Draw::e_pairBit);
 	self->B2AgsWorld->SetDebugDraw(&debugDraw);
 	self->B2AgsWorld->DrawDebugData();
 	debugDraw.ReleaseSurfaceForDebugDraw();
@@ -681,9 +993,9 @@ uint32_t AgsFixture_GetDensity(AgsFixture* self) {
 }
 
 void AgsFixture_SetDensity(AgsFixture* self, uint32_t density) {
-	float32 fdensity = ToNormalFloat(density);
+	float32 f_density = ToNormalFloat(density);
 
-	self->SetDensity(fdensity);
+	self->SetDensity(f_density);
 }
 
 uint32_t AgsFixture_GetFriction(AgsFixture* self) {
@@ -701,12 +1013,240 @@ uint32_t AgsFixture_GetRestitution(AgsFixture* self) {
 }
 
 void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
-	float32 frestitution = ToNormalFloat(restitution);
+	float32 f_restitution = ToNormalFloat(restitution);
 
-	self->SetRestitution(frestitution);
+	self->SetRestitution(f_restitution);
+}
+
+AgsBody* AgsFixture_GetBody(AgsFixture* self) {
+    AgsWorld* world = Book::IDtoAgsWorld(self->WorldID);
+
+    return FindAgsBodyFromB2Body(world->B2AgsWorld, world->ID, self->GetB2Body());
 }
 
 #pragma endregion // AgsFixture_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsJointDistance_ScriptAPI
+
+
+uint32_t AgsJointDistance_GetLength (AgsJointDistance* self) {
+    return ToAgsFloat(self->GetLength());
+}
+
+void AgsJointDistance_SetLength (AgsJointDistance* self, uint32_t length) {
+    float32 f_length = ToNormalFloat(length);
+    self->SetLength(f_length);
+}
+
+uint32_t AgsJointDistance_GetDampingRatio (AgsJointDistance* self) {
+    return ToAgsFloat(self->GetDampingRatio());
+}
+
+void AgsJointDistance_SetDampingRatio (AgsJointDistance* self, uint32_t dratio) {
+    float32 f_dratio = ToNormalFloat(dratio);
+    self->SetDampingRatio(f_dratio);
+}
+
+uint32_t AgsJointDistance_GetFrequency (AgsJointDistance* self) {
+    return ToAgsFloat(self->GetFrequency());
+}
+
+void AgsJointDistance_SetFrequency (AgsJointDistance* self, uint32_t hz) {
+    float32 fhz = ToNormalFloat(hz);
+    self->SetFrequency(fhz);
+}
+
+#pragma endregion // AgsJointDistance_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsJointMotor_ScriptAPI
+
+uint32_t AgsJointMotor_GetLinearOffsetX (AgsJointMotor* self) {
+    return ToAgsFloat(self->GetLinearOffsetX());
+}
+
+void AgsJointMotor_SetLinearOffsetX (AgsJointMotor* self, uint32_t x) {
+    float32 fx = ToNormalFloat(x);
+    self->SetLinearOffsetX(fx);
+}
+
+uint32_t AgsJointMotor_GetLinearOffsetY (AgsJointMotor* self) {
+    return ToAgsFloat(self->GetLinearOffsetY());
+}
+
+void AgsJointMotor_SetLinearOffsetY (AgsJointMotor* self, uint32_t y) {
+    float32 fy = ToNormalFloat(y);
+    self->SetLinearOffsetY(fy);
+}
+
+void AgsJointMotor_SetLinearOffset (AgsJointMotor* self, uint32_t x, uint32_t y) {
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+    self->SetLinearOffset(fx,fy);
+}
+
+uint32_t AgsJointMotor_GetAngularOffset (AgsJointMotor* self) {
+    return ToAgsFloat(self->GetAngularOffset());
+}
+
+void AgsJointMotor_SetAngularOffset (AgsJointMotor* self, uint32_t angularOffset) {
+    float32 fangularOffset = ToNormalFloat(angularOffset);
+    self->SetAngularOffset(fangularOffset);
+}
+
+uint32_t AgsJointMotor_GetMaxForce (AgsJointMotor* self) {
+    return ToAgsFloat(self->GetMaxForce());
+}
+
+void AgsJointMotor_SetMaxForce (AgsJointMotor* self, uint32_t force) {
+    float32 f_force = ToNormalFloat(force);
+    self->SetMaxForce(f_force);
+}
+
+uint32_t AgsJointMotor_GetMaxTorque (AgsJointMotor* self) {
+    return ToAgsFloat(self->GetMaxTorque());
+}
+
+void AgsJointMotor_SetMaxTorque (AgsJointMotor* self, uint32_t torque) {
+    float32 ftorque = ToNormalFloat(torque);
+    self->SetMaxTorque(ftorque);
+}
+
+#pragma endregion // AgsJointMotor_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsJointMouse_ScriptAPI
+
+uint32_t AgsJointMouse_GetDampingRatio (AgsJointMouse* self) {
+    return ToAgsFloat(self->GetDampingRatio());
+}
+
+void AgsJointMouse_SetDampingRatio (AgsJointMouse* self, uint32_t dratio) {
+    float32 f_dratio = ToNormalFloat(dratio);
+    self->SetDampingRatio(f_dratio);
+}
+
+uint32_t AgsJointMouse_GetFrequency (AgsJointMouse* self) {
+    return ToAgsFloat(self->GetFrequency());
+}
+
+void AgsJointMouse_SetFrequency (AgsJointMouse* self, uint32_t hz) {
+    float32 fhz = ToNormalFloat(hz);
+    self->SetFrequency(fhz);
+}
+
+uint32_t AgsJointMouse_GetTargetX (AgsJointMouse* self) {
+    return ToAgsFloat(self->GetTargetX());
+}
+
+uint32_t AgsJointMouse_GetTargetY (AgsJointMouse* self) {
+    return ToAgsFloat(self->GetTargetY());
+}
+
+void AgsJointMouse_SetTarget (AgsJointMouse* self, uint32_t x, uint32_t y) {
+    float32 fx = ToNormalFloat(x);
+    float32 fy = ToNormalFloat(y);
+    self->SetTarget(fx,fy);
+}
+
+uint32_t AgsJointMouse_GetMaxForce (AgsJointMouse* self) {
+    return ToAgsFloat(self->GetMaxForce());
+}
+
+void AgsJointMouse_SetMaxForce (AgsJointMouse* self, uint32_t force) {
+    float32 f_force = ToNormalFloat(force);
+    self->SetMaxForce(f_force);
+}
+
+#pragma endregion // AgsJointMouse_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsJointPulley_ScriptAPI
+
+uint32_t AgsJointPulley_GetLengthA (AgsJointPulley* self) {
+    return ToAgsFloat(self->GetLengthA());
+}
+
+uint32_t AgsJointPulley_GetLengthB (AgsJointPulley* self) {
+    return ToAgsFloat(self->GetLengthB());
+}
+
+uint32_t AgsJointPulley_GetRatio (AgsJointPulley* self) {
+    return ToAgsFloat(self->GetRatio());
+}
+
+#pragma endregion // AgsJointPulley_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsJoint_ScriptAPI
+
+AgsJointDistance* AgsJoint_AsDistance (AgsJoint* self) {
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_distanceJoint)
+        return nullptr;
+
+    AgsJointDistance* agsJointDistance = new AgsJointDistance(self->GetAgsWorld()->ID, dynamic_cast<b2DistanceJoint*>(self->GetB2AgsJoint()));
+    agsJointDistance->ID = engine->RegisterManagedObject(agsJointDistance, &AgsJointDistance_Interface);
+    Book::RegisterAgsJointDistance(agsJointDistance->ID, agsJointDistance);
+    return agsJointDistance;
+}
+
+AgsJointMotor* AgsJoint_AsMotor (AgsJoint* self) {
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_motorJoint)
+        return nullptr;
+
+    AgsJointMotor* agsJointMotor = new AgsJointMotor(self->GetAgsWorld()->ID, dynamic_cast<b2MotorJoint*>(self->GetB2AgsJoint()));
+    agsJointMotor->ID = engine->RegisterManagedObject(agsJointMotor, &AgsJointMotor_Interface);
+    Book::RegisterAgsJointMotor(agsJointMotor->ID, agsJointMotor);
+    return agsJointMotor;
+}
+
+AgsJointMouse* AgsJoint_AsMouse (AgsJoint* self) {
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_mouseJoint)
+        return nullptr;
+
+    AgsJointMouse* agsJointMouse = new AgsJointMouse(self->GetAgsWorld()->ID, dynamic_cast<b2MouseJoint*>(self->GetB2AgsJoint()));
+    agsJointMouse->ID = engine->RegisterManagedObject(agsJointMouse, &AgsJointMouse_Interface);
+    Book::RegisterAgsJointMouse(agsJointMouse->ID, agsJointMouse);
+    return agsJointMouse;
+}
+
+AgsJointPulley* AgsJoint_AsPulley (AgsJoint* self) {
+    if(self->GetB2AgsJoint()->GetType() != b2JointType ::e_pulleyJoint)
+        return nullptr;
+
+    AgsJointPulley* agsJointPulley = new AgsJointPulley(self->GetAgsWorld()->ID, dynamic_cast<b2PulleyJoint*>(self->GetB2AgsJoint()));
+    agsJointPulley->ID = engine->RegisterManagedObject(agsJointPulley, &AgsJointPulley_Interface);
+    Book::RegisterAgsJointPulley(agsJointPulley->ID, agsJointPulley);
+    return agsJointPulley;
+}
+
+int32 AgsJoint_GetIsValid (AgsJoint* self) {
+    return self->isValid();
+}
+
+int32 AgsJoint_GetIsActive (AgsJoint* self) {
+    return  self->isActive();
+}
+
+AgsBody* AgsJoint_GetBodyA (AgsJoint* self) {
+    b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
+    int32 world_id = self->GetAgsWorld()->ID;
+    if(self->GetB2AgsJoint()->GetType() == e_mouseJoint)
+        return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());
+
+    return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyA());
+}
+
+AgsBody* AgsJoint_GetBodyB (AgsJoint* self) {
+    b2World* b2world = self->GetAgsWorld()->B2AgsWorld;
+    int32 world_id = self->GetAgsWorld()->ID;
+    if(self->GetB2AgsJoint()->GetType() == e_mouseJoint)
+        return nullptr;
+
+    return FindAgsBodyFromB2Body(b2world, world_id, self->GetBodyB());
+}
+
+int32 AgsJoint_GetType (AgsJoint* self) {
+    return  self->GetType();
+}
+
+#pragma endregion // AgsJoint_ScriptAPI
 //-----------------------------------------------------------------------------
 
 #define REGISTER(x) engine->RegisterScriptFunction(#x, (void *) (x));
@@ -729,6 +1269,12 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
 
+    engine->AddManagedObjectReader(AgsJointInterface::name, &AgsJoint_Reader);
+    engine->AddManagedObjectReader(AgsJointDistanceInterface::name, &AgsJointDistance_Reader);
+    engine->AddManagedObjectReader(AgsJointMotorInterface::name, &AgsJointMotor_Reader);
+    engine->AddManagedObjectReader(AgsJointMouseInterface::name, &AgsJointMouse_Reader);
+    engine->AddManagedObjectReader(AgsJointPulleyInterface::name, &AgsJointPulley_Reader);
+
 	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::CreateWorld^2", (void*)agsbox2d_newWorld);
@@ -737,6 +1283,11 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("AgsBox2D::CreateRectangleShape^4", (void*)agsbox2d_newRectangleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateCircleShape^3", (void*)agsbox2d_newCircleShape);
 	engine->RegisterScriptFunction("AgsBox2D::CreateFixture^3", (void*)agsbox2d_newFixture);
+    engine->RegisterScriptFunction("AgsBox2D::CreateDistanceJoint^8", (void*)agsbox2d_newDistanceJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateMotorJoint^5", (void*)agsbox2d_newMotorJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreateMouseJoint^4", (void*)agsbox2d_newMouseJoint);
+    engine->RegisterScriptFunction("AgsBox2D::CreatePulleyJoint^13", (void*)agsbox2d_newPulleyJoint);
+    engine->RegisterScriptFunction("AgsBox2D::DestroyJoint^2", (void*)agsbox2d_DestroyJoint);
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);
@@ -793,6 +1344,50 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Fixture::set_Friction", (void*)AgsFixture_SetFriction);
 	engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
 	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
+    engine->RegisterScriptFunction("Fixture::get_Body", (void*)AgsFixture_GetBody);
+
+    engine->RegisterScriptFunction("JointDistance::get_Length", (void*)AgsJointDistance_GetLength);
+    engine->RegisterScriptFunction("JointDistance::set_Length", (void*)AgsJointDistance_SetLength);
+    engine->RegisterScriptFunction("JointDistance::get_DampingRatio", (void*)AgsJointDistance_GetDampingRatio);
+    engine->RegisterScriptFunction("JointDistance::set_DampingRatio", (void*)AgsJointDistance_SetDampingRatio);
+    engine->RegisterScriptFunction("JointDistance::get_Frequency", (void*)AgsJointDistance_GetFrequency);
+    engine->RegisterScriptFunction("JointDistance::set_Frequency", (void*)AgsJointDistance_SetFrequency);
+
+    engine->RegisterScriptFunction("JointMotor::get_LinearOffsetX", (void*)AgsJointMotor_GetLinearOffsetX);
+    engine->RegisterScriptFunction("JointMotor::set_LinearOffsetX", (void*)AgsJointMotor_SetLinearOffsetX);
+    engine->RegisterScriptFunction("JointMotor::get_LinearOffsetY", (void*)AgsJointMotor_GetLinearOffsetY);
+    engine->RegisterScriptFunction("JointMotor::set_LinearOffsetY", (void*)AgsJointMotor_SetLinearOffsetY);
+    engine->RegisterScriptFunction("JointMotor::SetLinearOffset^2", (void*)AgsJointMotor_SetLinearOffset);
+    engine->RegisterScriptFunction("JointMotor::get_AngularOffset", (void*)AgsJointMotor_GetAngularOffset);
+    engine->RegisterScriptFunction("JointMotor::set_AngularOffset", (void*)AgsJointMotor_SetAngularOffset);
+    engine->RegisterScriptFunction("JointMotor::get_MaxForce", (void*)AgsJointMotor_GetMaxForce);
+    engine->RegisterScriptFunction("JointMotor::set_MaxForce", (void*)AgsJointMotor_SetMaxForce);
+    engine->RegisterScriptFunction("JointMotor::get_MaxTorque", (void*)AgsJointMotor_GetMaxTorque);
+    engine->RegisterScriptFunction("JointMotor::set_MaxTorque", (void*)AgsJointMotor_SetMaxTorque);
+
+    engine->RegisterScriptFunction("JointMouse::get_DampingRatio", (void*)AgsJointMouse_GetDampingRatio);
+    engine->RegisterScriptFunction("JointMouse::set_DampingRatio", (void*)AgsJointMouse_SetDampingRatio);
+    engine->RegisterScriptFunction("JointMouse::get_Frequency", (void*)AgsJointMouse_GetFrequency);
+    engine->RegisterScriptFunction("JointMouse::set_Frequency", (void*)AgsJointMouse_SetFrequency);
+    engine->RegisterScriptFunction("JointMouse::get_TargetX", (void*)AgsJointMouse_GetTargetX);
+    engine->RegisterScriptFunction("JointMouse::get_TargetY", (void*)AgsJointMouse_GetTargetY);
+    engine->RegisterScriptFunction("JointMouse::SetTarget^2", (void*)AgsJointMouse_SetTarget);
+    engine->RegisterScriptFunction("JointMouse::get_MaxForce", (void*)AgsJointMouse_GetMaxForce);
+    engine->RegisterScriptFunction("JointMouse::set_MaxForce", (void*)AgsJointMouse_SetMaxForce);
+
+    engine->RegisterScriptFunction("JointPulley::get_LengthA", (void*)AgsJointPulley_GetLengthA);
+    engine->RegisterScriptFunction("JointPulley::get_LengthB", (void*)AgsJointPulley_GetLengthB);
+    engine->RegisterScriptFunction("JointPulley::get_Ratio", (void*)AgsJointPulley_GetRatio);
+
+    engine->RegisterScriptFunction("Joint::get_AsDistance", (void*)AgsJoint_AsDistance);
+    engine->RegisterScriptFunction("Joint::get_AsMotor", (void*)AgsJoint_AsMotor);
+    engine->RegisterScriptFunction("Joint::get_AsMouse", (void*)AgsJoint_AsMouse);
+    engine->RegisterScriptFunction("Joint::get_AsPulley", (void*)AgsJoint_AsPulley);
+    engine->RegisterScriptFunction("Joint::get_IsValid", (void*)AgsJoint_GetIsValid);
+    engine->RegisterScriptFunction("Joint::get_IsActive", (void*)AgsJoint_GetIsActive);
+    engine->RegisterScriptFunction("Joint::get_BodyA", (void*)AgsJoint_GetBodyA);
+    engine->RegisterScriptFunction("Joint::get_BodyB", (void*)AgsJoint_GetBodyB);
+    engine->RegisterScriptFunction("Joint::get_Type", (void*)AgsJoint_GetType);
 
   engine->RequestEventHook(AGSE_PRESCREENDRAW);
 }

@@ -19,14 +19,16 @@
 
 class AgsFixture
 {
+    b2Fixture* B2AgsFixture = nullptr;
 public:
 	AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density);
     AgsFixture(int32 world_id, int32 b2body_id, int32 fixture_id);
     ~AgsFixture(void);
-	b2Fixture* B2AgsFixture;
 	b2FixtureDef B2AgsFixtureDef;
 
     void InitializeIfNeeded();
+    b2Body* GetB2Body();
+    b2Fixture* GetB2AgsFixture();
 
 	float32 GetDensity();
 	void SetDensity(float32 density);

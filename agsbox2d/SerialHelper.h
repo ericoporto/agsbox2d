@@ -35,6 +35,7 @@ namespace SerialHelper {
 	char* b2ShapeToChar(b2Shape* b2shape, char* buf, char* end);
 	char* b2FixtureToChar(b2Fixture* b2fixture, char* buf, char* end);
 	char* b2BodyToChar(b2Body* b2body, char* buf, char* end);
+    char* b2JointToChar(b2Joint* b2joint, char* buf, char* end);
 
 	char* CharToBool(bool &b, char* buf);
 	char* CharToInt(int32 &i, char * buf);
@@ -43,6 +44,7 @@ namespace SerialHelper {
 	char* CharTob2Shape(b2Shape** b2shape, char * buf);
 	char* CharTob2FixtureDef(b2FixtureDef* b2fixturedef, char* buf);
 	char* CharTob2Body(b2BodyDef &b2bodydef, b2Body** pb2body, b2World* world, char* buf);
+    char* CharTob2JointDef(b2JointDef *b2jointdef, char* buf);
 }
 
 #endif /* AGSBOX2D_SERIALHELPER_H */

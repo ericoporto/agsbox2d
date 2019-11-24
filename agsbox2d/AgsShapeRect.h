@@ -24,7 +24,7 @@ public:
 	AgsShapeRect(float32 w, float32 h, float32 x, float32 y);
 	AgsShapeRect(b2PolygonShape* shape);
 	~AgsShapeRect(void);
-	b2PolygonShape  * B2AgsShapeRect;
+	b2PolygonShape  * B2AgsShapeRect = nullptr;
 	float32 GetWidthF();
 	void SetWidthF(float32 wf);
 	int32 GetWidth();
