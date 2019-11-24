@@ -88,6 +88,8 @@ function room_RepExec()
 
 Check [agsbox2d_demo](https://github.com/ericoporto/agsbox2d/tree/master/agsbox2d_demo) AGS Game project by loading it on AGS!
 
+---
+
 ## Script API
 
 ### AgsBox2D
@@ -171,6 +173,50 @@ You should always pass finite non-zero densities for dynamic bodies.
 You don't need to keep the pointer to the shape attached to a body through a 
 fixture, since the body will hold a copy of the shape. Similarly, you also
 don't need to keep a pointer to the fixture, because the body will hold it too.
+
+#### `Joint* CreateDistanceJoint(Body* bodyA, Body* bodyB, float a_x, float a_y, float b_x, float b_y, bool collideConnected = 0)`
+
+Create Distance Joint, pass anchors on bodies A and B using world coordinates. The two bodies are assumed to be in place when this joint is created. 
+
+This joint constrains the distance between two points on two bodies to be constant. The first anchor point is connected to the first body and the second to the second body, and the points define the length of the distance joint.
+
+#### `Joint* CreateMotorJoint(Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0)`
+
+Create Motor Joint. This is a joint between two bodies which controls the relative motion between them.
+                    
+Position and rotation offsets can be specified once the MotorJoint has been created, as well as the maximum motor force and torque that will be be applied to reach the target offsets.
+
+#### `Joint* CreateMouseJoint(Body* bodyA, float x, float y)`
+
+Create Mouse Joint between body and a target point in the world. To make it follow the mouse, the fixed point must be updated every time-step.
+
+The advantage of using a MouseJoint instead of just changing a body position directly is that collisions and reactions to other joints are handled by the physics engine.
+
+#### `Joint* CreatePulleyJoint(Body* bodyA, Body* bodyB, PointF* groundAnchorA, PointF* groundAnchorB, PointF* localAnchorA, PointF* localAnchorB, float ratio, bool collideConnected = 0)`
+
+Creates a PulleyJoint to join two bodies to each other and the ground.
+
+The pulley joint simulates a pulley with an optional block and tackle. If the ratio parameter has a value different from one, then the simulated rope extends faster on one side than the other. In a pulley joint the total length of the simulated rope is the constant length1 + ratio * length2, which is set when the pulley joint is created.
+
+Pulley joints can behave unpredictably if one side is fully extended. It is recommended that the method setMaxLengths  be used to constrain the maximum lengths each side can attain.
+
+#### `void AgsBox2D.DestroyJoint(World* world,  Joint* body)`
+
+Removes a joint from the world, it should no longer return true to isValid.
+
+### PointF
+
+#### `PointF* PointF.Create(float x, float y)`
+
+Creates a PointF object with x and y values.
+
+#### `float Body.X`
+
+The X coordinate property of a PointF.
+
+#### `float Body.Y`
+
+The Y coordinate property of a PointF.
 
 ### Body
 
@@ -336,6 +382,126 @@ the contact will have no friction.
 Restitution is used to make objects bounce, and is usually a value between 
 `0.0` and `1.0`. A value of `0.0` means the object won't bounce, and a value
 of `1.0` means the object velocity will be exactly reflected.
+
+### Joint
+
+#### `JointDistance* Joint.AsDistance`
+
+If this joint is a distance joint, returns the JointDistance interface; otherwise null.
+
+#### `JointMotor* Joint.AsMotor`
+
+If this joint is a motor joint, returns the JointMotor interface; otherwise null.
+
+#### `JointMouse* Joint.AsMouse`
+
+If this joint is a mouse joint, returns the JointMouse interface; otherwise null.
+
+#### `JointPulley* Joint.AsPulley`
+
+If this joint is a pulley joint, returns the JointPulley interface; otherwise null.
+
+#### `bool Joint.IsValid`
+
+If this joint is valid, returns true.
+
+#### `bool Joint.IsActive`
+
+If this joint is active, returns true.
+
+#### `Body* Joint.BodyA`
+
+Returns Body A if it's defined, otherwise null, for this joint.
+
+#### `Body* Joint.BodyB`
+
+Returns Body B if it's defined, otherwise null, for this joint. 
+
+#### `JointType Joint.Type`
+
+Returns this joint type.
+
+### JointDistance
+
+#### `float JointDistance.Length`
+
+The equilibrium distance between the two Bodies. 
+
+#### `float JointDistance.DampingRatio`
+
+The damping ratio, typically between 0 and 1. At 1, the damping is critical.
+
+#### `float JointDistance.Frequency`
+
+The frequency of a harmonic oscillator. Should be smaller than half the frame rate. 
+
+### JointMotor
+
+#### `void JointMotor.SetLinearOffset(float fx, float fy)`
+
+Sets the target linear offset between the two bodies the joint is attached to.
+
+#### `float JointMotor.LinearOffsetX`
+
+The target linear offset X axis between the two bodies the joint is attached to.
+
+#### `float JointMotor.LinearOffsetY`
+
+The target linear offset Y axis between the two bodies the joint is attached to.
+
+#### `float JointMotor.AngularOffset`
+
+The target angular offset between the two bodies the joint is attached to.
+
+#### `float JointMotor.MaxForce`
+
+The Maximum Force applied to reach target position.
+
+#### `float JointMotor.MaxTorque`
+
+The Maximum Torque applied to reach target rotation.
+
+### JointMouse
+
+#### `void JointMouse.SetTarget(float fx, float fy)`
+
+Sets the target point.
+
+#### `float JointMouse.TargetX`
+
+The target point X axis.
+
+#### `float JointMouse.TargetY`
+
+The target point Y axis.
+
+#### `float JointMouse.DampingRatio`
+
+The damping ratio, typically between 0 and 1. At 1, the damping is critical.
+
+#### `float JointMouse.Frequency`
+
+The frequency of a harmonic oscillator. Should be smaller than half the frame rate.
+
+#### `float JointMouse.MaxForce`
+
+The Maximum Force applied to reach target position.
+
+### JointPulley
+
+#### `float JointPulley.LengthA`
+
+The current length of the segment attached to the first body. 
+
+#### `float JointPulley.LengthB`
+
+The current length of the segment attached to the second body.
+
+#### `float JointPulley.Ratio`
+
+The pulley ratio.
+
+---
 
 ## Download AgsBox2D
 
