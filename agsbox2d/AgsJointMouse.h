@@ -19,7 +19,7 @@
 class AgsJointMouse
 {
 private:
-    b2MouseJoint* B2AgsJointMouse;
+    b2MouseJoint* B2AgsJointMouse = nullptr;
 public:
     AgsJointMouse(AgsWorld* agsworld, AgsBody* agsbody_a, float x, float y);
     AgsJointMouse(int32 world_id, b2MouseJoint* Mousejoint);

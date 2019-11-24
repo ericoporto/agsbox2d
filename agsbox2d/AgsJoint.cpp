@@ -108,6 +108,7 @@ int32 AgsJoint::GetType() {
     if(B2AgsJoint->GetType() == e_motorJoint) {
         return eJointMotor;
     }
+    return eJointUnknown;
 }
 
 bool AgsJoint::isValid(){

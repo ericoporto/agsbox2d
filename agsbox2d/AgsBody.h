@@ -20,12 +20,12 @@ class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
 class AgsBody
 {
 	bool IsDestroyed;
-    b2Body* B2AgsBody;
+    b2Body* B2AgsBody = nullptr;
 public:
 	AgsBody(bool destroyed = true);
 	AgsBody(AgsWorld* world, float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
 	~AgsBody(void);
-	AgsWorld* World;
+	AgsWorld* World = nullptr;
 	b2BodyDef B2AgsBodyDef;
 
     void InitializeIfNeeded();

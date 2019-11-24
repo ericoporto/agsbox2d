@@ -19,7 +19,7 @@
 class AgsJointPulley
 {
 private:
-    b2PulleyJoint* B2AgsJointPulley;
+    b2PulleyJoint* B2AgsJointPulley = nullptr;
 public:
     AgsJointPulley(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b,
                    float32 ground_anchor_a_x, float32 ground_anchor_a_y, float32 ground_anchor_b_x, float32 ground_anchor_b_y,

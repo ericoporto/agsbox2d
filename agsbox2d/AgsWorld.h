@@ -20,11 +20,11 @@ class AgsJoint; // forward declaration, we need AgsBody.h on the cpp
 
 class AgsWorld
 {
-    b2Body* B2GroundBody;
+    b2Body* B2GroundBody = nullptr;
 public:
 	AgsWorld(float32 gravityX, float32 gravityY);
 	~AgsWorld(void);
-	b2World* B2AgsWorld;
+	b2World* B2AgsWorld = nullptr;
     b2Body* GetGroundB2Body();
 	AgsBody* NewBody(float32 x, float32 y, b2BodyType bodytype = b2_dynamicBody);
 	void DestroyBody(AgsBody* body);

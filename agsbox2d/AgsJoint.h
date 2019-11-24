@@ -40,7 +40,7 @@ class AgsJoint
     int32 WorldID;
     int32 B2bodyA_ID;
     int32 B2bodyB_ID;
-    b2Joint* B2AgsJoint;
+    b2Joint* B2AgsJoint = nullptr;
 public:
 
     AgsJoint(AgsWorld* agsworld);

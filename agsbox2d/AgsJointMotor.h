@@ -19,7 +19,7 @@
 class AgsJointMotor
 {
 private:
-    b2MotorJoint* B2AgsJointMotor;
+    b2MotorJoint* B2AgsJointMotor = nullptr;
 public:
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b, float32 correction_factor, bool collide_connected);
     AgsJointMotor(AgsWorld* agsworld, AgsBody* agsbody_a, AgsBody* agsbody_b);

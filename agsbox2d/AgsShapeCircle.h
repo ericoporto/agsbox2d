@@ -21,7 +21,7 @@ public:
 	AgsShapeCircle(float32 radius);
 	AgsShapeCircle(b2CircleShape* circleshape);
 	~AgsShapeCircle(void);
-	b2CircleShape* B2AgsShapeCircle;
+	b2CircleShape* B2AgsShapeCircle = nullptr;
 };
 
 

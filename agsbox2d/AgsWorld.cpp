@@ -232,7 +232,7 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
     ptr = CharToInt(fixturecount, ptr);
 
     int32 temp_prev_body_id=-1;
-    b2Fixture* temp_f;
+    b2Fixture* temp_f = nullptr;
     if (fixturecount > 0) {
         for (int i = 0; i < fixturecount; i++) {
             int32 fixture_id;
@@ -257,7 +257,7 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
             int joint_id;
             int body_a_id;
             int body_b_id;
-            b2JointDef* b2jointdef;
+            b2JointDef* b2jointdef = nullptr;
             ptr = CharToInt(joint_id, ptr);
             ptr = CharToInt(body_a_id, ptr);
             ptr = CharToInt(body_b_id, ptr);
