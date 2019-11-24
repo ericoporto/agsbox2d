@@ -334,8 +334,8 @@ const char *ourScriptHeader =
 "  /// Adds a shape to a body, and a specified density. Shape is copyied to body. \r\n"
 "  import static Fixture* CreateFixture(Body* body, Shape* shape, float density=0); \r\n"
 "  \r\n"
-"  /// Create Distance Joint. \r\n"
-"  import static Joint* CreateDistanceJoint(Body* bodyA, Body* bodyB, float x1, float y1, float x2, float y2, bool collideConnected = 0); \r\n"
+"  /// Create Distance Joint, pass anchors on bodies A and B using world coordinates. \r\n"
+"  import static Joint* CreateDistanceJoint(Body* bodyA, Body* bodyB, float a_x, float a_y, float b_x, float b_y, bool collideConnected = 0); \r\n"
 "  \r\n"
 "  /// Create Motor Joint. \r\n"
 "  import static Joint* CreateMotorJoint(Body* bodyA, Body* bodyB, float correction_factor,  bool collideConnected = 0); \r\n"
@@ -592,17 +592,17 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 }
 
 AgsJoint* agsbox2d_newDistanceJoint(AgsBody* agsbody_a, AgsBody* agsbody_b,
-                                    uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2,
+                                    uint32_t a_x, uint32_t a_y, uint32_t b_x, uint32_t b_y,
                                     int32 collide_connected) {
-    float32 fx1 = ToNormalFloat(x1);
-    float32 fy1 = ToNormalFloat(y1);
-    float32 fx2 = ToNormalFloat(x2);
-    float32 fy2 = ToNormalFloat(y2);
+    float32 f_x_a = ToNormalFloat(a_x);
+    float32 f_y_a = ToNormalFloat(a_y);
+    float32 f_x_b = ToNormalFloat(b_x);
+    float32 f_y_b = ToNormalFloat(b_y);
     bool bcollide_connected = collide_connected != 0;
     AgsWorld* world = Book::IDtoAgsWorld(agsbody_a->World->ID);
 
     AgsJointDistance* agsJointDistance = new AgsJointDistance(
-            world, agsbody_a, agsbody_b, fx1, fy1, fx2, fy2, bcollide_connected);
+            world, agsbody_a, agsbody_b, f_x_a, f_y_a, f_x_b, f_y_b, bcollide_connected);
 
     int b2joint_id = Book::GetNewJointID(world->ID);
     agsJointDistance->b2Joint_ID = b2joint_id;
