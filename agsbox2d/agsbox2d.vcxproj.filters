@@ -66,6 +66,9 @@
     <ClCompile Include="AgsJointPulley.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PointF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="agsbox2d.h">
@@ -120,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AgsJointMotor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

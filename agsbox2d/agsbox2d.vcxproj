@@ -174,6 +174,7 @@
     <ClCompile Include="Book.cpp" />
     <ClCompile Include="Box2D.cpp" />
     <ClCompile Include="DebugDraw.cpp" />
+    <ClCompile Include="PointF.cpp" />
     <ClCompile Include="Scale.cpp" />
     <ClCompile Include="SerialHelper.cpp" />
   </ItemGroup>
@@ -194,6 +195,7 @@
     <ClInclude Include="Box2D.h" />
     <ClInclude Include="AgsNumberInterface.h" />
     <ClInclude Include="DebugDraw.h" />
+    <ClInclude Include="PointF.h" />
     <ClInclude Include="SerialHelper.h" />
     <ClInclude Include="Scale.h" />
   </ItemGroup>
