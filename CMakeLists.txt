@@ -24,6 +24,10 @@ add_library(agsbox2d SHARED
         agsbox2d/AgsShapeCircle.h
         agsbox2d/AgsShapeRect.cpp
         agsbox2d/AgsShapeRect.h
+        agsbox2d/AgsFixtureArray.h
+        agsbox2d/AgsFixtureArray.cpp
+        agsbox2d/AgsRaycastResult.cpp
+        agsbox2d/AgsRaycastResult.h
         agsbox2d/AgsWorld.cpp
         agsbox2d/AgsWorld.h
         agsbox2d/Book.cpp
