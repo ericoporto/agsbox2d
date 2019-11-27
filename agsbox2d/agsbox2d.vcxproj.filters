@@ -69,6 +69,12 @@
     <ClCompile Include="PointF.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AgsFixtureArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AgsRaycastResult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="agsbox2d.h">
@@ -126,6 +132,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AgsFixtureArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AgsRaycastResult.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

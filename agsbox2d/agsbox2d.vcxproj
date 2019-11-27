@@ -162,11 +162,13 @@
     <ClCompile Include="AgsBody.cpp" />
     <ClCompile Include="agsbox2d.cpp" />
     <ClCompile Include="AgsFixture.cpp" />
+    <ClCompile Include="AgsFixtureArray.cpp" />
     <ClCompile Include="AgsJoint.cpp" />
     <ClCompile Include="AgsJointDistance.cpp" />
     <ClCompile Include="AgsJointMotor.cpp" />
     <ClCompile Include="AgsJointMouse.cpp" />
     <ClCompile Include="AgsJointPulley.cpp" />
+    <ClCompile Include="AgsRaycastResult.cpp" />
     <ClCompile Include="AgsShape.cpp" />
     <ClCompile Include="AgsShapeCircle.cpp" />
     <ClCompile Include="AgsShapeRect.cpp" />
@@ -182,6 +184,7 @@
     <ClInclude Include="AgsBody.h" />
     <ClInclude Include="agsbox2d.h" />
     <ClInclude Include="AgsFixture.h" />
+    <ClInclude Include="AgsFixtureArray.h" />
     <ClInclude Include="AgsJoint.h" />
     <ClInclude Include="AgsJointDistance.h" />
     <ClInclude Include="AgsJointMotor.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="AgsNumberInterface.h" />
     <ClInclude Include="DebugDraw.h" />
     <ClInclude Include="PointF.h" />
+    <ClInclude Include="AgsRaycastResult.h" />
     <ClInclude Include="SerialHelper.h" />
     <ClInclude Include="Scale.h" />
   </ItemGroup>
