@@ -22,17 +22,25 @@
 
 // int32 is defined in agsplugin.h as long
 
+struct AgsFixtureArrayData {
+    b2World* B2World = nullptr;
+    int32 WorldID = -1;
+    b2Fixture* B2Fixture = nullptr;
+};
+
 struct AgsFixtureArray
 {
-    int32 capacity;
-    std::vector<AgsFixture*> data;
+    int32 ID = -1;
+    int32 capacity = 0;
+
+    //b2world pointer, world_id, b2Fixture pointer
+    std::vector<AgsFixtureArrayData> data;
 
     // call it everytime the array length changes
     void _c() { capacity = data.capacity(); }
 
     AgsFixtureArray() : data() { _c(); }
     AgsFixtureArray(AgsFixtureArray* a) : data(a->data) { _c(); }
-    AgsFixtureArray(int32 num, AgsFixture* ags_fixture) : data(num, ags_fixture) { _c(); }
 
     void clear() { data.clear(); _c(); }
 
@@ -46,9 +54,21 @@ struct AgsFixtureArray
         _c();
     }
 
+    void set_item(int32 pos, AgsFixture* ags_fixture) {
+        AgsFixtureArrayData fad;
+        fad.WorldID = ags_fixture->WorldID;
+        fad.B2World = ags_fixture->GetB2Body()->GetWorld();
+        fad.B2Fixture = ags_fixture->GetB2AgsFixture();
+        data[pos] = fad;
+    }
+
     void insert(int32 pos, AgsFixture* ags_fixture) {
-        data.insert(data.begin() + pos,
-                    ags_fixture); _c();
+        AgsFixtureArrayData fad;
+        fad.WorldID = ags_fixture->WorldID;
+        fad.B2World = ags_fixture->GetB2Body()->GetWorld();
+        fad.B2Fixture = ags_fixture->GetB2AgsFixture();
+        data.insert(data.begin() + pos, fad);
+        _c();
     }
 
     void insert(int32 pos, const AgsFixtureArray* src) {
@@ -58,17 +78,29 @@ struct AgsFixtureArray
         _c();
     }
 
-    AgsFixture operator[](int32 pos) { return *data[pos]; _c(); }
+    AgsFixtureArrayData operator[](int32 pos) { return data[pos]; _c(); }
 
-    AgsFixture* pop()
+    AgsFixtureArrayData pop()
     {
-        AgsFixture* ags_fixture = *data.rbegin();
+        AgsFixtureArrayData fad = *data.rbegin();
         data.pop_back();
         _c();
-        return ags_fixture;
+        return fad;
     }
 
-    void push(AgsFixture* ags_fixture) { data.push_back(ags_fixture); _c(); }
+    void push(AgsFixture* ags_fixture) {
+        AgsFixtureArrayData fad;
+        fad.WorldID = ags_fixture->WorldID;
+        fad.B2World = ags_fixture->GetB2Body()->GetWorld();
+        fad.B2Fixture = ags_fixture->GetB2AgsFixture();
+        data.push_back(fad);
+        _c();
+    }
+
+    void push_fad(AgsFixtureArrayData fad) {
+        data.push_back(fad);
+        _c();
+    }
 
     int32 size() const { return data.size(); }
 

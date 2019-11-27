@@ -147,7 +147,9 @@ using namespace SerialHelper;
 int AgsJointMouseInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointMouseByID(((AgsJointMouse*)address)->ID);
-    //delete ((AgsJointMouse*)address);
+    delete ((AgsJointMouse*)address);
+    AgsJointMouse* agsJointMouse = ((AgsJointMouse*)address);
+    agsJointMouse = nullptr;
     return (1);
 }
 

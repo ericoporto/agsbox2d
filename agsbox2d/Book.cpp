@@ -13,7 +13,12 @@
 #include "AgsBody.h"
 #include "AgsShape.h"
 #include "AgsFixture.h"
+#include "AgsFixtureArray.h"
 #include "AgsJoint.h"
+#include "AgsJointDistance.h"
+#include "AgsJointMotor.h"
+#include "AgsJointMouse.h"
+#include "AgsJointPulley.h"
 
 // -- PRIVATE --
 
@@ -493,6 +498,35 @@ AgsFixture* Book::b2FixtureIDtoAgsFixture(int32 fixture_id, int32 world_id){
 }
 
 // -- End of AgsFixture Bookkeeping --
+
+// -- AgsFixtureArray Bookkeeping --
+bool Book::isAgsFixtureArrayRegisteredByID(int32 id) {
+    return i()->MapAgsFixtureArray.count(id) != 0;
+}
+
+bool Book::RegisterAgsFixtureArray(int32 id, AgsFixtureArray* agsFixtureArray) {
+    if (i()->MapAgsFixtureArray.count(id) == 0) {
+        i()->MapAgsFixtureArray[id] = agsFixtureArray;
+        return true;
+    }
+    return false;
+}
+
+bool Book::UnregisterAgsFixtureArrayByID(int32 id) {
+    if (i()->MapAgsFixtureArray.count(id) == 0) {
+        return false;
+    }
+    i()->MapAgsFixtureArray.erase(id);
+    return true;
+}
+
+AgsFixtureArray* Book::IDtoAgsFixtureArray(int32 id) {
+    if (i()->MapAgsFixtureArray.count(id) == 0) {
+        return nullptr;
+    }
+    return i()->MapAgsFixtureArray[id];
+}
+// -- End of AgsFixtureArray Bookkeeping --
 
 // -- AgsJoint Bookkeeping --
 bool Book::isAgsJointRegisteredByID(int32 id) {

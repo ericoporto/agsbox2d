@@ -112,7 +112,9 @@ using namespace SerialHelper;
 int AgsJointDistanceInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointDistanceByID(((AgsJointDistance*)address)->ID);
-    //delete ((AgsJointDistance*)address);
+    delete ((AgsJointDistance*)address);
+    AgsJointDistance* agsJointDistance = ((AgsJointDistance*)address);
+    agsJointDistance = nullptr;
     return (1);
 }
 

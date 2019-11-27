@@ -8,7 +8,7 @@
  ***************************************************************/
 
 #include "AgsFixtureArray.h"
-
+#include "Book.h"
 
 //------------------------------------------------------------------------------
 
@@ -25,7 +25,10 @@ using namespace SerialHelper;
 
 int AgsFixtureArrayInterface::Dispose(const char* address, bool force)
 {
+    Book::UnregisterAgsFixtureByID(((AgsFixtureArray*)address)->ID);
     delete ((AgsFixtureArray*)address);
+    AgsFixtureArray* agsFixtureArray = ((AgsFixtureArray*)address);
+    agsFixtureArray = nullptr;
     return (1);
 }
 
@@ -40,14 +43,18 @@ int AgsFixtureArrayInterface::Serialize(const char* address, char* buffer, int b
 
     ptr = IntToChar( arr_length,ptr, end);
 
-    std::vector<AgsFixture*>::iterator it;
+    std::vector<AgsFixtureArrayData>::iterator it;
     for (it = agsFixtureArray->data.begin(); it != agsFixtureArray->data.end(); ++it)
     {
-        AgsFixture* agsFixture = (*it);
+        AgsFixtureArrayData fad = (*it);
 
-        int32 world_id = agsFixture->WorldID;
-        int32 b2body_id = agsFixture->b2BodyID;
-        int32 fixture_id = agsFixture->b2FixtureID;
+        int32 world_id = fad.WorldID;
+        int32 fixture_id = -1;
+        int32 b2body_id = -1;
+        if(fad.B2Fixture != nullptr && fad.B2Fixture->GetBody() != nullptr){
+            fixture_id = Book::b2FixtureToID(world_id, fad.B2Fixture);
+            b2body_id = Book::b2BodyToID(world_id, fad.B2Fixture->GetBody());
+        }
 
         ptr = IntToChar(world_id, ptr, end);
         ptr = IntToChar(b2body_id, ptr, end);
@@ -63,29 +70,38 @@ void AgsFixtureArrayReader::Unserialize(int key, const char* serializedData, int
 {
 
     char* ptr = (char*)serializedData;
-    AgsFixtureArray* agsFixtureArray = new AgsFixtureArray();
+    AgsFixtureArray* agsFixtureArray = nullptr;
 
-    int arr_length;
-    ptr = CharToInt(arr_length, ptr);
+    if(Book::isAgsFixtureArrayRegisteredByID(key)){
+        agsFixtureArray = Book::IDtoAgsFixtureArray(key);
+    } else {
+        agsFixtureArray = new AgsFixtureArray();
 
-    int i=0;
+        int arr_length;
+        ptr = CharToInt(arr_length, ptr);
 
-    while (ptr - serializedData < dataSize && i < arr_length) {
+        int i = 0;
 
-        int32 world_id;
-        int32 b2body_id;
-        int32 fixture_id;
+        while (ptr - serializedData < dataSize && i < arr_length) {
 
-        ptr = CharToInt(world_id, ptr);
-        ptr = CharToInt(b2body_id, ptr);
-        ptr = CharToInt(fixture_id, ptr);
+            int32 world_id;
+            int32 b2body_id;
+            int32 fixture_id;
 
-        AgsFixture* agsFixture = new AgsFixture(world_id, b2body_id, fixture_id);
+            ptr = CharToInt(world_id, ptr);
+            ptr = CharToInt(b2body_id, ptr);
+            ptr = CharToInt(fixture_id, ptr);
 
-        agsFixtureArray->push(agsFixture);
+            AgsFixture *agsFixture = new AgsFixture(world_id, b2body_id, fixture_id);
 
-        i++;
+            agsFixtureArray->push(agsFixture);
+
+            i++;
+        }
+        agsFixtureArray->ID = key;
+        Book::RegisterAgsFixtureArray(key, agsFixtureArray);
     }
+
 
     engine->RegisterUnserializedObject(key, agsFixtureArray, &AgsFixtureArray_Interface);
 }

@@ -10,6 +10,7 @@
 #include "AgsWorld.h"
 #include "AgsBody.h"
 #include "AgsJoint.h"
+#include "AgsFixtureArray.h"
 #include "Scale.h"
 #include "Book.h"
 #include <vector>
@@ -56,44 +57,38 @@ void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIteratio
 	//printf("step of world id %d of dt %f and v %d and p %d\n", ID, dt, velocityIterations, positionIterations );
 }
 
+AgsFixtureArray* AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy) {
 
-// -- functions for AABB query
-std::vector<b2Fixture* > _fixtureQueryList;
-
-class QueryFixturesCallback : public b2QueryCallback
-{
-public:
-    bool ReportFixture(b2Fixture* fixture)
+    class QueryFixturesCallback : public b2QueryCallback
     {
-        _fixtureQueryList.push_back(fixture);
-        return true;
-    }
-};
+        int32 WorldID;
+        b2World* B2AGSWorld;
+    public:
+        QueryFixturesCallback(int32 world_id, b2World* b2world)
+        {
+            WorldID = world_id;
+            B2AGSWorld = b2world;
+        }
+        AgsFixtureArray* FixtureQueryList = new AgsFixtureArray();
+        bool ReportFixture(b2Fixture* fixture)
+        {
+            AgsFixtureArrayData fad;
+            fad.WorldID = WorldID;
+            fad.B2World = B2AGSWorld;
+            fad.B2Fixture = fixture;
+            FixtureQueryList->push_fad(fad);
+            return true;
+        }
+    };
 
-int32 AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy) {
     b2AABB box;
     box.lowerBound = Scale::ScaleDown(b2Vec2(lx, ly));
     box.upperBound = Scale::ScaleDown(b2Vec2(ux, uy));
-    _fixtureQueryList.clear();
-    QueryFixturesCallback query;
+    QueryFixturesCallback query(ID, B2AgsWorld);
     B2AgsWorld->QueryAABB(&query, box);
-    return _fixtureQueryList.size();
+    return query.FixtureQueryList;
 }
 
-int32 AgsWorld::BoundingBoxQueryFixtureCount() {
-    return _fixtureQueryList.size();
-}
-
-b2Fixture* AgsWorld::BoundingBoxQueryFixture(int32 i) {
-    if(i >= _fixtureQueryList.size() || i<0)
-        return nullptr;
-
-    return _fixtureQueryList[i];
-}
-
-void AgsWorld::BoundingBoxQueryReset() {
-    _fixtureQueryList.clear();
-}
 
 // -- end of functions for AABB query
 

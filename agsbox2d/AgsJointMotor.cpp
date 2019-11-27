@@ -177,7 +177,9 @@ using namespace SerialHelper;
 int AgsJointMotorInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointMotorByID(((AgsJointMotor*)address)->ID);
-    //delete ((AgsJointMotor*)address);
+    delete ((AgsJointMotor*)address);
+    AgsJointMotor* agsJointMotor = ((AgsJointMotor*)address);
+    agsJointMotor = nullptr;
     return (1);
 }
 

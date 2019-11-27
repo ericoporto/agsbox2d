@@ -43,6 +43,7 @@
 #include "AgsShapeCircle.h"
 #include "AgsShapeRect.h"
 #include "AgsFixture.h"
+#include "AgsFixtureArray.h"
 #include "AgsJoint.h"
 #include "AgsJointDistance.h"
 #include "AgsJointMotor.h"
@@ -160,12 +161,19 @@ const char *ourScriptHeader =
 "  import bool IsTouching(Body* other); \r\n"
 "}; \r\n"
 " \r\n"
+"managed struct FixtureArray; \r\n"
+" \r\n"
 "builtin managed struct World { \r\n"
 "  \r\n"
 "  /// Advances one step of time dt in seconds of the simulation. \r\n"
 "  import void Step(float dt, int velocityIteractions = 8, int positionIteractions = 3); \r\n"
+"  \r\n"
 "  /// Returns a sprite with debug data. Set as GUI Background over screen for debugging your physics. \r\n"
 "  import int GetDebugSprite(int camera_x = 0, int camera_y = 0); \r\n"
+"  \r\n"
+"  /// Returns array of fixtures which their bounding boxes are overlapped by the supplied box. \r\n"
+"  import FixtureArray* BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y); \r\n"
+"  \r\n"
 "}; \r\n"
 " \r\n"
 "builtin managed struct ShapeCircle; \r\n"
@@ -213,6 +221,39 @@ const char *ourScriptHeader =
 "  /// Returns Bodyif it's defined for this fixture, otherwise null. \r\n"
 "  readonly import attribute Body* Body; \r\n"
 "  \r\n"
+"}; \r\n"
+" \r\n"
+"managed struct FixtureArray { \r\n"
+"  \r\n"
+"  /// Gets the size of the array \r\n"
+"  import attribute int Size\r\n"
+"  \r\n"
+"  /// Access a Fixture directly \r\n"
+"  import attribute Fixture* Items[];\r\n"
+"  \r\n"
+"  /// Creates a new array of Fixtures.\r\n"
+"  import static FixtureArray* Create (); // $AUTOCOMPLETESTATICONLY$\r\n"
+"  \r\n"
+"  /// Copies an existing array.\r\n"
+"  import FixtureArray* Copy (); \r\n"
+"  \r\n"
+"  /// Clears all values in the array.\r\n"
+"  import void Clear ();\r\n"
+"  \r\n"
+"  /// Returns true when the array is empty.\r\n"
+"  import bool IsEmpty ();\r\n"
+"  \r\n"
+"  /// Removes specified value(s) from the array.\r\n"
+"  import void Erase (int pos, int number = 1);\r\n"
+"  \r\n"
+"  /// Inserts a value at a specified place in the array.\r\n"
+"  import void Insert (int pos, Fixture* fixture);\r\n"
+"  \r\n"
+"  /// Removes the last item of the array and returns it.\r\n"
+"  import Fixture* Pop ();\r\n"
+"  \r\n"
+"  /// Adds the specified value to the end of the array.\r\n"
+"  import void Push (Fixture* fixture);\r\n"
 "}; \r\n"
 " \r\n"
 "builtin managed struct JointDistance; \r\n"
@@ -778,6 +819,22 @@ int32 AgsWorld_GetDebugSprite(AgsWorld* self, int32 camera_x, int32 camera_y) {
 	return debugDraw.GetDebugSprite();
 }
 
+AgsFixtureArray* AgsWorld_BoundingBoxQuery(AgsWorld* self, uint32_t lx, uint32_t ly, uint32_t ux, uint32_t uy) {
+    float32 f_lx = ToNormalFloat(lx);
+    float32 f_ly = ToNormalFloat(ly);
+    float32 f_ux = ToNormalFloat(ux);
+    float32 f_uy = ToNormalFloat(uy);
+
+    AgsFixtureArray* agsFixtureArray = self->BoundingBoxQuery(f_lx,f_ly,f_ux,f_uy);
+    if(agsFixtureArray == nullptr) {
+        return nullptr;
+    }
+
+    agsFixtureArray->ID = engine->RegisterManagedObject(agsFixtureArray, &AgsFixtureArray_Interface);
+    Book::RegisterAgsFixtureArray(agsFixtureArray->ID, agsFixtureArray);
+    return agsFixtureArray;
+}
+
 #pragma endregion // AgsWorld_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsBody_ScriptAPI
@@ -1075,6 +1132,126 @@ AgsBody* AgsFixture_GetBody(AgsFixture* self) {
 
 #pragma endregion // AgsFixture_ScriptAPI
 //-----------------------------------------------------------------------------
+#pragma region AgsFixtureArray_ScriptAPI
+
+AgsFixtureArray* AgsFixtureArray_Create()
+{
+    AgsFixtureArray* arr;
+
+    arr = new AgsFixtureArray();
+
+    arr->ID = engine->RegisterManagedObject(arr, &AgsFixtureArray_Interface);
+    Book::RegisterAgsFixtureArray(arr->ID, arr);
+    return (arr);
+}
+
+AgsFixtureArray* AgsFixtureArray_Copy(AgsFixtureArray* self)
+{
+    AgsFixtureArray* arr;
+
+    if (self == nullptr)
+        arr = new AgsFixtureArray();
+    else
+        arr = new AgsFixtureArray(self);
+
+    arr->ID = engine->RegisterManagedObject(arr, &AgsFixtureArray_Interface);
+    Book::RegisterAgsFixtureArray(arr->ID, arr);
+    return (arr);
+}
+
+void AgsFixtureArray_Clear(AgsFixtureArray* self) {
+    self->clear();
+}
+
+int32 AgsFixtureArray_IsEmpty(AgsFixtureArray* self) {
+    return self->empty();
+}
+
+void AgsFixtureArray_Erase(AgsFixtureArray* self, int32 pos, int32 number) {
+    if (pos < 0)
+        pos += self->size();
+
+    if (pos >= self->size())
+        pos = self->size() - 1;
+
+    if (number < 2)
+        self->erase(pos);
+    else
+    {
+        number += pos;
+        if (number < 0)
+            number = 0;
+        else if (number > self->size())
+            number = self->size();
+
+        self->erase(pos, number);
+    }
+}
+
+void AgsFixtureArray_Insert(AgsFixtureArray* self, int32 pos, AgsFixture* agsFixture) {
+    if (agsFixture == nullptr)
+        return;
+
+    if (pos < 0)
+        pos += self->size();
+
+    if (pos > self->size())
+        pos = self->size();
+
+    self->insert(pos, agsFixture);
+}
+
+AgsFixture* AgsFixtureArray_GetItems(AgsFixtureArray* self, int32 i) {
+    if ((i < 0) || (i >= self->size()))
+        return nullptr;
+
+    AgsFixtureArrayData fad = (*self).data[i];
+    AgsFixture* agsFixture = FindAgsFixtureFromB2Fixture(fad.B2World, fad.WorldID, fad.B2Fixture);
+    return agsFixture;
+}
+
+void AgsFixtureArray_SetItems(AgsFixtureArray* self, int32 i, AgsFixture* agsFixture) {
+    if (agsFixture == nullptr)
+        return;
+
+    if ((i < 0) || (i >= self->size()))
+        return;
+
+    self->set_item(i, agsFixture);
+}
+
+AgsFixture* AgsFixtureArray_Pop(AgsFixtureArray* self) {
+    if (!self->empty()) {
+        AgsFixtureArrayData fad = self->pop();
+        AgsFixture* agsFixture = FindAgsFixtureFromB2Fixture(fad.B2World, fad.WorldID, fad.B2Fixture);
+        return agsFixture;
+    }
+    else {
+        return (0);
+    }
+}
+
+void AgsFixtureArray_Push(AgsFixtureArray* self, AgsFixture* agsFixture) {
+    if (agsFixture == nullptr)
+        return;
+
+    self->push(agsFixture);
+}
+
+int32 AgsFixtureArray_GetSize(AgsFixtureArray* self) {
+    return self->size();
+}
+
+void AgsFixtureArray_SetSize(AgsFixtureArray* self, int32 size) {
+    self->resize(size);
+}
+
+void AgsFixtureArray_Reserve(AgsFixtureArray* self, int32 number) {
+    self->reserve(number);
+}
+
+#pragma endregion // AgsFixtureArray_ScriptAPI
+//-----------------------------------------------------------------------------
 #pragma region AgsJointDistance_ScriptAPI
 
 
@@ -1319,6 +1496,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsShapeRectInterface::name, &AgsShapeRect_Reader);
 	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
+    engine->AddManagedObjectReader(AgsFixtureArrayInterface::name, &AgsFixtureArray_Reader);
 
     engine->AddManagedObjectReader(AgsJointInterface::name, &AgsJoint_Reader);
     engine->AddManagedObjectReader(AgsJointDistanceInterface::name, &AgsJointDistance_Reader);
@@ -1348,6 +1526,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);
+	engine->RegisterScriptFunction("World::BoundingBoxQuery^4", (void*)AgsWorld_BoundingBoxQuery);
 
 	engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
 	engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
@@ -1409,6 +1588,19 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("JointDistance::set_DampingRatio", (void*)AgsJointDistance_SetDampingRatio);
     engine->RegisterScriptFunction("JointDistance::get_Frequency", (void*)AgsJointDistance_GetFrequency);
     engine->RegisterScriptFunction("JointDistance::set_Frequency", (void*)AgsJointDistance_SetFrequency);
+
+    engine->RegisterScriptFunction("FixtureArray::Create^0", (void*)AgsFixtureArray_Create);
+    engine->RegisterScriptFunction("FixtureArray::Copy^0", (void*)AgsFixtureArray_Copy);
+    engine->RegisterScriptFunction("FixtureArray::Clear^0", (void*)AgsFixtureArray_Clear);
+    engine->RegisterScriptFunction("FixtureArray::IsEmpty^0", (void*)AgsFixtureArray_IsEmpty);
+    engine->RegisterScriptFunction("FixtureArray::Erase^2", (void*)AgsFixtureArray_Erase);
+    engine->RegisterScriptFunction("FixtureArray::Insert^2", (void*)AgsFixtureArray_Insert);
+    engine->RegisterScriptFunction("FixtureArray::geti_Items", (void*)AgsFixtureArray_GetItems);
+    engine->RegisterScriptFunction("FixtureArray::seti_Items", (void*)AgsFixtureArray_SetItems);
+    engine->RegisterScriptFunction("FixtureArray::Pop^0", (void*)AgsFixtureArray_Pop);
+    engine->RegisterScriptFunction("FixtureArray::Push^1", (void*)AgsFixtureArray_Push);
+    engine->RegisterScriptFunction("FixtureArray::get_Size", (void*)AgsFixtureArray_GetSize);
+    engine->RegisterScriptFunction("FixtureArray::set_Size", (void*)AgsFixtureArray_SetSize);
 
     engine->RegisterScriptFunction("JointMotor::get_LinearOffsetX", (void*)AgsJointMotor_GetLinearOffsetX);
     engine->RegisterScriptFunction("JointMotor::set_LinearOffsetX", (void*)AgsJointMotor_SetLinearOffsetX);

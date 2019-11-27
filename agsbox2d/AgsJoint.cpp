@@ -160,6 +160,8 @@ int AgsJointInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointByID(((AgsJoint*)address)->ID);
     delete ((AgsJoint*)address);
+    AgsJoint* agsJoint = ((AgsJoint*)address);
+    agsJoint = nullptr;
     return (1);
 }
 
