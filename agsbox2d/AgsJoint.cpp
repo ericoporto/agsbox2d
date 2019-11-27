@@ -111,6 +111,10 @@ int32 AgsJoint::GetType() {
     return eJointUnknown;
 }
 
+void AgsJoint::EraseB2AgsJoint() {
+    B2AgsJoint = nullptr;
+}
+
 bool AgsJoint::isValid(){
     InitializeIfNeeded();
     return  B2AgsJoint!=nullptr;

@@ -66,6 +66,7 @@ public:
     AgsWorld* GetAgsWorld();
     b2Body* GetBodyA();
     b2Body* GetBodyB();
+    void EraseB2AgsJoint();
 };
 
 

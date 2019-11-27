@@ -789,12 +789,11 @@ AgsJoint* agsbox2d_newPulleyJoint(AgsBody* agsbody_a, AgsBody* agsbody_b,
 }
 
 void agsbox2d_DestroyJoint(AgsWorld* world, AgsJoint* joint) {
-    if (world == nullptr)
+    if (world == nullptr || joint == nullptr )
         return;
 
     world->DestroyJoint(joint);
 }
-
 
 #pragma endregion // agsbox2d_ScriptAPI
 //-----------------------------------------------------------------------------

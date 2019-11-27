@@ -50,6 +50,7 @@ void AgsWorld::DestroyJoint(AgsJoint* joint) {
 
     Book::UnregisterJointFromWorldByID(Book::b2JointToID(this->ID,joint->GetB2AgsJoint()),this->ID);
     B2AgsWorld->DestroyJoint(joint->GetB2AgsJoint());
+    joint->EraseB2AgsJoint();
 }
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {
