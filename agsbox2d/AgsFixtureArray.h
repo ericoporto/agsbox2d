@@ -28,8 +28,9 @@ struct AgsFixtureArrayData {
     b2Fixture* B2Fixture = nullptr;
 };
 
-struct AgsFixtureArray
+class AgsFixtureArray
 {
+public:
     int32 ID = -1;
     int32 capacity = 0;
 
