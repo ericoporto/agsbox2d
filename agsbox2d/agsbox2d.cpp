@@ -113,7 +113,7 @@ const char *ourScriptHeader =
 "  import float Length(); \r\n"
 "  \r\n"
 "  ///  Returns squared length from point (distance from 0,0 origin). Faster than length. \r\n"
-"  import float float SquaredLength(); \r\n"
+"  import float SquaredLength(); \r\n"
 "  \r\n"
 "  /// Returns a new point with the sum of this with pointF. \r\n"
 "  import PointF* Add(PointF* pointF); \r\n"
