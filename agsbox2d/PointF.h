@@ -26,6 +26,13 @@ public:
     float32 GetX();
     void SetY(float32 y);
     float32 GetY();
+
+    PointF* Rotate(float32 angle, float32 pivot_x, float32 pivot_y);
+    PointF* Scale(float32 scale);
+    float32 Length();
+    float32 SquaredLength();
+    PointF* Add(PointF* pointF);
+    PointF* Sub(PointF* pointF);
 };
 
 

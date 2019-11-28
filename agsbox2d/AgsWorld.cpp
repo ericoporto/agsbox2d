@@ -10,6 +10,8 @@
 #include "AgsWorld.h"
 #include "AgsBody.h"
 #include "AgsJoint.h"
+#include "AgsFixtureArray.h"
+#include "AgsRaycastResult.h"
 #include "Scale.h"
 #include "Book.h"
 #include <vector>
@@ -49,6 +51,7 @@ void AgsWorld::DestroyJoint(AgsJoint* joint) {
 
     Book::UnregisterJointFromWorldByID(Book::b2JointToID(this->ID,joint->GetB2AgsJoint()),this->ID);
     B2AgsWorld->DestroyJoint(joint->GetB2AgsJoint());
+    joint->EraseB2AgsJoint();
 }
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {
@@ -56,46 +59,98 @@ void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIteratio
 	//printf("step of world id %d of dt %f and v %d and p %d\n", ID, dt, velocityIterations, positionIterations );
 }
 
+AgsFixtureArray* AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy) {
 
-// -- functions for AABB query
-std::vector<b2Fixture* > _fixtureQueryList;
-
-class QueryFixturesCallback : public b2QueryCallback
-{
-public:
-    bool ReportFixture(b2Fixture* fixture)
+    class QueryFixturesCallback : public b2QueryCallback
     {
-        _fixtureQueryList.push_back(fixture);
-        return true;
-    }
-};
+        int32 WorldID;
+        b2World* B2AGSWorld;
+    public:
+        QueryFixturesCallback(int32 world_id, b2World* b2world)
+        {
+            WorldID = world_id;
+            B2AGSWorld = b2world;
+        }
+        AgsFixtureArray* FixtureQueryList = new AgsFixtureArray();
+        bool ReportFixture(b2Fixture* fixture)
+        {
+            AgsFixtureArrayData fad;
+            fad.WorldID = WorldID;
+            fad.B2World = B2AGSWorld;
+            fad.B2Fixture = fixture;
+            FixtureQueryList->push_fad(fad);
+            return true;
+        }
+    };
 
-int32 AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy) {
     b2AABB box;
     box.lowerBound = Scale::ScaleDown(b2Vec2(lx, ly));
     box.upperBound = Scale::ScaleDown(b2Vec2(ux, uy));
-    _fixtureQueryList.clear();
-    QueryFixturesCallback query;
+    QueryFixturesCallback query(ID, B2AgsWorld);
     B2AgsWorld->QueryAABB(&query, box);
-    return _fixtureQueryList.size();
+    return query.FixtureQueryList;
 }
 
-int32 AgsWorld::BoundingBoxQueryFixtureCount() {
-    return _fixtureQueryList.size();
+
+// Raycast x0 y0 x1 y1 (StopAtFirstFixture, StopAtSpecificFixture, StopOnFixtureFromArray, Passthrough)
+AgsRaycastResult* AgsWorld::RaycastQuery(float32 x0, float32 y0, float32 x1, float32 y1, RaycastType raycastType, AgsFixtureArray* agsFixtureArray) {
+    class AgsRayCastCallback : public b2RayCastCallback
+    {
+        int32 WorldID;
+        b2World* B2AGSWorld;
+        AgsFixtureArray* TargetFixtures;
+    public:
+        AgsRayCastCallback(int32 world_id, b2World* b2world, RaycastType raycastType)
+        {
+            WorldID = world_id;
+            B2AGSWorld = b2world;
+            m_raycast_type = raycastType;
+        }
+        AgsRaycastResult* RaycastResult = new AgsRaycastResult();
+
+        float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+                              const b2Vec2& normal, float32 fraction)
+        {
+
+            RaycastResultItem rritem;
+
+            rritem.FixtureData.WorldID = WorldID;
+            rritem.FixtureData.B2FixtureID = Book::b2FixtureToID(WorldID, fixture);
+            rritem.PointX = point.x;
+            rritem.PointY = point.y;
+            rritem.NormalX = normal.x;
+            rritem.NormalY = normal.y;
+            rritem.Fraction = fraction;
+
+            RaycastResult->RaycastResultList.push_back(rritem);
+
+            if(m_raycast_type == eRaycastUntilHit) {
+                if(TargetFixtures == nullptr || TargetFixtures->size() == 0) return fraction; // stop at first hit
+                else {
+                    std::vector<AgsFixtureArrayData>::iterator it;
+                    for (it = TargetFixtures->data.begin(); it != TargetFixtures->data.end(); ++it) {
+                        AgsFixtureArrayData fad = (*it);
+                        if(fixture == fad.B2Fixture) return fraction; // stop, we hit a target fixture
+                    }
+                    return  1.0; // we didn't hit anything, so we go on.
+                }
+            } else  {
+                return  1.0; // passthrough
+            }
+        }
+
+        RaycastType m_raycast_type;
+    };
+
+
+    b2Vec2 v1 = Scale::ScaleDown(b2Vec2(x0, y0));
+    b2Vec2 v2 = Scale::ScaleDown(b2Vec2(x1, y1));
+    AgsRayCastCallback query(ID, B2AgsWorld, raycastType);
+
+    if((v1-v2).LengthSquared() > 0.0f) B2AgsWorld->RayCast(&query, v1, v2);
+    return  query.RaycastResult;
 }
 
-b2Fixture* AgsWorld::BoundingBoxQueryFixture(int32 i) {
-    if(i >= _fixtureQueryList.size() || i<0)
-        return nullptr;
-
-    return _fixtureQueryList[i];
-}
-
-void AgsWorld::BoundingBoxQueryReset() {
-    _fixtureQueryList.clear();
-}
-
-// -- end of functions for AABB query
 
 AgsWorld::~AgsWorld(void)
 {

@@ -111,7 +111,9 @@ using namespace SerialHelper;
 int AgsJointPulleyInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointPulleyByID(((AgsJointPulley*)address)->ID);
-    //delete ((AgsJointPulley*)address);
+    delete ((AgsJointPulley*)address);
+    AgsJointPulley* agsJointPulley = ((AgsJointPulley*)address);
+    agsJointPulley = nullptr;
     return (1);
 }
 

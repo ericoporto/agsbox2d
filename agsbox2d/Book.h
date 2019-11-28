@@ -20,6 +20,7 @@
 class AgsWorld; // forward declaration, we need AgsWorld.h on the cpp
 class AgsBody; // forward declaration, we need AgsBody.h on the cpp
 class AgsFixture; // forward declaration, we need AgsFixture.h on the cpp
+class AgsFixtureArray; // forward declaration, we need AgsFixture.h on the cpp
 class AgsShape; // forward declaration, we need AgsShape.h on the cpp
 class AgsJoint; // forward declaration, we need AgsShape.h on the cpp
 class AgsJointDistance; // forward declaration, we need AgsShape.h on the cpp
@@ -45,6 +46,7 @@ private:
 	std::unordered_map<int32, AgsWorld*> MapAgsWorld;
 	std::unordered_map<int32, AgsBody*> MapAgsBody;
 	std::unordered_map<int32, AgsFixture*> MapAgsFixture;
+	std::unordered_map<int32, AgsFixtureArray*> MapAgsFixtureArray;
 	std::unordered_map<int32, AgsShape*> MapAgsShape;
 
     std::unordered_map<int32, AgsJoint*> MapAgsJoint;
@@ -89,6 +91,11 @@ public:
     static int32 GetFixtureCount(int32 world_id);
 
 	static Book* i();
+
+    static bool isAgsFixtureArrayRegisteredByID(int32 id);
+    static bool RegisterAgsFixtureArray(int32 id, AgsFixtureArray* agsFixtureArray);
+    static bool UnregisterAgsFixtureArrayByID(int32 id);
+    static AgsFixtureArray* IDtoAgsFixtureArray(int32 id);
 
 	static bool isAgsWorldRegisteredByID(int32 id);
 	static bool RegisterAgsWorld(int32 id, AgsWorld* world);

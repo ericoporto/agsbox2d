@@ -111,6 +111,10 @@ int32 AgsJoint::GetType() {
     return eJointUnknown;
 }
 
+void AgsJoint::EraseB2AgsJoint() {
+    B2AgsJoint = nullptr;
+}
+
 bool AgsJoint::isValid(){
     InitializeIfNeeded();
     return  B2AgsJoint!=nullptr;
@@ -160,6 +164,8 @@ int AgsJointInterface::Dispose(const char* address, bool force)
 {
     Book::UnregisterAgsJointByID(((AgsJoint*)address)->ID);
     delete ((AgsJoint*)address);
+    AgsJoint* agsJoint = ((AgsJoint*)address);
+    agsJoint = nullptr;
     return (1);
 }
 
