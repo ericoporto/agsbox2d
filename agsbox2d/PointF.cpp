@@ -35,6 +35,48 @@ float32 PointF::GetY(){
     return _y;
 }
 
+PointF* PointF::Rotate(float32 angle, float32 pivot_x, float32 pivot_y){
+    float32 s = sin(angle);
+    float32 c = cos(angle);
+
+    // translate point back to origin:
+    float32 p_x = _x - pivot_x;
+    float32 p_y = _y - pivot_y;
+
+    // rotate point
+    float32 xnew = p_x * c - p_y * s;
+    float32 ynew = p_x * s + p_y * c;
+
+    // translate point back:
+    p_x = xnew + pivot_x;
+    p_y = ynew + pivot_y;
+    return new PointF(p_x, p_y);
+}
+
+
+PointF* PointF::Scale(float32 scale){
+    return new PointF(_x * scale, _y * scale);
+}
+
+float32 PointF::Length(){
+    return sqrt(_x * _x + _y * _y);
+}
+
+float32 PointF::SquaredLength(){
+    return (_x * _x + _y * _y);
+}
+
+PointF* PointF::Add(PointF* pointF) {
+    if(pointF == nullptr) return new PointF(_x , _y );
+
+    return new PointF(_x + pointF->GetX(), _y + pointF->GetY());
+}
+
+PointF* PointF::Sub(PointF* pointF) {
+    if(pointF == nullptr) return new PointF(_x , _y );
+
+    return new PointF(_x - pointF->GetX(), _y - pointF->GetY());
+}
 
 //------------------------------------------------------------------------------
 
