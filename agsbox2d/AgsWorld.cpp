@@ -145,9 +145,9 @@ AgsRaycastResult* AgsWorld::RaycastQuery(float32 x0, float32 y0, float32 x1, flo
 
     b2Vec2 v1 = Scale::ScaleDown(b2Vec2(x0, y0));
     b2Vec2 v2 = Scale::ScaleDown(b2Vec2(x1, y1));
-
     AgsRayCastCallback query(ID, B2AgsWorld, raycastType);
-    B2AgsWorld->RayCast(&query, v1, v2);
+
+    if((v1-v2).LengthSquared() > 0.0f) B2AgsWorld->RayCast(&query, v1, v2);
     return  query.RaycastResult;
 }
 
