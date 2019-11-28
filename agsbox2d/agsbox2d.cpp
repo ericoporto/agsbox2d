@@ -182,7 +182,7 @@ const char *ourScriptHeader =
 "  import FixtureArray* BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y); \r\n"
 "  \r\n"
 "  /// Returns RaycastResult with fixtures hit by a line, along with the hit normals. Raycast can also stop at a fixture or specific fixtures. \r\n"
-"  import RaycastResult* Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = null); \r\n"
+"  import RaycastResult* Raycast(float x0, float y0, float x1, float y1, FixtureArray* stopping_fixtures, RaycastType rc_type = 0); \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -869,7 +869,7 @@ AgsFixtureArray* AgsWorld_BoundingBoxQuery(AgsWorld* self, uint32_t lx, uint32_t
     return agsFixtureArray;
 }
 
-AgsRaycastResult* AgsWorld_Raycast(AgsWorld* self, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, int32 raycast_type, AgsFixtureArray* agsFixtureArray) {
+AgsRaycastResult* AgsWorld_Raycast(AgsWorld* self, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, AgsFixtureArray* agsFixtureArray,  int32 raycast_type) {
     float32 f_x0 = ToNormalFloat(x0);
     float32 f_y0 = ToNormalFloat(y0);
     float32 f_x1 = ToNormalFloat(x1);
