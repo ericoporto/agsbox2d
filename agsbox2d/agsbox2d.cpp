@@ -182,7 +182,7 @@ const char *ourScriptHeader =
 "  import FixtureArray* BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y); \r\n"
 "  \r\n"
 "  /// Returns RaycastResult with fixtures hit by a line, along with the hit normals. Raycast can also stop at a fixture or specific fixtures. \r\n"
-"  import RaycastResult* Raycast(float x0, float y-, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0); \r\n"
+"  import RaycastResult* Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0); \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
