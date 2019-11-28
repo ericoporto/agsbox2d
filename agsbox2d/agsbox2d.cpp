@@ -102,6 +102,25 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Float Y coordinate of the point. \r\n"
 "  import attribute float Y; \r\n"
+"  \r\n"
+"  /// Assumes point as vector and rotates around pivot. Angle is in radians. Returns a new point as result. \r\n"
+"  import PointF* Rotate(float angle, float pivot_x = 0, float pivot_y = 0); \r\n"
+"  \r\n"
+"  /// Multiplies x and y coordinates by a scalar and returns a new point with the result. \r\n"
+"  import PointF* Scale(float scale); \r\n"
+"  \r\n"
+"  /// Returns length from point (distance from 0,0 origin). \r\n"
+"  import float Length(); \r\n"
+"  \r\n"
+"  ///  Returns squared length from point (distance from 0,0 origin). Faster than length. \r\n"
+"  import float float SquaredLength(); \r\n"
+"  \r\n"
+"  /// Returns a new point with the sum of this with pointF. \r\n"
+"  import PointF* Add(PointF* pointF); \r\n"
+"  \r\n"
+"  /// Returns a new point with the subtraction of pointF from this. \r\n"
+"  import PointF* Sub(PointF* pointF); \r\n"
+"  \r\n"
 "}; \r\n"
 " \r\n"
 "Point* ToPoint(this PointF*){ \r\n"
@@ -603,6 +622,42 @@ void PointF_SetY(PointF* self, uint32_t y) {
     float32 fy = ToNormalFloat(y);
 
     self->SetX(fy);
+}
+
+uint32_t PointF_Length(PointF* self) {
+    return ToAgsFloat(self->Length());
+}
+
+uint32_t PointF_SquaredLength(PointF* self) {
+    return ToAgsFloat(self->SquaredLength());
+}
+
+PointF* PointF_Add(PointF* self, PointF* other){
+    PointF* point_f = self->Add(other);
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
+}
+
+PointF* PointF_Sub(PointF* self, PointF* other){
+    PointF* point_f = self->Sub(other);
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
+}
+
+PointF* PointF_Rotate(PointF* self, uint32_t angle, uint32_t pivot_x, uint32_t pivot_y){
+    float32 f_angle = ToNormalFloat(angle);
+    float32 f_pivot_x = ToNormalFloat(pivot_x);
+    float32 f_pivot_y = ToNormalFloat(pivot_y);
+    PointF* point_f = self->Rotate(f_angle, f_pivot_x, f_pivot_y);
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
+}
+
+PointF* PointF_Scale(PointF* self, uint32_t scale){
+    float32 f_scale = ToNormalFloat(scale);
+    PointF* point_f = self->Scale(f_scale);
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
 }
 
 #pragma endregion // PointF_ScriptAPI
@@ -1604,6 +1659,12 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("PointF::get_X", (void*)PointF_GetX);
     engine->RegisterScriptFunction("PointF::set_Y", (void*)PointF_SetY);
     engine->RegisterScriptFunction("PointF::get_Y", (void*)PointF_GetY);
+    engine->RegisterScriptFunction("PointF::Length^0", (void*)PointF_Length);
+    engine->RegisterScriptFunction("PointF::SquaredLength^0", (void*)PointF_SquaredLength);
+    engine->RegisterScriptFunction("PointF::Add^1", (void*)PointF_Add);
+    engine->RegisterScriptFunction("PointF::Sub^1", (void*)PointF_Sub);
+    engine->RegisterScriptFunction("PointF::Rotate^3", (void*)PointF_Rotate);
+    engine->RegisterScriptFunction("PointF::Scale^1", (void*)PointF_Scale);
 
 	engine->RegisterScriptFunction("AgsBox2D::SetMeter^1", (void*)agsbox2d_SetMeter);
 	engine->RegisterScriptFunction("AgsBox2D::GetMeter^0", (void*)agsbox2d_GetMeter);
