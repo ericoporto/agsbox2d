@@ -13,7 +13,6 @@
 #define _AGS_FIXTURE_ARRAY_H
 
 #include <vector>
-#include <string>
 
 #include "AgsFixture.h"
 #include "plugin/agsplugin.h"

@@ -18,6 +18,12 @@
 class AgsBody; // forward declaration, we need AgsBody.h on the cpp
 class AgsJoint; // forward declaration, we need AgsBody.h on the cpp
 class AgsFixtureArray;
+class AgsRaycastResult;
+
+enum RaycastType {
+    eRaycastPassthrough = 0,
+    eRaycastUntilHit = 1,
+};
 
 class AgsWorld
 {
@@ -34,6 +40,7 @@ public:
 	int32 ID;
 
     AgsFixtureArray* BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy);
+    AgsRaycastResult* RaycastQuery(float32 x0, float32 y0, float32 x1, float32 y1, RaycastType raycastType, AgsFixtureArray* agsFixtureArray);
 };
 
 

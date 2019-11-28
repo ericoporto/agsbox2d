@@ -11,6 +11,7 @@
 #include "AgsBody.h"
 #include "AgsJoint.h"
 #include "AgsFixtureArray.h"
+#include "AgsRaycastResult.h"
 #include "Scale.h"
 #include "Book.h"
 #include <vector>
@@ -91,7 +92,65 @@ AgsFixtureArray* AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, 
 }
 
 
-// -- end of functions for AABB query
+// Raycast x0 y0 x1 y1 (StopAtFirstFixture, StopAtSpecificFixture, StopOnFixtureFromArray, Passthrough)
+AgsRaycastResult* AgsWorld::RaycastQuery(float32 x0, float32 y0, float32 x1, float32 y1, RaycastType raycastType, AgsFixtureArray* agsFixtureArray) {
+    class AgsRayCastCallback : public b2RayCastCallback
+    {
+        int32 WorldID;
+        b2World* B2AGSWorld;
+        AgsFixtureArray* TargetFixtures;
+    public:
+        AgsRayCastCallback(int32 world_id, b2World* b2world, RaycastType raycastType)
+        {
+            WorldID = world_id;
+            B2AGSWorld = b2world;
+            m_raycast_type = raycastType;
+        }
+        AgsRaycastResult* RaycastResult = new AgsRaycastResult();
+
+        float32 ReportFixture(b2Fixture* fixture, const b2Vec2& point,
+                              const b2Vec2& normal, float32 fraction)
+        {
+
+            RaycastResultItem rritem;
+
+            rritem.FixtureData.WorldID = WorldID;
+            rritem.FixtureData.B2FixtureID = Book::b2FixtureToID(WorldID, fixture);
+            rritem.PointX = point.x;
+            rritem.PointY = point.y;
+            rritem.NormalX = normal.x;
+            rritem.NormalY = normal.y;
+            rritem.Fraction = fraction;
+
+            RaycastResult->RaycastResultList.push_back(rritem);
+
+            if(m_raycast_type == eRaycastUntilHit) {
+                if(TargetFixtures == nullptr || TargetFixtures->size() == 0) return fraction; // stop at first hit
+                else {
+                    std::vector<AgsFixtureArrayData>::iterator it;
+                    for (it = TargetFixtures->data.begin(); it != TargetFixtures->data.end(); ++it) {
+                        AgsFixtureArrayData fad = (*it);
+                        if(fixture == fad.B2Fixture) return fraction; // stop, we hit a target fixture
+                    }
+                    return  1.0; // we didn't hit anything, so we go on.
+                }
+            } else  {
+                return  1.0; // passthrough
+            }
+        }
+
+        RaycastType m_raycast_type;
+    };
+
+
+    b2Vec2 v1 = Scale::ScaleDown(b2Vec2(x0, y0));
+    b2Vec2 v2 = Scale::ScaleDown(b2Vec2(x1, y1));
+
+    AgsRayCastCallback query(ID, B2AgsWorld, raycastType);
+    B2AgsWorld->RayCast(&query, v1, v2);
+    return  query.RaycastResult;
+}
+
 
 AgsWorld::~AgsWorld(void)
 {

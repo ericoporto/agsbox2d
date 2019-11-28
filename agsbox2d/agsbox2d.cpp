@@ -44,6 +44,7 @@
 #include "AgsShapeRect.h"
 #include "AgsFixture.h"
 #include "AgsFixtureArray.h"
+#include "AgsRaycastResult.h"
 #include "AgsJoint.h"
 #include "AgsJointDistance.h"
 #include "AgsJointMotor.h"
@@ -69,6 +70,11 @@ const char *ourScriptHeader =
 "  eBodyStatic=0, \r\n"
 "  eBodyKinematic=1, \r\n"
 "  eBodyDynamic=2, \r\n"
+"}; \r\n"
+" \r\n"
+"enum RaycastType { \r\n"
+"  eRaycastPassthrough=0, \r\n"
+"  eRaycastUntilHit=1, \r\n"
 "}; \r\n"
 " \r\n"
 "enum JointType { \r\n"
@@ -161,7 +167,8 @@ const char *ourScriptHeader =
 "  import bool IsTouching(Body* other); \r\n"
 "}; \r\n"
 " \r\n"
-"managed struct FixtureArray; \r\n"
+"builtin managed struct FixtureArray; \r\n"
+"builtin managed struct RaycastResult; \r\n"
 " \r\n"
 "builtin managed struct World { \r\n"
 "  \r\n"
@@ -173,6 +180,9 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Returns array of fixtures which their bounding boxes are overlapped by the supplied box. \r\n"
 "  import FixtureArray* BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y); \r\n"
+"  \r\n"
+"  /// Returns RaycastResult with fixtures hit by a line, along with the hit normals. Raycast can also stop at a fixture or specific fixtures. \r\n"
+"  import RaycastResult* Raycast(float x0, float y-, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0); \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -254,6 +264,31 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Adds the specified value to the end of the array.\r\n"
 "  import void Push (Fixture* fixture); \r\n"
+"}; \r\n"
+" \r\n"
+"builtin managed struct RaycastResult{ \r\n"
+"  \r\n"
+"  /// Gets the length of the result so you don't access a invalid position on any array. \r\n"
+"  readonly import attribute int Length; \r\n"
+"  \r\n"
+"  /// Position X where the raycast hit a fixture. \r\n"
+"  readonly import attribute float PointX[]; \r\n"
+"  \r\n"
+"  /// Position Y where the raycast hit a fixture. \r\n"
+"  readonly import attribute float PointY[]; \r\n"
+"  \r\n"
+"  /// X coordinate of a vector representing a normal to the hit. \r\n"
+"  readonly import attribute float NormalX[]; \r\n"
+"  \r\n"
+"  /// Y coordinate of a vector representing a normal to the hit. \r\n"
+"  readonly import attribute float NormalY[]; \r\n"
+"  \r\n"
+"  /// A proportion value between 0 and 1 of the position of raycast line where the hit occurred. \r\n"
+"  readonly import attribute float Fraction[]; \r\n"
+"  \r\n"
+"  /// Read a Fixture that was hit. \r\n"
+"  readonly import attribute Fixture* Fixture[]; \r\n"
+"  \r\n"
 "}; \r\n"
 " \r\n"
 "builtin managed struct JointDistance; \r\n"
@@ -834,7 +869,63 @@ AgsFixtureArray* AgsWorld_BoundingBoxQuery(AgsWorld* self, uint32_t lx, uint32_t
     return agsFixtureArray;
 }
 
+AgsRaycastResult* AgsWorld_Raycast(AgsWorld* self, uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, int32 raycast_type, AgsFixtureArray* agsFixtureArray) {
+    float32 f_x0 = ToNormalFloat(x0);
+    float32 f_y0 = ToNormalFloat(y0);
+    float32 f_x1 = ToNormalFloat(x1);
+    float32 f_y1 = ToNormalFloat(y1);
+
+    if(agsFixtureArray == 0) agsFixtureArray = nullptr;
+
+    AgsRaycastResult* agsRaycastResult = self->RaycastQuery(f_x0, f_y0, f_x1, f_y1, (RaycastType) raycast_type, agsFixtureArray);
+    if(agsRaycastResult == nullptr) {
+        return nullptr;
+    }
+
+    engine->RegisterManagedObject(agsRaycastResult, &AgsRaycastResult_Interface);
+    return agsRaycastResult;
+}
+
 #pragma endregion // AgsWorld_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsRaycastResult_ScriptAPI
+
+int32 AgsRaycastResult_GetLength(AgsRaycastResult* self){
+    return self->GetLength();
+}
+
+uint32_t AgsRaycastResult_GetPointX(AgsRaycastResult* self, int32 i) {
+    return ToAgsFloat(self->GetPointX(i));
+}
+
+uint32_t AgsRaycastResult_GetPointY(AgsRaycastResult* self, int32 i) {
+    return ToAgsFloat(self->GetPointY(i));
+}
+
+uint32_t AgsRaycastResult_GetNormalX(AgsRaycastResult* self, int32 i) {
+    return ToAgsFloat(self->GetNormalX(i));
+}
+
+uint32_t AgsRaycastResult_GetNormalY(AgsRaycastResult* self, int32 i) {
+    return ToAgsFloat(self->GetNormalY(i));
+}
+
+uint32_t AgsRaycastResult_GetFraction(AgsRaycastResult* self, int32 i) {
+    return ToAgsFloat(self->GetFraction(i));
+}
+
+AgsFixture* AgsRaycastResult_GetFixture(AgsRaycastResult* self, int32 i) {
+    if ((i < 0) || (i >= self->GetLength()))
+        return nullptr;
+
+    AgsFixtureData fad = self->GetFixtureData(i);
+    AgsFixture* agsFixture = FindAgsFixtureFromB2Fixture(
+            Book::IDtoAgsWorld(fad.WorldID)->B2AgsWorld,
+            fad.WorldID, Book::IDtoB2Fixture(fad.WorldID, fad.B2FixtureID));
+    return agsFixture;
+}
+
+#pragma endregion // AgsRaycastResult_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsBody_ScriptAPI
 
@@ -1496,6 +1587,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsShapeCircleInterface::name, &AgsShapeCircle_Reader);
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
     engine->AddManagedObjectReader(AgsFixtureArrayInterface::name, &AgsFixtureArray_Reader);
+    engine->AddManagedObjectReader(AgsRaycastResultInterface::name, &AgsRaycastResult_Reader);
 
     engine->AddManagedObjectReader(AgsJointInterface::name, &AgsJoint_Reader);
     engine->AddManagedObjectReader(AgsJointDistanceInterface::name, &AgsJointDistance_Reader);
@@ -1526,6 +1618,15 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("World::Step^3", (void*)AgsWorld_Step);
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);
 	engine->RegisterScriptFunction("World::BoundingBoxQuery^4", (void*)AgsWorld_BoundingBoxQuery);
+    engine->RegisterScriptFunction("World::Raycast^6", (void*)AgsWorld_Raycast);
+
+    engine->RegisterScriptFunction("RaycastResult::get_Length", (void*)AgsRaycastResult_GetLength);
+    engine->RegisterScriptFunction("RaycastResult::geti_PointX", (void*)AgsRaycastResult_GetPointX);
+    engine->RegisterScriptFunction("RaycastResult::geti_PointY", (void*)AgsRaycastResult_GetPointY);
+    engine->RegisterScriptFunction("RaycastResult::geti_NormalX", (void*)AgsRaycastResult_GetNormalX);
+    engine->RegisterScriptFunction("RaycastResult::geti_NormalY", (void*)AgsRaycastResult_GetNormalY);
+    engine->RegisterScriptFunction("RaycastResult::geti_Fraction", (void*)AgsRaycastResult_GetFraction);
+    engine->RegisterScriptFunction("RaycastResult::geti_Fixture", (void*)AgsRaycastResult_GetFixture);
 
 	engine->RegisterScriptFunction("Body::get_IsDestroyed", (void*)AgsBody_IsDestroyed);
 	engine->RegisterScriptFunction("Body::set_FixedRotation", (void*)AgsBody_SetFixedRotation);
