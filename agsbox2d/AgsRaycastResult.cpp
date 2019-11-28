@@ -141,7 +141,6 @@ void AgsRaycastResultReader::Unserialize(int key, const char* serializedData, in
         float32 normaly;
         float32 fraction;
         int32 world_id;
-        int32 b2body_id;
         int32 fixture_id;
 
         ptr = CharToFloat(pointx, ptr);

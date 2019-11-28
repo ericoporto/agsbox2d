@@ -1,1 +1,1 @@
-OBJS = Box2D.o DebugDraw.o PointF.o SerialHelper.o Book.o AgsBody.o AgsShapeCircle.o AgsWorld.o AgsShape.o AgsFixture.o AgsFixtureArray.o AgsShapeRect.o Scale.o AgsJoint.o AgsJointDistance.o AgsJointMotor.o AgsJointMouse.o AgsJointPulley.o agsbox2d.o
+OBJS = Box2D.o DebugDraw.o PointF.o SerialHelper.o Book.o AgsBody.o AgsShapeCircle.o AgsWorld.o AgsShape.o AgsFixture.o AgsFixtureArray.o AgsRaycastResult.o AgsShapeRect.o Scale.o AgsJoint.o AgsJointDistance.o AgsJointMotor.o AgsJointMouse.o AgsJointPulley.o agsbox2d.o
