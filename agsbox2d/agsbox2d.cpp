@@ -235,7 +235,7 @@ const char *ourScriptHeader =
 "  /// Usually a value between 0.0 and 1.0 to make objects bounce. \r\n"
 "  import attribute float Restitution; \r\n"
 "  \r\n"
-"  /// Returns Bodyif it's defined for this fixture, otherwise null. \r\n"
+"  /// Returns Body if it's defined for this fixture, otherwise null. \r\n"
 "  readonly import attribute Body* Body; \r\n"
 "  \r\n"
 "  /// Group the fixture belongs to, from -32768 to 32767. Fixtures with the same group will always collide if group is positive or never collide if it's negative. Zero means no group, and is default. \r\n"
@@ -250,7 +250,7 @@ const char *ourScriptHeader =
 "  /// Returns true if a point is inside the shape of the fixture. \r\n"
 "  import bool TestPoint(float x, float y); \r\n"
 "  \r\n"
-"  /// Wheter this fixture is a sensor. Sensors do not cause collision responses, but generate begin-contact and end-contact events. \r\n"
+"  /// Whether this fixture is a sensor. Sensors do not cause collision responses, but generate begin-contact and end-contact events. \r\n"
 "  import attribute bool IsSensor; \r\n"
 "  \r\n"
 "}; \r\n"
@@ -518,7 +518,7 @@ void AGS_EditorProperties(HWND parent)                        //*** optional ***
         // User has chosen to view the Properties of the plugin
         // We could load up an options dialog or something here instead
 	MessageBox(parent,
-             L"agsbox2d v0.3.0 By eri0o",
+             L"agsbox2d v0.4.0 By eri0o",
              L"About",
          MB_OK | MB_ICONINFORMATION);
 
@@ -1890,7 +1890,7 @@ int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
         int screenWidth, screenHeight, colDepth;
         engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
         debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
-        printf("\nagsbox2d 0.3.0\n");
+        printf("\nagsbox2d 0.4.0\n");
         do_only_once = true;
     }
   }

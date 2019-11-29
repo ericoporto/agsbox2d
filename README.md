@@ -425,6 +425,31 @@ Restitution is used to make objects bounce, and is usually a value between
 `0.0` and `1.0`. A value of `0.0` means the object won't bounce, and a value
 of `1.0` means the object velocity will be exactly reflected.
 
+#### `readonly Body* Fixture.Body`
+
+Returns Body if it's defined for this fixture, otherwise null.
+
+#### `int Fixture.GroupIndex`
+
+Group the fixture belongs to, from -32768 to 32767. Fixtures with the same group will always collide if group is positive or never collide if it's negative. 
+Zero means no group, and is default.
+
+#### `int Fixture.CategoryBits`
+
+Category of this fixture, from 16 possible categories encoded as 16-bit integer (1, 2, 4, 8, ... 32768). 65535 means all categories.
+
+#### `int Fixture.MaskBits`
+
+Mask of this fixture, encoded as 16-bit integer. Categories selected will collide with this fixture (ex: 5, means category 1 and 4 will collide). Default is 65535 - collide with all categories.
+
+#### `bool Fixture.TestPoint(float x, float y)`
+
+Returns true if a point is inside the shape of the fixture.
+
+#### `bool Fixture.IsSensor`
+
+Whether this fixture is a sensor. Sensors do not cause collision responses, but generate begin-contact and end-contact events.
+
 ### Joint
 
 #### `JointDistance* Joint.AsDistance`

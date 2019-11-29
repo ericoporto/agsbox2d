@@ -1,6 +1,6 @@
-[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.3.0 [/b][/color]
+[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.4.0 [/b][/color]
 
-[url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
+[url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
 
 [url=https://dev.azure.com/ericoporto/agsbox2d/_build/latest?definitionId=11&branchName=master][img]https://dev.azure.com/ericoporto/agsbox2d/_apis/build/status/ericoporto.agsbox2d?branchName=master[/img][/url]
 
@@ -397,6 +397,31 @@ Box2D uses the square root of the multiplication of two contacting fixtures to c
 [/li]
 [li][b][tt]float Fixture.Restitution[/tt][/b]
 Restitution is used to make objects bounce, and is usually a value between [tt]0.0[/tt] and [tt]1.0[/tt]. A value of [tt]0.0[/tt] means the object won't bounce, and a value of [tt]1.0[/tt] means the object velocity will be exactly reflected.
+
+[/li]
+[li][b][tt]readonly Body* Fixture.Body[/tt][/b]
+Returns Body if it's defined for this fixture, otherwise null.
+
+[/li]
+[li][b][tt]int Fixture.GroupIndex[/tt][/b]
+Group the fixture belongs to, from -32768 to 32767. Fixtures with the same group will always collide if group is positive or never collide if it's negative.
+Zero means no group, and is default.
+
+[/li]
+[li][b][tt]int Fixture.CategoryBits[/tt][/b]
+Category of this fixture, from 16 possible categories encoded as 16-bit integer (1, 2, 4, 8, ... 32768). 65535 means all categories.
+
+[/li]
+[li][b][tt]int Fixture.MaskBits[/tt][/b]
+Mask of this fixture, encoded as 16-bit integer. Categories selected will collide with this fixture (ex: 5, means category 1 and 4 will collide). Default is 65535 - collide with all categories.
+
+[/li]
+[li][b][tt]bool Fixture.TestPoint(float x, float y)`[/tt][/b]
+Returns true if a point is inside the shape of the fixture.
+
+[/li]
+[li][b][tt]bool Fixture.IsSensor[/tt][/b]
+Whether this fixture is a sensor. Sensors do not cause collision responses, but generate begin-contact and end-contact events.
 
 [/li]
 [/list]
