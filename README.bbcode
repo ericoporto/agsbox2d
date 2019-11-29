@@ -344,18 +344,21 @@ Returns a sprite of the size of the screen with the objects in the world drawn o
 A common usage is to create a GUI of the size of the screen and set the background graphic of it with the sprite this function outputs. Set this GUI transparency between 1 and 99.
 
 You can pass a camera x and y value to scroll the camera on the world.
+
 [/li]
 [li][b][tt]int FixtureArray*  World.BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y)[/tt][/b]
 Returns array of fixtures which their bounding boxes are overlapped by the supplied box.
 
 A fixture bounding box is the non rotated smallest rectangle that contains it's shape, this means a rotate rectangle or a circle, a empty area is part of the bounding box.
 This is usually good enough for a first stage of a detection, but may require additional steps.
+
 [/li]
 [li][b][tt]int RaycastResult* World.Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0)[/tt][/b]
 Returns RaycastResult with fixtures hit by a line, along with the hit normals.
 The raycast goes through all fixtures on the line if you supply [tt]eRaycastPassthrough[/tt] (this is the default).
 
 You can use [tt]eRaycastUntilHit[/tt] for it to stop at the first fixture hit, or additionally supply an array of target fixtures so that the raycast only stops if hit any fixture on the array.
+
 [/li]
 [/list]
 
