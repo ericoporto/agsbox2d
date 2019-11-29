@@ -101,7 +101,7 @@ int32 AgsFixture::GetCategoryBits(){
 
 void AgsFixture::SetCategoryBits(int32 category){
     InitializeIfNeeded();
-    if(category < 0 || category > 65535) return;
+    if(category < 1 || category > 65535) return;
 
     b2Filter f = B2AgsFixture->GetFilterData();
     f.categoryBits = (uint16)category;
