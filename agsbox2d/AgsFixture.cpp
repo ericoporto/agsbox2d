@@ -10,6 +10,7 @@
 #include "AgsFixture.h"
 #include "Book.h"
 #include "AgsWorld.h"
+#include "Scale.h"
 
 AgsFixture::AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density) {
 
@@ -78,6 +79,54 @@ void AgsFixture::SetRestitution(float32 restitution) {
     InitializeIfNeeded();
 	B2AgsFixture->SetRestitution(restitution);
 }
+
+void AgsFixture::SetGroupIndex(int32 index) {
+    InitializeIfNeeded();
+    if(index < -32768 || index > 32767) return;
+
+    b2Filter f = B2AgsFixture->GetFilterData();
+    f.groupIndex = (uint16)index;
+    B2AgsFixture->SetFilterData(f);
+}
+
+int32 AgsFixture::GetGroupIndex() {
+    InitializeIfNeeded();
+    return B2AgsFixture->GetFilterData().groupIndex;
+}
+
+int32 AgsFixture::GetCategoryBits(){
+    InitializeIfNeeded();
+    return B2AgsFixture->GetFilterData().categoryBits;
+}
+
+void AgsFixture::SetCategoryBits(int32 category){
+    InitializeIfNeeded();
+    if(category < 0 || category > 65535) return;
+
+    b2Filter f = B2AgsFixture->GetFilterData();
+    f.categoryBits = (uint16)category;
+    B2AgsFixture->SetFilterData(f);
+}
+
+int32 AgsFixture::GetMaskBits(){
+    InitializeIfNeeded();
+    return B2AgsFixture->GetFilterData().maskBits;
+}
+
+void AgsFixture::SetMaskBits(int32 mask){
+    InitializeIfNeeded();
+    if(mask < 0 || mask > 65535) return;
+
+    b2Filter f = B2AgsFixture->GetFilterData();
+    f.maskBits = (uint16)mask;
+    B2AgsFixture->SetFilterData(f);
+}
+
+bool AgsFixture::TestPoint(float32 x, float32 y){
+    InitializeIfNeeded();
+    return B2AgsFixture->TestPoint(Scale::ScaleDown(b2Vec2(x, y)));
+}
+
 
 b2Body* AgsFixture::GetB2Body() {
     InitializeIfNeeded();

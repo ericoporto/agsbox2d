@@ -238,6 +238,18 @@ const char *ourScriptHeader =
 "  /// Returns Bodyif it's defined for this fixture, otherwise null. \r\n"
 "  readonly import attribute Body* Body; \r\n"
 "  \r\n"
+"  /// Group the fixture belongs to, from -32768 to 32767. Fixtures with the same group will always collide if group is positive or never collide if it's negative. Zero means no group, and is default. \r\n"
+"  import attribute int GroupIndex; \r\n"
+"  \r\n"
+"  /// Category of this fixture, from 16 possible categories encoded as 16-bit integer (1, 2, 4, 8, ... 32768). 65535 means all categories. \r\n"
+"  import attribute int CategoryBits; \r\n"
+"  \r\n"
+"  /// Mask of this fixture, encoded as 16-bit integer. Categories selected will NOT collide with this fixture (ex: 5, means category 1 and 4 won't collide). \r\n"
+"  import attribute int MaskBits; \r\n"
+"  \r\n"
+"  /// Returns true if a point is inside the shape of the fixture. \r\n"
+"  import bool TestPoint(float x, float y); \r\n"
+"  \r\n"
 "}; \r\n"
 " \r\n"
 "managed struct FixtureArray { \r\n"
@@ -1273,10 +1285,41 @@ void AgsFixture_SetRestitution(AgsFixture* self, uint32_t restitution) {
 	self->SetRestitution(f_restitution);
 }
 
+int32 AgsFixture_GetGroupIndex(AgsFixture* self) {
+    return self->GetGroupIndex();
+}
+
+void AgsFixture_SetGroupIndex(AgsFixture* self, int32 index) {
+    self->SetGroupIndex(index);
+}
+
+int32 AgsFixture_GetMaskBits(AgsFixture* self) {
+    return self->GetMaskBits();
+}
+
+void AgsFixture_SetMaskBits(AgsFixture* self, int32 index) {
+    self->SetMaskBits(index);
+}
+
+int32 AgsFixture_GetCategoryBits(AgsFixture* self) {
+    return self->GetCategoryBits();
+}
+
+void AgsFixture_SetCategoryBits(AgsFixture* self, int32 index) {
+    self->SetCategoryBits(index);
+}
+
 AgsBody* AgsFixture_GetBody(AgsFixture* self) {
     AgsWorld* world = Book::IDtoAgsWorld(self->WorldID);
 
     return FindAgsBodyFromB2Body(world->B2AgsWorld, world->ID, self->GetB2Body());
+}
+
+int32 AgsFixture_TestPoint(AgsFixture* self, uint32_t x, uint32_t y) {
+    float32 f_x = ToNormalFloat(x);
+    float32 f_y = ToNormalFloat(y);
+    if(self->TestPoint(f_x, f_y)) return 1;
+    return 0;
 }
 
 #pragma endregion // AgsFixture_ScriptAPI
@@ -1746,6 +1789,14 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("Fixture::get_Restitution", (void*)AgsFixture_GetRestitution);
 	engine->RegisterScriptFunction("Fixture::set_Restitution", (void*)AgsFixture_SetRestitution);
     engine->RegisterScriptFunction("Fixture::get_Body", (void*)AgsFixture_GetBody);
+    engine->RegisterScriptFunction("Fixture::get_GroupIndex", (void*)AgsFixture_GetGroupIndex);
+    engine->RegisterScriptFunction("Fixture::set_GroupIndex", (void*)AgsFixture_SetGroupIndex);
+    engine->RegisterScriptFunction("Fixture::get_CategoryBits", (void*)AgsFixture_GetCategoryBits);
+    engine->RegisterScriptFunction("Fixture::set_CategoryBits", (void*)AgsFixture_SetCategoryBits);
+    engine->RegisterScriptFunction("Fixture::get_MaskBits", (void*)AgsFixture_GetMaskBits);
+    engine->RegisterScriptFunction("Fixture::set_MaskBits", (void*)AgsFixture_SetMaskBits);
+    engine->RegisterScriptFunction("Fixture::TestPoint^2", (void*)AgsFixture_TestPoint);
+
 
     engine->RegisterScriptFunction("JointDistance::get_Length", (void*)AgsJointDistance_GetLength);
     engine->RegisterScriptFunction("JointDistance::set_Length", (void*)AgsJointDistance_SetLength);

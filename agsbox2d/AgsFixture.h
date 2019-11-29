@@ -39,6 +39,17 @@ public:
 	float32 GetRestitution();
 	void SetRestitution(float32 restitution);
 
+    int32 GetGroupIndex();
+	void SetGroupIndex(int32 index);
+
+    int32 GetCategoryBits();
+    void SetCategoryBits(int32 index);
+
+    int32 GetMaskBits();
+    void SetMaskBits(int32 index);
+
+    bool TestPoint(float32 x, float32 y);
+
 	int32 ID;
     int32 WorldID;
     int32 b2BodyID;
