@@ -94,6 +94,15 @@ namespace SerialHelper {
 		buf = FloatToChar(b2fixture->GetDensity(), buf, end);
 		buf = BoolToChar(b2fixture->IsSensor(), buf, end);
 
+        b2Filter filter = b2fixture->GetFilterData();
+        int32 filter_category_bits = filter.categoryBits;
+        int32 filter_mask_bits = filter.maskBits;
+        int32 filter_group_index = filter.groupIndex;
+
+        buf = IntToChar(filter_category_bits, buf, end);
+        buf = IntToChar(filter_mask_bits, buf, end);
+        buf = IntToChar(filter_group_index, buf, end);
+
 		b2Shape* shape = b2fixture->GetShape();
 
 		buf = b2ShapeToChar(shape, buf, end);
@@ -294,6 +303,18 @@ namespace SerialHelper {
 		buf = CharToFloat(b2fixturedef->friction, buf);
 		buf = CharToFloat(b2fixturedef->density, buf);
 		buf = CharToBool(b2fixturedef->isSensor, buf);
+
+        int32 filter_category_bits;
+        int32 filter_mask_bits;
+        int32 filter_group_index;
+
+        buf = CharToInt(filter_category_bits, buf);
+        buf = CharToInt(filter_mask_bits, buf);
+        buf = CharToInt(filter_group_index, buf);
+
+        b2fixturedef->filter.categoryBits = filter_category_bits;
+        b2fixturedef->filter.maskBits = filter_mask_bits;
+        b2fixturedef->filter.groupIndex = filter_group_index;
 
 		b2Shape* shape = nullptr;
 		buf = CharTob2Shape(&shape, buf);
