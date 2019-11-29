@@ -210,13 +210,41 @@ Removes a joint from the world, it should no longer return true to isValid.
 
 Creates a PointF object with x and y values.
 
-#### `float Body.X`
+#### `float PointF.X`
 
 The X coordinate property of a PointF.
 
-#### `float Body.Y`
+#### `float PointF.Y`
 
 The Y coordinate property of a PointF.
+
+#### `float PointF.Length()`
+
+Returns distance from point (X,Y) coordinates to origin (0,0).
+
+#### `float PointF.SquaredLength()`
+
+Returns  squared distance from point (X,Y) coordinates to origin (0,0). Slightly faster.
+
+#### `PointF* PointF.Add(PointF* pointF)`
+
+Returns a new point with the sum of this with pointF.
+
+#### `PointF* PointF.Sub(PointF* pointF)`
+
+Returns a new point with the subtraction of pointF from this.
+
+#### `PointF* PointF.Scale(float scale)`
+
+Returns a new point that is a copy of this point multiplied by a scalar.
+
+#### `PointF* PointF.Rotate(float angle, float pivot_x = 0, float pivot_y = 0)`
+
+Returns a new point with this point treated as a vector to a pivot point, rotated by an angle in radians. If you don't specify, pivot is origin (0,0).
+
+#### `Point* PointF.ToPoint()`
+
+Rounds this point as integer and returns a standard AGS Point object.
 
 ### Body
 
@@ -342,6 +370,20 @@ A common usage is to create a GUI of the size of the screen and set the backgrou
 graphic of it with the sprite this function outputs.
 
 You can pass a camera x and y value to scroll the camera on the world.
+
+#### `int FixtureArray*  World.BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y)`
+
+Returns array of fixtures which their bounding boxes are overlapped by the supplied box.
+
+A fixture bounding box is the non rotated smallest rectangle that contains it's shape, this means a rotate rectangle or a circle, a empty area is part of the bounding box. 
+This is usually good enough for a first stage of a detection, but may require additional steps.
+
+#### `int RaycastResult* World.Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0)`
+
+Returns RaycastResult with fixtures hit by a line, along with the hit normals. 
+The raycast goes through all fixtures on the line if you supply `eRaycastPassthrough` (this is the default).
+
+You can use `eRaycastUntilHit` for it to stop at the first fixture hit, or additionally supply an array of target fixtures so that the raycast only stops if hit any fixture on the array.
 
 ### Shape
 

@@ -1,6 +1,6 @@
-[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.2.0 [/b][/color]
+[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.3.0 [/b][/color]
 
-[url=https://github.com/ericoporto/agsbox2d/releases/download/0.2.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.2.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.2.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.2.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.2.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
+[url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.3.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
 
 [url=https://dev.azure.com/ericoporto/agsbox2d/_build/latest?definitionId=11&branchName=master][img]https://dev.azure.com/ericoporto/agsbox2d/_apis/build/status/ericoporto.agsbox2d?branchName=master[/img][/url]
 
@@ -198,6 +198,34 @@ The X coordinate property of a PointF.
 The Y coordinate property of a PointF.
 
 [/li]
+[li][b][tt]float PointF.Length()[/tt][/b]
+Returns distance from point (X,Y) coordinates to origin (0,0).
+
+[/li]
+[li][b][tt]float PointF.SquaredLength()[/tt][/b]
+Returns  squared distance from point (X,Y) coordinates to origin (0,0). Slightly faster than Length.
+
+[/li]
+[li][b][tt]PointF* PointF.Add(PointF* pointF)[/tt][/b]
+Returns a new point with the sum of this with pointF.
+
+[/li]
+[li][b][tt]PointF* PointF.Sub(PointF* pointF)[/tt][/b]
+Returns a new point with the subtraction of pointF from this.
+
+[/li]
+[li][b][tt]PointF* PointF.Scale(float scale)[/tt][/b]
+Returns a new point that is a copy of this point multiplied by a scalar.
+
+[/li]
+[li][b][tt]PointF* PointF.Rotate(float angle, float pivot_x = 0, float pivot_y = 0)[/tt][/b]
+Returns a new point with this point treated as a vector to a pivot point, rotated by an angle in radians. If you don't specify, pivot is origin (0,0).
+
+[/li]
+[li][b][tt]Point* PointF.ToPoint()[/tt][/b]
+Rounds this point as integer and returns a standard AGS Point object.
+
+[/li]
 [/list]
 
 [i][b]Body[/b][/i]
@@ -316,6 +344,18 @@ Returns a sprite of the size of the screen with the objects in the world drawn o
 A common usage is to create a GUI of the size of the screen and set the background graphic of it with the sprite this function outputs. Set this GUI transparency between 1 and 99.
 
 You can pass a camera x and y value to scroll the camera on the world.
+[/li]
+[li][b][tt]int FixtureArray*  World.BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y)[/tt][/b]
+Returns array of fixtures which their bounding boxes are overlapped by the supplied box.
+
+A fixture bounding box is the non rotated smallest rectangle that contains it's shape, this means a rotate rectangle or a circle, a empty area is part of the bounding box.
+This is usually good enough for a first stage of a detection, but may require additional steps.
+[/li]
+[li][b][tt]int RaycastResult* World.Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0)[/tt][/b]
+Returns RaycastResult with fixtures hit by a line, along with the hit normals.
+The raycast goes through all fixtures on the line if you supply [tt]eRaycastPassthrough[/tt] (this is the default).
+
+You can use [tt]eRaycastUntilHit[/tt] for it to stop at the first fixture hit, or additionally supply an array of target fixtures so that the raycast only stops if hit any fixture on the array.
 [/li]
 [/list]
 

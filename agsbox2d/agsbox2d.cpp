@@ -503,7 +503,7 @@ void AGS_EditorProperties(HWND parent)                        //*** optional ***
         // User has chosen to view the Properties of the plugin
         // We could load up an options dialog or something here instead
 	MessageBox(parent,
-             L"agsbox2d v0.2.0 By eri0o",
+             L"agsbox2d v0.3.0 By eri0o",
              L"About",
          MB_OK | MB_ICONINFORMATION);
 
@@ -1826,7 +1826,7 @@ int AGS_EngineOnEvent(int event, int data)                    //*** optional ***
         int screenWidth, screenHeight, colDepth;
         engine->GetScreenDimensions(&screenWidth, &screenHeight, &colDepth);
         debugDraw.InitializeAgsDebugDraw(engine, screenWidth, screenHeight, colDepth);
-        printf("\nagsbox2d 0.2.0\n");
+        printf("\nagsbox2d 0.3.0\n");
         do_only_once = true;
     }
   }
