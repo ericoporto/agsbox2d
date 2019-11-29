@@ -50,6 +50,9 @@ public:
 
     bool TestPoint(float32 x, float32 y);
 
+    void SetIsSensor(bool sensor);
+    bool GetIsSensor();
+
 	int32 ID;
     int32 WorldID;
     int32 b2BodyID;

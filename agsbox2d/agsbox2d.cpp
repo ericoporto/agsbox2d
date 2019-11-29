@@ -244,11 +244,14 @@ const char *ourScriptHeader =
 "  /// Category of this fixture, from 16 possible categories encoded as 16-bit integer (1, 2, 4, 8, ... 32768). 65535 means all categories. \r\n"
 "  import attribute int CategoryBits; \r\n"
 "  \r\n"
-"  /// Mask of this fixture, encoded as 16-bit integer. Categories selected will NOT collide with this fixture (ex: 5, means category 1 and 4 won't collide). \r\n"
+"  /// Mask of this fixture, encoded as 16-bit integer. Categories selected will collide with this fixture (ex: 5, means category 1 and 4 will collide). Default is 65535 - collide with all categories. \r\n"
 "  import attribute int MaskBits; \r\n"
 "  \r\n"
 "  /// Returns true if a point is inside the shape of the fixture. \r\n"
 "  import bool TestPoint(float x, float y); \r\n"
+"  \r\n"
+"  /// Wheter this fixture is a sensor. Sensors do not cause collision responses, but generate begin-contact and end-contact events. \r\n"
+"  import attribute bool IsSensor; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -1322,6 +1325,14 @@ int32 AgsFixture_TestPoint(AgsFixture* self, uint32_t x, uint32_t y) {
     return 0;
 }
 
+int32 AgsFixture_GetIsSensor(AgsFixture* self) {
+    return self->GetIsSensor() ? 1 : 0;
+}
+
+void AgsFixture_SetIsSensor(AgsFixture* self, int32 index) {
+    self->SetIsSensor(index == 1);
+}
+
 #pragma endregion // AgsFixture_ScriptAPI
 //-----------------------------------------------------------------------------
 #pragma region AgsFixtureArray_ScriptAPI
@@ -1796,6 +1807,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("Fixture::get_MaskBits", (void*)AgsFixture_GetMaskBits);
     engine->RegisterScriptFunction("Fixture::set_MaskBits", (void*)AgsFixture_SetMaskBits);
     engine->RegisterScriptFunction("Fixture::TestPoint^2", (void*)AgsFixture_TestPoint);
+    engine->RegisterScriptFunction("Fixture::get_IsSensor", (void*)AgsFixture_GetIsSensor);
+    engine->RegisterScriptFunction("Fixture::set_IsSensor", (void*)AgsFixture_SetIsSensor);
 
 
     engine->RegisterScriptFunction("JointDistance::get_Length", (void*)AgsJointDistance_GetLength);

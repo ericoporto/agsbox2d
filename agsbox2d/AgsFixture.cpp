@@ -127,6 +127,16 @@ bool AgsFixture::TestPoint(float32 x, float32 y){
     return B2AgsFixture->TestPoint(Scale::ScaleDown(b2Vec2(x, y)));
 }
 
+void AgsFixture::SetIsSensor(bool sensor){
+    InitializeIfNeeded();
+    return B2AgsFixture->SetSensor(sensor);
+}
+
+bool AgsFixture::GetIsSensor(){
+    InitializeIfNeeded();
+    return B2AgsFixture->IsSensor();
+}
+
 
 b2Body* AgsFixture::GetB2Body() {
     InitializeIfNeeded();
