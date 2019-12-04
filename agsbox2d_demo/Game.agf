@@ -662,6 +662,10 @@
             <Number>4</Number>
             <Description IsNull="True" />
           </UnloadedRoom>
+          <UnloadedRoom>
+            <Number>5</Number>
+            <Description IsNull="True" />
+          </UnloadedRoom>
         </UnloadedRooms>
       </UnloadedRoomFolder>
     </Rooms>
@@ -2109,7 +2113,7 @@
               <Height>200</Height>
               <Width>320</Width>
               <Left>0</Left>
-              <Top>20</Top>
+              <Top>0</Top>
               <Clickable>False</Clickable>
               <Visible>True</Visible>
               <PopupStyle>Normal</PopupStyle>
@@ -2347,7 +2351,7 @@
             <IdleView>0</IdleView>
             <ThinkingView>0</ThinkingView>
             <BlinkingView>0</BlinkingView>
-            <StartingRoom>4</StartingRoom>
+            <StartingRoom>5</StartingRoom>
             <StartX>104</StartX>
             <StartY>111</StartY>
             <UniformMovementSpeed>True</UniformMovementSpeed>
@@ -4305,6 +4309,39 @@
               </Sprite>
             </Sprites>
           </SpriteFolder>
+          <SpriteFolder Name="boxify">
+            <SubFolders />
+            <Sprites>
+              <Sprite Slot="1" Width="14" Height="18" ColorDepth="32" Resolution="Real" AlphaChannel="True">
+                <Source>
+                  <FileName>Sprite/a_barrel.png</FileName>
+                  <OffsetX>0</OffsetX>
+                  <OffsetY>0</OffsetY>
+                  <ImportHeight>18</ImportHeight>
+                  <ImportWidth>14</ImportWidth>
+                  <Frame>0</Frame>
+                  <RemapToGamePalette>False</RemapToGamePalette>
+                  <RemapToRoomPalette>False</RemapToRoomPalette>
+                  <ImportMethod>LeaveAsIs</ImportMethod>
+                  <ImportAlphaChannel>True</ImportAlphaChannel>
+                </Source>
+              </Sprite>
+              <Sprite Slot="2" Width="22" Height="28" ColorDepth="32" Resolution="Real" AlphaChannel="True">
+                <Source>
+                  <FileName>Sprite/a_box.png</FileName>
+                  <OffsetX>0</OffsetX>
+                  <OffsetY>0</OffsetY>
+                  <ImportHeight>28</ImportHeight>
+                  <ImportWidth>22</ImportWidth>
+                  <Frame>0</Frame>
+                  <RemapToGamePalette>False</RemapToGamePalette>
+                  <RemapToRoomPalette>False</RemapToRoomPalette>
+                  <ImportMethod>LeaveAsIs</ImportMethod>
+                  <ImportAlphaChannel>True</ImportAlphaChannel>
+                </Source>
+              </Sprite>
+            </Sprites>
+          </SpriteFolder>
         </SubFolders>
         <Sprites>
           <Sprite Slot="0" Width="10" Height="6" ColorDepth="32" Resolution="Real" AlphaChannel="False">
@@ -4562,6 +4599,30 @@
       <ScriptFolder Name="Main">
         <SubFolders />
         <ScriptAndHeaders>
+          <ScriptAndHeader>
+            <ScriptAndHeader_Header>
+              <Script>
+                <FileName>Boxify.ash</FileName>
+                <Name />
+                <Description />
+                <Author />
+                <Version />
+                <Key>1349850394</Key>
+                <IsHeader>True</IsHeader>
+              </Script>
+            </ScriptAndHeader_Header>
+            <ScriptAndHeader_Script>
+              <Script>
+                <FileName>Boxify.asc</FileName>
+                <Name />
+                <Description />
+                <Author />
+                <Version />
+                <Key>1349850394</Key>
+                <IsHeader>False</IsHeader>
+              </Script>
+            </ScriptAndHeader_Script>
+          </ScriptAndHeader>
           <ScriptAndHeader>
             <ScriptAndHeader_Header>
               <Script>
