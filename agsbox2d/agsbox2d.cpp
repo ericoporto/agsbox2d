@@ -1062,7 +1062,7 @@ void AgsContact_SetEnabled(AgsContact* self, int32 enabled) {
 
 int32 AgsContact_GetEnabled(AgsContact* self) {
     if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
-    self->IsEnabled();
+    return self->IsEnabled();
 }
 
 void AgsContact_SetRestitution(AgsContact* self, uint32_t restitution) {
