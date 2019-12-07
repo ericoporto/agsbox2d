@@ -50,6 +50,7 @@
 #include "AgsJointMotor.h"
 #include "AgsJointMouse.h"
 #include "AgsJointPulley.h"
+#include "AgsContact.h"
 #include "Book.h"
 
 #include "DebugDraw.h"
@@ -313,6 +314,37 @@ const char *ourScriptHeader =
 "  \r\n"
 "}; \r\n"
 " \r\n"
+"builtin managed struct Contact{ \r\n"
+"  \r\n"
+"  /// Whether the Contact is still valid. \r\n"
+"  readonly import attribute bool IsValid; \r\n"
+"  \r\n"
+"  /// The normal vector between two shapes that are in contact. \r\n"
+"  readonly import attribute PointF* Normal; \r\n"
+"  \r\n"
+"  /// The contact points of the two colliding fixture, use PositionsCount to find out how many. Index starts at 0. \r\n"
+"  readonly import attribute PointF* Positions[]; \r\n"
+"  \r\n"
+"  /// How many position of contact are available. \r\n"
+"  readonly import attribute int PositionsCount; \r\n"
+"  \r\n"
+"  /// One of the Fixtures that hold the shapes in contact. \r\n"
+"  readonly import attribute Fixture* FixtureA; \r\n"
+"  \r\n"
+"  /// The other of the Fixtures that hold the shapes in contact. \r\n"
+"  readonly import attribute Fixture* FixtureB; \r\n"
+"  \r\n"
+"  /// Whether the contact is enabled. \r\n"
+"  import attribute bool Enabled; \r\n"
+"  \r\n"
+"  /// The restitution between two shapes that are in contact. \r\n"
+"  import attribute float Restitution; \r\n"
+"  \r\n"
+"  /// The friction between two shapes that are in contact. \r\n"
+"  import attribute float Friction; \r\n"
+"  \r\n"
+"}; \r\n"
+" \r\n"
 "builtin managed struct World { \r\n"
 "  \r\n"
 "  /// Advances one step of time dt in seconds of the simulation. \r\n"
@@ -326,6 +358,12 @@ const char *ourScriptHeader =
 "  \r\n"
 "  /// Returns RaycastResult with fixtures hit by a line, along with the hit normals. Raycast can also stop at a fixture or specific fixtures. \r\n"
 "  import RaycastResult* Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0); \r\n"
+"  \r\n"
+"  /// How many contacts are available. \r\n"
+"  readonly import attribute int ContactCount; \r\n"
+"  \r\n"
+"  /// Gets the contacts in the world by index. \r\n"
+"  readonly import attribute Contact* Contacts[]; \r\n"
 "  \r\n"
 "}; \r\n"
 " \r\n"
@@ -960,9 +998,96 @@ AgsRaycastResult* AgsWorld_Raycast(AgsWorld* self, uint32_t x0, uint32_t y0, uin
     return agsRaycastResult;
 }
 
+int32 AgsWorld_GetContactCount(AgsWorld* self) {
+    return self->GetContactCount();
+}
+
+AgsContact* AgsWorld_GetContacts(AgsWorld* self, int32 i) {
+    if(i<0 || i>=self->GetContactCount()) return nullptr;
+
+    AgsContact* contact = self->GetContact(i);
+    contact->ID = engine->RegisterManagedObject(contact, &AgsContact_Interface);
+    return contact;
+}
+
 #pragma endregion // AgsWorld_ScriptAPI
 //-----------------------------------------------------------------------------
-#pragma region AgsRaycastResult_ScriptAPI
+#pragma region AgsContact_ScriptAPI
+
+int32 AgsContact_GetIsValud(AgsContact* self) {
+    if (self->IsValid()) return 1;
+    return 0;
+}
+
+PointF* AgsContact_GetNormal(AgsContact* self) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    PointF* point_f = self->GetNormal();
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
+}
+
+int32 AgsContact_GetPositionsCount(AgsContact* self) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    return self->GetPositionsCount();
+}
+
+PointF* AgsContact_GetPositions(AgsContact* self, int32 i) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    PointF* point_f = self->GetPosition(i);
+    if (point_f == nullptr) return nullptr;
+    engine->RegisterManagedObject(point_f, &PointF_Interface);
+    return  point_f;
+}
+
+AgsFixture* AgsContact_GetFixtureA(AgsContact* self) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    b2Fixture* b2fixture = self->GetB2FixtureA();
+    AgsFixture* fixture = FindAgsFixtureFromB2Fixture(
+            Book::IDtoAgsWorld(self->WorldID)->B2AgsWorld, self->WorldID, b2fixture);
+    return fixture;
+}
+
+AgsFixture* AgsContact_GetFixtureB(AgsContact* self) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    b2Fixture* b2fixture = self->GetB2FixtureB();
+    AgsFixture* fixture = FindAgsFixtureFromB2Fixture(
+            Book::IDtoAgsWorld(self->WorldID)->B2AgsWorld, self->WorldID, b2fixture);
+    return fixture;
+}
+
+void AgsContact_SetEnabled(AgsContact* self, int32 enabled) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    self->SetEnabled(enabled!=0);
+}
+
+int32 AgsContact_GetEnabled(AgsContact* self) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    self->IsEnabled();
+}
+
+void AgsContact_SetRestitution(AgsContact* self, uint32_t restitution) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    float32 f_restitution = ToNormalFloat(restitution);
+    self->SetRestitution(f_restitution);
+}
+
+uint32_t AgsContact_GetRestitution(AgsContact* self) {
+    return ToAgsFloat(self->GetRestitution());
+}
+
+void AgsContact_SetFriction(AgsContact* self, uint32_t friction) {
+    if (!self->IsValid()) engine->AbortGame("Accessed invalid contact.");
+    float32 f_friction = ToNormalFloat(friction);
+    self->SetFriction(f_friction);
+}
+
+uint32_t AgsContact_GetFriction(AgsContact* self) {
+    return ToAgsFloat(self->GetFriction());
+}
+
+#pragma endregion // AgsContact_ScriptAPI
+//-----------------------------------------------------------------------------
+#pragma region AgsBody_ScriptAPI
 
 int32 AgsRaycastResult_GetLength(AgsRaycastResult* self){
     return self->GetLength();
@@ -1738,6 +1863,8 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->RegisterScriptFunction("World::GetDebugSprite^2", (void*)AgsWorld_GetDebugSprite);
 	engine->RegisterScriptFunction("World::BoundingBoxQuery^4", (void*)AgsWorld_BoundingBoxQuery);
     engine->RegisterScriptFunction("World::Raycast^6", (void*)AgsWorld_Raycast);
+    engine->RegisterScriptFunction("World::get_ContactCount", (void*)AgsWorld_GetContactCount);
+    engine->RegisterScriptFunction("World::geti_Contacts", (void*)AgsWorld_GetContacts);
 
     engine->RegisterScriptFunction("RaycastResult::get_Length", (void*)AgsRaycastResult_GetLength);
     engine->RegisterScriptFunction("RaycastResult::geti_PointX", (void*)AgsRaycastResult_GetPointX);
@@ -1810,6 +1937,18 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("Fixture::get_IsSensor", (void*)AgsFixture_GetIsSensor);
     engine->RegisterScriptFunction("Fixture::set_IsSensor", (void*)AgsFixture_SetIsSensor);
 
+    engine->RegisterScriptFunction("Contact::get_Friction", (void*)AgsContact_GetFriction);
+    engine->RegisterScriptFunction("Contact::set_Friction", (void*)AgsContact_SetFriction);
+    engine->RegisterScriptFunction("Contact::get_Restitution", (void*)AgsContact_GetRestitution);
+    engine->RegisterScriptFunction("Contact::set_Restitution", (void*)AgsContact_SetRestitution);
+    engine->RegisterScriptFunction("Contact::get_Enabled", (void*)AgsContact_GetEnabled);
+    engine->RegisterScriptFunction("Contact::set_Enabled", (void*)AgsContact_SetEnabled);
+    engine->RegisterScriptFunction("Contact::get_IsValid", (void*)AgsContact_GetIsValud);
+    engine->RegisterScriptFunction("Contact::get_Normal", (void*)AgsContact_GetNormal);
+    engine->RegisterScriptFunction("Contact::get_PositionsCount", (void*)AgsContact_GetPositionsCount);
+    engine->RegisterScriptFunction("Contact::geti_IsValid", (void*)AgsContact_GetPositions);
+    engine->RegisterScriptFunction("Contact::get_FixtureA", (void*)AgsContact_GetFixtureA);
+    engine->RegisterScriptFunction("Contact::get_FixtureB", (void*)AgsContact_GetFixtureB);
 
     engine->RegisterScriptFunction("JointDistance::get_Length", (void*)AgsJointDistance_GetLength);
     engine->RegisterScriptFunction("JointDistance::set_Length", (void*)AgsJointDistance_SetLength);

@@ -12,6 +12,7 @@
 #include "AgsJoint.h"
 #include "AgsFixtureArray.h"
 #include "AgsRaycastResult.h"
+#include "AgsContact.h"
 #include "Scale.h"
 #include "Book.h"
 #include <vector>
@@ -151,6 +152,27 @@ AgsRaycastResult* AgsWorld::RaycastQuery(float32 x0, float32 y0, float32 x1, flo
     return  query.RaycastResult;
 }
 
+int32 AgsWorld::GetContactCount() {
+    return B2AgsWorld->GetContactCount();
+}
+
+AgsContact* AgsWorld::GetContact(int32 i) {
+    if(i<0 || i>= B2AgsWorld->GetContactCount()) return nullptr;
+
+    b2Contact *contact = B2AgsWorld->GetContactList();
+    int index = 0;
+
+    do
+    {
+        if (!contact) break;
+        if(index == i) break;
+
+        index++;
+    }
+    while ((contact = contact->GetNext()));
+
+    return new AgsContact(contact, ID);
+}
 
 AgsWorld::~AgsWorld(void)
 {

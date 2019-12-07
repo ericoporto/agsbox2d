@@ -11,6 +11,8 @@ include_directories(.)
 add_library(agsbox2d SHARED
         agsbox2d/PointF.cpp
         agsbox2d/PointF.h
+        agsbox2d/AgsContact.cpp
+        agsbox2d/AgsContact.h
         agsbox2d/AgsBody.cpp
         agsbox2d/AgsBody.h
         agsbox2d/agsbox2d.cpp
