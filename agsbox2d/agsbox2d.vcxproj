@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="AgsBody.cpp" />
     <ClCompile Include="agsbox2d.cpp" />
+    <ClCompile Include="AgsContact.cpp" />
     <ClCompile Include="AgsFixture.cpp" />
     <ClCompile Include="AgsFixtureArray.cpp" />
     <ClCompile Include="AgsJoint.cpp" />
@@ -183,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="AgsBody.h" />
     <ClInclude Include="agsbox2d.h" />
+    <ClInclude Include="AgsContact.h" />
     <ClInclude Include="AgsFixture.h" />
     <ClInclude Include="AgsFixtureArray.h" />
     <ClInclude Include="AgsJoint.h" />
