@@ -34,17 +34,6 @@ b2Body* AgsWorld::GetGroundB2Body(){
     return B2GroundBody;
 }
 
-void AgsWorld::DestroyBody(AgsBody* body) {
-	if (body == nullptr || body->GetIsDestroyed()) {
-		return;
-	}
-
-    Book::UnregisterBodyFromWorldByID(Book::b2BodyToID(this->ID,body->GetB2AgsBody()),this->ID);
-	B2AgsWorld->DestroyBody(body->GetB2AgsBody());
-
-	body->SetIsDestroyed();
-}
-
 void AgsWorld::DestroyJoint(AgsJoint* joint) {
     if (joint == nullptr || !joint->isValid()) {
         return;
@@ -54,6 +43,47 @@ void AgsWorld::DestroyJoint(AgsJoint* joint) {
     B2AgsWorld->DestroyJoint(joint->GetB2AgsJoint());
     joint->EraseB2AgsJoint();
 }
+
+void AgsWorld::DestroyBody(AgsBody* body) {
+	if (body == nullptr || body->GetIsDestroyed()) {
+		return;
+	}
+
+	b2JointEdge* b2joint_edge = body->GetB2AgsBody()->GetJointList();
+
+    for(;b2joint_edge!= nullptr;b2joint_edge = b2joint_edge->next ) {
+        b2Joint* b2joint = b2joint_edge->joint;
+        int32 b2joint_id = Book::b2JointToID(this->ID,b2joint);
+        AgsJoint* agsJoint = Book::b2JointIDtoAgsJoint(b2joint_id, this->ID);
+
+        if(agsJoint != nullptr) {
+            agsJoint->b2Joint_ID = -1;
+            agsJoint->InitializeIfNeeded();
+        }
+    }
+
+	b2Fixture* fixture = body->GetB2AgsBody()->GetFixtureList();
+
+	for(;fixture!= nullptr;fixture = fixture->GetNext()) {
+	    int32 b2fixture_id = Book::b2FixtureToID(this->ID,fixture);
+
+	    AgsFixture* agsFixture = Book::b2FixtureIDtoAgsFixture(b2fixture_id, this->ID);
+
+	    if(agsFixture != nullptr) {
+            agsFixture->b2FixtureID = -1;
+            agsFixture->InitializeIfNeeded();
+	    }
+
+	    Book::UnregisterFixtureFromWorldByID(Book::b2FixtureToID(this->ID,fixture),this->ID);
+	}
+
+    Book::UnregisterBodyFromWorldByID(Book::b2BodyToID(this->ID,body->GetB2AgsBody()),this->ID);
+	B2AgsWorld->DestroyBody(body->GetB2AgsBody());
+
+	body->SetIsDestroyed();
+}
+
+
 
 void AgsWorld::Step(float32 dt, int32 velocityIterations, int32 positionIterations) {
 	B2AgsWorld->Step(dt, velocityIterations, positionIterations);
@@ -302,6 +332,10 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 
 			ptr = CharTob2Body(bodydef, &body, world->B2AgsWorld, ptr);
 			Book::RegisterBodyFromWorld(body, body_id, world->ID);
+            AgsBody* agsBody = Book::b2bodyIDtoAgsBody(body_id,world->ID);
+            if(agsBody != nullptr) {
+                agsBody->InitializeIfNeeded();
+            }
 		}
 	}
 
@@ -321,6 +355,11 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
                 temp_f = b2body->GetFixtureList();
 
             Book::RegisterFixtureFromWorld(temp_f, fixture_id, world->ID);
+            AgsFixture* agsFixture = Book::b2FixtureIDtoAgsFixture(fixture_id,world->ID);
+            if(agsFixture != nullptr) {
+                agsFixture->b2FixtureID = fixture_id;
+                agsFixture->InitializeIfNeeded();
+            }
 
             temp_prev_body_id = body_id;
             temp_f->GetNext();

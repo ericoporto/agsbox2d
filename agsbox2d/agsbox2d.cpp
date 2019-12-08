@@ -820,6 +820,7 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 
     int b2fixture_id = Book::GetNewFixtureID(body->World->ID);
     Book::RegisterFixtureFromWorld(fixture->GetB2AgsFixture(), b2fixture_id, body->World->ID);
+    fixture->b2FixtureID = b2fixture_id;
 
 	return fixture;
 }

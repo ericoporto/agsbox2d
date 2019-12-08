@@ -83,7 +83,7 @@ public:
 
     static int32 GetNewFixtureID(int32 world_id);
     static bool RegisterFixtureFromWorld(b2Fixture* fixture, int32 fixture_id, int32 world_id);
-    static bool UnregisterFixtureFromWorldByID(int32 fixture_id, int32 world_id);
+    static bool UnregisterFixtureFromWorldByID(int32 b2fixture_id, int32 world_id);
     static int32 b2FixtureToID(int32 world_id, b2Fixture* fixture);
     static b2Fixture* IDtoB2Fixture(int32 world_id, int32 fixture_id);
     static std::unordered_map<int32, b2Fixture* >::iterator GetFixtureBegin(int32 world_id);
@@ -123,6 +123,7 @@ public:
     static bool RegisterAgsJoint(int32 id, AgsJoint* joint);
     static bool UnregisterAgsJointByID(int32 id);
     static AgsJoint* IDtoAgsJoint(int32 id);
+    static AgsJoint* b2JointIDtoAgsJoint(int32 b2joint_id, int32 world_id);
 
     static bool isAgsJointDistanceRegisteredByID(int32 id);
     static bool RegisterAgsJointDistance(int32 id, AgsJointDistance* joint);

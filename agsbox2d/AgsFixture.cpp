@@ -33,13 +33,17 @@ AgsFixture::AgsFixture(AgsBody* agsBody, AgsShape* agsShape, float32 density) {
 	B2AgsFixture = agsBody->GetB2AgsBody()->CreateFixture(&B2AgsFixtureDef);
 }
 
-AgsFixture::AgsFixture(int32 world_id, int32 b2body_id, int32 fixture_id) {
+AgsFixture::AgsFixture(int32 world_id, int32 b2body_id, int32 b2fixture_id) {
     WorldID = world_id;
     b2BodyID = b2body_id;
-    b2FixtureID = fixture_id;
+    b2FixtureID = b2fixture_id;
 }
 
 void AgsFixture::InitializeIfNeeded(){
+    if(b2FixtureID <0) {
+        B2AgsFixture = nullptr;
+    }
+
     if(B2AgsFixture == nullptr) {
         B2AgsFixture = Book::IDtoB2Fixture(WorldID, b2FixtureID);
     }
@@ -164,15 +168,13 @@ using namespace SerialHelper;
 
 int AgsFixtureInterface::Dispose(const char* address, bool force)
 {
-	//if (((AgsFixture*)address)->Body != NULL && 
-	//	(((AgsFixture*)address)->Body->B2AgsBody != NULL) && 
-	//	(((AgsFixture*)address)->B2AgsFixture != NULL)){
-
-	//	((AgsFixture*)address)->Body->B2AgsBody->DestroyFixture(((AgsFixture*)address)->B2AgsFixture);
-	//}
+    AgsFixture* fixture = ((AgsFixture*)address);
+	if((AgsFixture*)address == nullptr)
+        return (1);
 
 	Book::UnregisterAgsFixtureByID(((AgsFixture*)address)->ID);
 	delete ((AgsFixture*)address);
+    fixture = nullptr;
 	return (1);
 }
 
@@ -186,11 +188,11 @@ int AgsFixtureInterface::Serialize(const char* address, char* buffer, int bufsiz
 
     int32 world_id = agsFixture->WorldID;
     int32 b2body_id = agsFixture->b2BodyID;
-    int32 fixture_id = agsFixture->b2FixtureID;
+    int32 b2fixture_id = agsFixture->b2FixtureID;// Book::b2FixtureToID(world_id, agsFixture->GetB2AgsFixture());
 
     ptr = IntToChar(world_id, ptr, end);
     ptr = IntToChar(b2body_id, ptr, end);
-    ptr = IntToChar(fixture_id, ptr, end);
+    ptr = IntToChar(b2fixture_id, ptr, end);
 	
 	return (ptr - buffer);
 }
@@ -201,17 +203,39 @@ void AgsFixtureReader::Unserialize(int key, const char* serializedData, int data
 {
     int32 world_id;
     int32 b2body_id;
-    int32 fixture_id;
+    int32 b2fixture_id;
 
     char* ptr = (char*)serializedData;
 
     ptr = CharToInt(world_id, ptr);
     ptr = CharToInt(b2body_id, ptr);
-    ptr = CharToInt(fixture_id, ptr);
+    ptr = CharToInt(b2fixture_id, ptr);
 
-    AgsFixture* agsFixture = new AgsFixture(world_id, b2body_id, fixture_id);
+    AgsFixture* agsFixture = nullptr;
 
-	engine->RegisterUnserializedObject(key, agsFixture, &AgsFixture_Interface);
+    AgsWorld * world;
+    if (Book::isAgsWorldRegisteredByID(world_id)) {
+        world = Book::IDtoAgsWorld(world_id);
+        if(world == nullptr) throw;
+    }
+    else {
+        world = new AgsWorld(0, 0);
+        Book::RegisterAgsWorld(world_id, world);
+    }
+
+    if (Book::isAgsFixtureArrayRegisteredByID(key)) {
+        agsFixture = Book::IDtoAgsFixture(key);
+        agsFixture->WorldID = world_id;
+        agsFixture->b2FixtureID = Book::b2FixtureToID(world_id, agsFixture->GetB2AgsFixture());
+    }
+
+    if(agsFixture == nullptr) {
+        agsFixture = new AgsFixture(world_id, b2body_id, b2fixture_id);
+        agsFixture->ID = key;
+        Book::RegisterAgsFixture(agsFixture->ID, agsFixture);
+        agsFixture->InitializeIfNeeded();
+    }
+    engine->RegisterUnserializedObject(key, agsFixture, &AgsFixture_Interface);
 }
 
 //..............................................................................
