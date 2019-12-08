@@ -1826,6 +1826,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
 	engine->AddManagedObjectReader(AgsFixtureInterface::name, &AgsFixture_Reader);
     engine->AddManagedObjectReader(AgsFixtureArrayInterface::name, &AgsFixtureArray_Reader);
     engine->AddManagedObjectReader(AgsRaycastResultInterface::name, &AgsRaycastResult_Reader);
+    engine->AddManagedObjectReader(AgsContactInterface::name, &AgsContact_Reader);
 
     engine->AddManagedObjectReader(AgsJointInterface::name, &AgsJoint_Reader);
     engine->AddManagedObjectReader(AgsJointDistanceInterface::name, &AgsJointDistance_Reader);
