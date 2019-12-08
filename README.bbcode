@@ -360,6 +360,14 @@ The raycast goes through all fixtures on the line if you supply [tt]eRaycastPass
 You can use [tt]eRaycastUntilHit[/tt] for it to stop at the first fixture hit, or additionally supply an array of target fixtures so that the raycast only stops if hit any fixture on the array.
 
 [/li]
+[li][b][tt]readonly int World.ContactCount[/tt][/b]
+How many contacts are available. Use it to know the range to access [tt]World.Contacts[][/tt].
+
+[/li]
+[li][b][tt]readonly Contact* World.Contacts[][/tt][/b]
+Gets the contacts in the world by index. These only contain fixtures in contact right now.
+
+[/li]
 [/list]
 
 [i][b]Shape[/b][/i]
