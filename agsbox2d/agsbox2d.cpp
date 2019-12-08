@@ -1946,7 +1946,7 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("Contact::get_IsValid", (void*)AgsContact_GetIsValud);
     engine->RegisterScriptFunction("Contact::get_Normal", (void*)AgsContact_GetNormal);
     engine->RegisterScriptFunction("Contact::get_PositionsCount", (void*)AgsContact_GetPositionsCount);
-    engine->RegisterScriptFunction("Contact::geti_IsValid", (void*)AgsContact_GetPositions);
+    engine->RegisterScriptFunction("Contact::geti_Positions", (void*)AgsContact_GetPositions);
     engine->RegisterScriptFunction("Contact::get_FixtureA", (void*)AgsContact_GetFixtureA);
     engine->RegisterScriptFunction("Contact::get_FixtureB", (void*)AgsContact_GetFixtureB);
 
