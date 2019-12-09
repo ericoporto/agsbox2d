@@ -65,6 +65,10 @@ AgsJoint::~AgsJoint(void)
 }
 
 void AgsJoint::InitializeIfNeeded(){
+    if(b2Joint_ID <0) {
+        B2AgsJoint = nullptr;
+    }
+
     if(B2AgsJoint == nullptr) {
         B2AgsJoint = Book::IDtoB2Joint(WorldID, b2Joint_ID);
     }

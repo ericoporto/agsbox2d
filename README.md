@@ -17,6 +17,8 @@ AgsBox2D is still in early development.
   * [World](#world)
   * [Shape](#shape)
   * [Fixture](#fixture)
+  * [Joint](#joint)
+  * [Contact](#contact)
 - [Download agsbox2d](#download-agsbox2d)
 - [Building agsbox2d](#building-agsbox2d)
 - [License and Author](#license-and-author)
@@ -151,6 +153,8 @@ The specifics on a body form and mass are defined by using a Shape and Fixture.
 #### `void AgsBox2D.DestroyBody(World* world,  Body* body)`
 
 Removes a body from the world, and marks it with the property IsDestroyed true.
+
+Always remove Joints attached to a body before removing it, otherwise the joint may turn invalid and be accessed, causing a crash.
 
 #### `Shape* AgsBox2D.CreateRectangleShape(float w,  float h,  float x=0, float y=0)`
 
@@ -371,19 +375,27 @@ graphic of it with the sprite this function outputs.
 
 You can pass a camera x and y value to scroll the camera on the world.
 
-#### `int FixtureArray*  World.BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y)`
+#### `FixtureArray*  World.BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y)`
 
 Returns array of fixtures which their bounding boxes are overlapped by the supplied box.
 
 A fixture bounding box is the non rotated smallest rectangle that contains it's shape, this means a rotate rectangle or a circle, a empty area is part of the bounding box. 
 This is usually good enough for a first stage of a detection, but may require additional steps.
 
-#### `int RaycastResult* World.Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0)`
+#### `RaycastResult* World.Raycast(float x0, float y0, float x1, float y1, RaycastType rc_type = 0, FixtureArray* stopping_fixtures = 0)`
 
 Returns RaycastResult with fixtures hit by a line, along with the hit normals. 
 The raycast goes through all fixtures on the line if you supply `eRaycastPassthrough` (this is the default).
 
 You can use `eRaycastUntilHit` for it to stop at the first fixture hit, or additionally supply an array of target fixtures so that the raycast only stops if hit any fixture on the array.
+
+#### `readonly int World.ContactCount`
+
+How many contacts are available. Use it to know the range to access `World.Contacts[]`. 
+
+#### `readonly Contact* World.Contacts[]`
+
+Gets the contacts in the world by index. These only contain fixtures in contact right now.
 
 ### Shape
 
@@ -567,6 +579,44 @@ The current length of the segment attached to the second body.
 #### `float JointPulley.Ratio`
 
 The pulley ratio.
+
+### Contact
+
+#### `readonly bool Contact.IsValid`
+
+Whether the Contact is still valid. 
+
+#### `readonly PointF* Contact.Normal`
+
+The normal vector between two shapes that are in contact.
+
+#### `readonly PointF* Contact.Positions[]`
+
+The contact points of the two colliding fixture, use PositionsCount to find out how many. Index starts at 0. 
+
+#### `readonly int Contact.PositionsCount`
+
+How many position of contact are available.
+
+#### `readonly Fixture* Contact.FixtureA`
+
+One of the Fixtures that hold the shapes in contact.
+
+#### `readonly Fixture* Contact.FixtureB`
+
+The other of the Fixtures that hold the shapes in contact.
+
+#### `bool Contact.Enabled`
+
+Whether the contact is enabled.
+
+#### `float Contact.Restitution`
+
+The restitution between two shapes that are in contact.
+
+#### `float Contact.Friction`
+
+The friction between two shapes that are in contact.
 
 ---
 

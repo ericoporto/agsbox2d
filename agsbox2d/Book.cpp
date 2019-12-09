@@ -42,6 +42,7 @@ void Book::DisposeWorldIfNeeded(){
 			b2World* world = *i()->ListB2World.rbegin();
 
 			delete world;
+			printf("\n!!disposed of world!!\n");
 
 			i()->ListB2World.pop_back();
 		}
@@ -292,7 +293,7 @@ int32 Book::GetNewFixtureID(int32 world_id){
     return i()->FixtureIDCount;
 }
 
-bool Book::RegisterFixtureFromWorld(b2Fixture* fixture, int32 fixture_id, int32 world_id) {
+bool Book::RegisterFixtureFromWorld(b2Fixture* fixture, int32 b2fixture_id, int32 world_id) {
     if (i()->B2FixtureByID.count(world_id) == 0) {
         i()->B2FixtureByID[world_id] = new std::unordered_map<int32, b2Fixture* >;
         i()->B2FixtureByPointer[world_id] = new std::unordered_map<b2Fixture*, int32 >;
@@ -300,10 +301,10 @@ bool Book::RegisterFixtureFromWorld(b2Fixture* fixture, int32 fixture_id, int32 
 
     if(fixture != nullptr && i()->B2BodiesByID[world_id] != nullptr) {
         if (i()->B2FixtureByPointer[world_id]->count(fixture) == 0 &&
-            i()->B2FixtureByID[world_id]->count(fixture_id) == 0) {
+            i()->B2FixtureByID[world_id]->count(b2fixture_id) == 0) {
 
-            (*i()->B2FixtureByID[world_id])[fixture_id] = fixture;
-            (*i()->B2FixtureByPointer[world_id])[fixture] = fixture_id;
+            (*i()->B2FixtureByID[world_id])[b2fixture_id] = fixture;
+            (*i()->B2FixtureByPointer[world_id])[fixture] = b2fixture_id;
 
             return true;
         }
@@ -311,13 +312,13 @@ bool Book::RegisterFixtureFromWorld(b2Fixture* fixture, int32 fixture_id, int32 
     return false;
 }
 
-bool Book::UnregisterFixtureFromWorldByID(int32 fixture_id, int32 world_id) {
-    if (i()->B2FixtureByID[world_id]->count(fixture_id) == 0) {
+bool Book::UnregisterFixtureFromWorldByID(int32 b2fixture_id, int32 world_id) {
+    if (i()->B2FixtureByID[world_id]->count(b2fixture_id) == 0) {
         return false;
     }
 
-    i()->B2FixtureByPointer[world_id]->erase((*i()->B2FixtureByID[world_id])[fixture_id]);
-    i()->B2FixtureByID[world_id]->erase(fixture_id);
+    i()->B2FixtureByPointer[world_id]->erase((*i()->B2FixtureByID[world_id])[b2fixture_id]);
+    i()->B2FixtureByID[world_id]->erase(b2fixture_id);
     return true;
 }
 
@@ -481,8 +482,8 @@ AgsFixture* Book::IDtoAgsFixture(int32 id) {
 	return i()->MapAgsFixture[id];
 }
 
-AgsFixture* Book::b2FixtureIDtoAgsFixture(int32 fixture_id, int32 world_id){
-    b2Fixture* b2fixture = Book::IDtoB2Fixture(world_id, fixture_id);
+AgsFixture* Book::b2FixtureIDtoAgsFixture(int32 b2fixture_id, int32 world_id){
+    b2Fixture* b2fixture = Book::IDtoB2Fixture(world_id, b2fixture_id);
 
     if (i()->MapAgsFixture.empty())
         return nullptr;
@@ -554,6 +555,22 @@ AgsJoint* Book::IDtoAgsJoint(int32 id) {
         return nullptr;
     }
     return i()->MapAgsJoint[id];
+}
+
+AgsJoint* Book::b2JointIDtoAgsJoint(int32 b2joint_id, int32 world_id){
+    b2Joint* b2joint = Book::IDtoB2Joint(world_id, b2joint_id);
+
+    if (i()->MapAgsJoint.empty())
+        return nullptr;
+
+    std::unordered_map<int32, AgsJoint*>::iterator it;
+
+    for (it=i()->MapAgsJoint.begin(); it != i()->MapAgsJoint.end(); ++it){
+        if(it->second->GetB2AgsJoint() == b2joint){
+            return it->second;
+        }
+    }
+    return nullptr;
 }
 // -- End of AgsJoint Bookkeeping --
 

@@ -1,6 +1,6 @@
-[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.4.0 [/b][/color]
+[b][size=14pt]agsbox2d[/size][/b]  [color=gray][b] version 0.5.0 [/b][/color]
 
-[url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.4.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
+[url=https://github.com/ericoporto/agsbox2d/releases/download/0.5.0/agsbox2d.dll]Get Latest Release [b]agsbox2d.dll[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.5.0/libagsbox2d.so][b]libagsbox2d.so[/b][/url] | [url=https://github.com/ericoporto/agsbox2d/releases/download/0.5.0/libagsbox2d.dylib][b]libagsbox2d.dylib[/b][/url] | [url=https://github.com/ericoporto/agsbox2d]GitHub Repo[/url] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.5.0/agsbox2d_demo_windows.zip]Demo Windows[/url][/b] | [b][url=https://github.com/ericoporto/agsbox2d/releases/download/0.5.0/agsbox2d_demo_linux.tar.xz]Demo Linux[/url][/b]
 
 [url=https://dev.azure.com/ericoporto/agsbox2d/_build/latest?definitionId=11&branchName=master][img]https://dev.azure.com/ericoporto/agsbox2d/_apis/build/status/ericoporto.agsbox2d?branchName=master[/img][/url]
 
@@ -21,7 +21,7 @@ Still, if you want to experiment with it and report your findings, this post sho
 
 Below we will do a very simple example that creates a ground, and adds a box and a ball. The ball is controlled by keyboard input. The game is supposed 320x200 in this example.
 
-[code]// room script file
+[code=ags]// room script file
 World* world;
 Overlay* ov;
 
@@ -68,6 +68,8 @@ function room_RepExec()
 
   world.Step(1.0/IntToFloat(GetGameSpeed()), 8, 3);
 }[/code]
+
+There's a [url=https://www.adventuregamestudio.co.uk/forums/index.php?topic=57458.msg636613531#msg636613531]breakdown of this code here[/url].
 
 [b][size=12pt]Script API[/size][/b]
 
@@ -360,6 +362,14 @@ The raycast goes through all fixtures on the line if you supply [tt]eRaycastPass
 You can use [tt]eRaycastUntilHit[/tt] for it to stop at the first fixture hit, or additionally supply an array of target fixtures so that the raycast only stops if hit any fixture on the array.
 
 [/li]
+[li][b][tt]readonly int World.ContactCount[/tt][/b]
+How many contacts are available. Use it to know the range to access [tt]World.Contacts[][/tt].
+
+[/li]
+[li][b][tt]readonly Contact* World.Contacts[][/tt][/b]
+Gets the contacts in the world by index. These only contain fixtures in contact right now.
+
+[/li]
 [/list]
 
 [i][b]Shape[/b][/i]
@@ -565,6 +575,50 @@ The current length of the segment attached to the second body.
 [/li]
 [li][b][tt]float JointPulley.Ratio[/tt][/b]
 The pulley ratio.
+
+[/li]
+[/list]
+
+
+[i][b]Contact[/b][/i]
+Contact are returned to inform a contact is happening, between two fixtures. They also include additional useful information.
+
+[list]
+
+[li][b][tt]readonly bool Contact.IsValid[/tt][/b]
+Whether the Contact is still valid.
+
+[/li]
+[li][b][tt]readonly PointF* Contact.Normal[/tt][/b]
+The normal vector between two shapes that are in contact.
+
+[/li]
+[li][b][tt]readonly PointF* Contact.Positions[][/tt][/b]
+The contact points of the two colliding fixture, use PositionsCount to find out how many. Index starts at 0.
+
+[/li]
+[li][b][tt]readonly int Contact.PositionsCount[/tt][/b]
+How many position of contact are available.
+
+[/li]
+[li][b][tt]readonly Fixture* Contact.FixtureA[/tt][/b]
+One of the Fixtures that hold the shapes in contact.
+
+[/li]
+[li][b][tt]readonly Fixture* Contact.FixtureB[/tt][/b]
+The other of the Fixtures that hold the shapes in contact.
+
+[/li]
+[li][b][tt]bool Contact.Enabled[/tt][/b]
+Whether the contact is enabled.
+
+[/li]
+[li][b][tt]float Contact.Restitution[/tt][/b]
+The restitution between two shapes that are in contact.
+
+[/li]
+[li][b][tt]float Contact.Friction[/tt][/b]
+The friction between two shapes that are in contact.
 
 [/li]
 [/list][/spoiler]
