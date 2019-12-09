@@ -656,4 +656,4 @@ Sprites used here includes the ones included with the Sierra template.
 
 Magic Cliffs background used on the demo is made by [ansimuz](https://opengameart.org/content/magic-cliffs-environment) and is available as CC-BY 3.0.
 
-Room 5 and 6 are made by [Buch](https://opengameart.org/users/buch), with the CC0 license.
+Room 5 and 6 sprites are made by [Buch](https://opengameart.org/users/buch), with the CC0 license.
