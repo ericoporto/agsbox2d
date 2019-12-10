@@ -186,7 +186,10 @@ bool Book::GetBodiesEmpty(int32 world_id){
 // Joint related functions
 
 int32 Book::b2JointToID(int32 world_id, b2Joint* joint){
-    if ( i()->B2JointByPointer.empty() || i()->B2JointByPointer.count(world_id) == 0 || i()->B2JointByPointer[world_id]->count(joint) == 0) {
+    if ( joint == nullptr ||
+         i()->B2JointByPointer.empty() ||
+         i()->B2JointByPointer.count(world_id) == 0 ||
+         i()->B2JointByPointer[world_id]->count(joint) == 0) {
         return -1;
     }
 
@@ -194,7 +197,10 @@ int32 Book::b2JointToID(int32 world_id, b2Joint* joint){
 }
 
 b2Joint* Book::IDtoB2Joint(int32 world_id, int32 joint_id){
-    if ( i()->B2JointByID.empty() || i()->B2JointByID.count(world_id) == 0 || i()->B2JointByID[world_id]->count(joint_id) == 0) {
+    if ( joint_id == -1 ||
+         i()->B2JointByID.empty() ||
+         i()->B2JointByID.count(world_id) == 0 ||
+         i()->B2JointByID[world_id]->count(joint_id) == 0) {
         return nullptr;
     }
 
@@ -263,7 +269,10 @@ int32 Book::GetJointCount(int32 world_id){
 
 
 int32 Book::b2FixtureToID(int32 world_id, b2Fixture* fixture){
-    if (i()->B2FixtureByPointer.empty() || i()->B2FixtureByPointer.count(world_id) == 0 || i()->B2FixtureByPointer[world_id]->count(fixture) == 0) {
+    if ( fixture == nullptr ||
+         i()->B2FixtureByPointer.empty() ||
+         i()->B2FixtureByPointer.count(world_id) == 0 ||
+         i()->B2FixtureByPointer[world_id]->count(fixture) == 0) {
         return -1;
     }
 
@@ -271,7 +280,10 @@ int32 Book::b2FixtureToID(int32 world_id, b2Fixture* fixture){
 }
 
 b2Fixture* Book::IDtoB2Fixture(int32 world_id, int32 fixture_id){
-    if (i()->B2FixtureByID.empty() || i()->B2FixtureByID.count(world_id) == 0 ||  i()->B2FixtureByID[world_id]->count(fixture_id) == 0) {
+    if ( fixture_id == -1 ||
+         i()->B2FixtureByID.empty() ||
+         i()->B2FixtureByID.count(world_id) == 0 ||
+         i()->B2FixtureByID[world_id]->count(fixture_id) == 0) {
         return nullptr;
     }
 

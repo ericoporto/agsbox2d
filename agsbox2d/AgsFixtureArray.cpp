@@ -9,6 +9,7 @@
 
 #include "AgsFixtureArray.h"
 #include "Book.h"
+#include "AgsWorld.h"
 
 //------------------------------------------------------------------------------
 
@@ -91,6 +92,16 @@ void AgsFixtureArrayReader::Unserialize(int key, const char* serializedData, int
             ptr = CharToInt(world_id, ptr);
             ptr = CharToInt(b2body_id, ptr);
             ptr = CharToInt(fixture_id, ptr);
+
+            AgsWorld * world;
+            if (Book::isAgsWorldRegisteredByID(world_id)) {
+                world = Book::IDtoAgsWorld(world_id);
+                if(world == nullptr) throw;
+            }
+            else {
+                world = new AgsWorld(0, 0);
+                Book::RegisterAgsWorld(world_id, world);
+            }
 
             AgsFixture *agsFixture = new AgsFixture(world_id, b2body_id, fixture_id);
 

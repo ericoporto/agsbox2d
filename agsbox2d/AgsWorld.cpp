@@ -105,6 +105,7 @@ AgsFixtureArray* AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, 
         AgsFixtureArray* FixtureQueryList = new AgsFixtureArray();
         bool ReportFixture(b2Fixture* fixture)
         {
+            if(fixture == nullptr) return true;
             AgsFixtureArrayData fad;
             fad.WorldID = WorldID;
             fad.B2World = B2AGSWorld;
@@ -119,6 +120,19 @@ AgsFixtureArray* AgsWorld::BoundingBoxQuery(float32 lx, float32 ly, float32 ux, 
     box.upperBound = Scale::ScaleDown(b2Vec2(ux, uy));
     QueryFixturesCallback query(ID, B2AgsWorld);
     B2AgsWorld->QueryAABB(&query, box);
+
+    // for some reason, we get some fixtures here that have no ID. I can't explain how this is happening, so I will just filter them out.
+    std::vector<AgsFixtureArrayData>* vec = &(query.FixtureQueryList->data);
+    for(std::vector<AgsFixtureArrayData>::iterator it = vec->begin(); it != vec->end(); ){
+        if( Book::b2FixtureToID(ID,(*it).B2Fixture) == -1) {
+            it = vec->erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    query.FixtureQueryList->_c();
+
     return query.FixtureQueryList;
 }
 

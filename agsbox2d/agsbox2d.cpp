@@ -1439,12 +1439,14 @@ void AgsFixture_SetCategoryBits(AgsFixture* self, int32 index) {
 }
 
 AgsBody* AgsFixture_GetBody(AgsFixture* self) {
+    if(self == nullptr) return nullptr;
     AgsWorld* world = Book::IDtoAgsWorld(self->WorldID);
 
     return FindAgsBodyFromB2Body(world->B2AgsWorld, world->ID, self->GetB2Body());
 }
 
 int32 AgsFixture_TestPoint(AgsFixture* self, uint32_t x, uint32_t y) {
+    if(self == nullptr) return 0;
     float32 f_x = ToNormalFloat(x);
     float32 f_y = ToNormalFloat(y);
     if(self->TestPoint(f_x, f_y)) return 1;

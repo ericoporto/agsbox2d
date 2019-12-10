@@ -182,7 +182,11 @@ int AgsJointInterface::Serialize(const char* address, char* buffer, int bufsize)
     char* end = buffer + bufsize;
 
     int32 world_id = agsjoint->GetAgsWorld()->ID;
-    int32 b2joint_id = Book::b2JointToID(world_id, agsjoint->GetB2AgsJoint());
+    b2Joint* b2joint = agsjoint->GetB2AgsJoint();
+    int32 b2joint_id = -1;
+    if(b2joint != nullptr) {
+        b2joint_id = Book::b2JointToID(world_id,b2joint);
+    }
 
     ptr = IntToChar(world_id, ptr, end);
     ptr = IntToChar(b2joint_id, ptr, end);
