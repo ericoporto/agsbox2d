@@ -43,6 +43,11 @@ public:
     AgsFixtureArray* BoundingBoxQuery(float32 lx, float32 ly, float32 ux, float32 uy);
     AgsRaycastResult* RaycastQuery(float32 x0, float32 y0, float32 x1, float32 y1, RaycastType raycastType, AgsFixtureArray* agsFixtureArray);
 
+    float32 GetGravityX();
+    float32 GetGravityY();
+    void SetGravityX(float32 g_x);
+    void SetGravityY(float32 g_y);
+
     int32 GetContactCount();
     AgsContact* GetContact(int32 i);
 };

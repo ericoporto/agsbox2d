@@ -353,6 +353,12 @@ const char *ourScriptHeader =
 "  /// Returns a sprite with debug data. Set as GUI Background over screen for debugging your physics. \r\n"
 "  import int GetDebugSprite(int camera_x = 0, int camera_y = 0); \r\n"
 "  \r\n"
+"  /// World Gravity X axis. \r\n"
+"  import attribute float GravityX; \r\n"
+"  \r\n"
+"  /// World Gravity Y axis. \r\n"
+"  import attribute float GravityY; \r\n"
+"  \r\n"
 "  /// Returns array of fixtures which their bounding boxes are overlapped by the supplied box. \r\n"
 "  import FixtureArray* BoundingBoxQuery(float lower_x, float lower_y, float upper_x, float upper_y); \r\n"
 "  \r\n"
@@ -1009,6 +1015,24 @@ AgsContact* AgsWorld_GetContacts(AgsWorld* self, int32 i) {
     AgsContact* contact = self->GetContact(i);
     contact->ID = engine->RegisterManagedObject(contact, &AgsContact_Interface);
     return contact;
+}
+
+uint32_t AgsWorld_GetGravityX(AgsWorld* self) {
+    return ToAgsFloat(self->GetGravityX());
+}
+
+uint32_t AgsWorld_GetGravityY(AgsWorld* self) {
+    return ToAgsFloat(self->GetGravityY());
+}
+
+void AgsWorld_SetGravityX(AgsWorld* self, uint32_t g_x) {
+    float32 f_g_x = ToNormalFloat(g_x);
+    self->SetGravityX(f_g_x);
+}
+
+void AgsWorld_SetGravityY(AgsWorld* self, uint32_t g_y) {
+    float32 f_g_y = ToNormalFloat(g_y);
+    self->SetGravityY(f_g_y);
 }
 
 #pragma endregion // AgsWorld_ScriptAPI
@@ -1869,6 +1893,10 @@ void AGS_EngineStartup(IAGSEngine *lpEngine)
     engine->RegisterScriptFunction("World::Raycast^6", (void*)AgsWorld_Raycast);
     engine->RegisterScriptFunction("World::get_ContactCount", (void*)AgsWorld_GetContactCount);
     engine->RegisterScriptFunction("World::geti_Contacts", (void*)AgsWorld_GetContacts);
+    engine->RegisterScriptFunction("World::set_GravityX", (void*)AgsWorld_SetGravityX);
+    engine->RegisterScriptFunction("World::get_GravityX", (void*)AgsWorld_GetGravityX);
+    engine->RegisterScriptFunction("World::set_GravityY", (void*)AgsWorld_SetGravityY);
+    engine->RegisterScriptFunction("World::get_GravityY", (void*)AgsWorld_GetGravityY);
 
     engine->RegisterScriptFunction("RaycastResult::get_Length", (void*)AgsRaycastResult_GetLength);
     engine->RegisterScriptFunction("RaycastResult::geti_PointX", (void*)AgsRaycastResult_GetPointX);

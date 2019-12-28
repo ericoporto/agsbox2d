@@ -219,6 +219,23 @@ AgsContact* AgsWorld::GetContact(int32 i) {
     return new AgsContact(contact, ID);
 }
 
+float32 AgsWorld::GetGravityX(){
+    return Scale::ScaleUp(B2AgsWorld->GetGravity().x);
+}
+
+float32 AgsWorld::GetGravityY(){
+    return Scale::ScaleUp(B2AgsWorld->GetGravity().y);
+}
+
+void AgsWorld::SetGravityX(float32 g_x){
+    B2AgsWorld->SetGravity(b2Vec2( Scale::ScaleDown(g_x),B2AgsWorld->GetGravity().y));
+}
+
+void AgsWorld::SetGravityY(float32 g_y){
+    B2AgsWorld->SetGravity(b2Vec2( B2AgsWorld->GetGravity().x,Scale::ScaleDown(g_y)));
+
+}
+
 AgsWorld::~AgsWorld(void)
 {
 }
