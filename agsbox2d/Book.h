@@ -31,6 +31,7 @@ class AgsJointPulley; // forward declaration, we need AgsShape.h on the cpp
 class Book
 {
 private:
+    static Book* instance;
 	Book();
 	~Book(void);
 	std::vector<b2World* > ListB2World;

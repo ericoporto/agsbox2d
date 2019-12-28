@@ -220,7 +220,9 @@ void AgsFixtureReader::Unserialize(int key, const char* serializedData, int data
     }
     else {
         world = new AgsWorld(0, 0);
+        world->ID = world_id;
         Book::RegisterAgsWorld(world_id, world);
+        //printf("AgsFixtureReader::Unserialize - world_id=%d\n",world_id);
     }
 
     if (Book::isAgsFixtureArrayRegisteredByID(key)) {

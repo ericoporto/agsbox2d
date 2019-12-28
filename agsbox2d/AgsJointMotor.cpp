@@ -221,6 +221,7 @@ void AgsJointMotorReader::Unserialize(int key, const char* serializedData, int d
     }
     else {
         world = new AgsWorld(0, 0);
+        world->ID = world_id;
         Book::RegisterAgsWorld(world_id, world);
     }
 

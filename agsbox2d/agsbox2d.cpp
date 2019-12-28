@@ -749,12 +749,12 @@ AgsBody* agsbox2d_newBody(AgsWorld* world, uint32_t x, uint32_t y, uint32_t body
 		bt = b2_dynamicBody;
 
 	AgsBody* body = world->NewBody(bx, by, bt);
-
 	body->ID = engine->RegisterManagedObject(body, &AgsBody_Interface);
-	Book::RegisterAgsBody(body->ID, body);
-
 	int b2body_id = Book::GetNewBodyID(world->ID);
+    body->B2BodyID = b2body_id;
+
 	Book::RegisterBodyFromWorld(body->GetB2AgsBody(), b2body_id, world->ID);
+    Book::RegisterAgsBody(body->ID, body);
 
 	return body;
 }
@@ -819,8 +819,8 @@ AgsFixture* agsbox2d_newFixture(AgsBody* body, AgsShape* shape, uint32_t density
 	Book::RegisterAgsFixture(fixture->ID, fixture);
 
     int b2fixture_id = Book::GetNewFixtureID(body->World->ID);
-    Book::RegisterFixtureFromWorld(fixture->GetB2AgsFixture(), b2fixture_id, body->World->ID);
     fixture->b2FixtureID = b2fixture_id;
+    Book::RegisterFixtureFromWorld(fixture->GetB2AgsFixture(), b2fixture_id, body->World->ID);
 
 	return fixture;
 }
