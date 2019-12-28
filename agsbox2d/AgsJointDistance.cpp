@@ -156,7 +156,9 @@ void AgsJointDistanceReader::Unserialize(int key, const char* serializedData, in
     }
     else {
         world = new AgsWorld(0, 0);
+        world->ID = world_id;
         Book::RegisterAgsWorld(world_id, world);
+        //printf("AgsJointDistanceReader::Unserialize - world_id=%d\n",world_id);
     }
 
     b2Joint * b2joint = Book::IDtoB2Joint(world_id, b2joint_id);

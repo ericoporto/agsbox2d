@@ -126,11 +126,12 @@ int32 Book::GetNewBodyID(int32 world_id){
     }
 
     if(i()->B2BodiesByID[world_id] != nullptr) {
-        while( (*i()->B2BodiesByID[world_id]).count(i()->BodyIDCount) != 0){
+        while( (i()->B2BodiesByID[world_id])->count(i()->BodyIDCount) != 0){
             i()->BodyIDCount++;
         }
     }
 
+    //printf("BodyIDCount= %d \n",i()->BodyIDCount);
     return i()->BodyIDCount;
 }
 
@@ -147,6 +148,7 @@ bool Book::RegisterBodyFromWorld(b2Body* body,  int32 body_id, int32 world_id) {
             (*i()->B2BodiesByID[world_id])[body_id] = body;
             (*i()->B2BodiesByPointer[world_id])[body] = body_id;
 
+           // printf("body_id=%d p.x=%.2f p.y=%.2f body=%#010x \n",body_id, body->GetTransform().p.x, body->GetTransform().p.y, body);
             return true;
         }
     }
@@ -311,6 +313,8 @@ bool Book::RegisterFixtureFromWorld(b2Fixture* fixture, int32 b2fixture_id, int3
         i()->B2FixtureByPointer[world_id] = new std::unordered_map<b2Fixture*, int32 >;
     }
 
+   // printf(" -- b2fixture_id=%d p.x=%.2f p.y=%.2f fixture=%#010x \n",b2fixture_id, fixture->GetBody()->GetTransform().p.x, fixture->GetBody()->GetTransform().p.y, fixture);
+
     if(fixture != nullptr && i()->B2BodiesByID[world_id] != nullptr) {
         if (i()->B2FixtureByPointer[world_id]->count(fixture) == 0 &&
             i()->B2FixtureByID[world_id]->count(b2fixture_id) == 0) {
@@ -318,6 +322,7 @@ bool Book::RegisterFixtureFromWorld(b2Fixture* fixture, int32 b2fixture_id, int3
             (*i()->B2FixtureByID[world_id])[b2fixture_id] = fixture;
             (*i()->B2FixtureByPointer[world_id])[fixture] = b2fixture_id;
 
+         //   printf("b2fixture_id=%d p.x=%.2f p.y=%.2f fixture=%#010x \n",b2fixture_id, fixture->GetBody()->GetTransform().p.x, fixture->GetBody()->GetTransform().p.y, fixture);
             return true;
         }
     }
@@ -349,12 +354,16 @@ int32 Book::GetFixtureCount(int32 world_id){
 }
 
 // -- End of Fixture related functions
+Book* Book::instance = nullptr;
 
 Book* Book::i()
 {
-	static Book instance;
+    if (instance == nullptr)
+    {
+        instance = new Book();
+    }
 
-	return &instance;
+    return instance;
 }
 
 // -- AgsWorld Bookkeeping --
@@ -372,6 +381,7 @@ bool Book::RegisterAgsWorld(int32 id, AgsWorld* world) {
 }
 
 bool Book::UnregisterAgsWorldByID(int32 id) {
+    DisposeWorldIfNeeded();
 	if (i()->MapAgsWorld.count(id) == 0) {
 		return false;
 	}
@@ -402,6 +412,7 @@ bool Book::RegisterAgsBody(int32 id, AgsBody* body) {
 }
 
 bool Book::UnregisterAgsBodyByID(int32 id) {
+    DisposeWorldIfNeeded();
 	if (i()->MapAgsBody.count(id) == 0) {
 		return false;
 	}

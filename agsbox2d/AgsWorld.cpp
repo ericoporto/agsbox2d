@@ -21,6 +21,7 @@ AgsWorld::AgsWorld(float32 gravityX, float32 gravityY) {
 	B2AgsWorld = new b2World(Scale::ScaleDown(b2Vec2(gravityX, gravityY)));
     b2BodyDef def;
     B2GroundBody = B2AgsWorld->CreateBody(&def);
+    //printf("  creating new world...");
 }
 
 
@@ -243,7 +244,7 @@ int AgsWorldInterface::Dispose(const char* address, bool force)
 	Book::UnregisterAgsWorldByID(((AgsWorld*)address)->ID);
 
 	//still need to figure an strategy for when to dispose of the Box2D World
-	//printf("dispose of world %d\n", ((AgsWorld*)address)->ID);
+	printf("dispose of world %d\n", ((AgsWorld*)address)->ID);
 	delete ((AgsWorld*)address);
 	return (1);
 }
@@ -398,7 +399,7 @@ void AgsWorldReader::Unserialize(int key, const char* serializedData, int dataSi
 
             if(b2jointdef->type == b2JointType::e_mouseJoint) {
                 b2jointdef->bodyA = world->GetGroundB2Body();
-                b2jointdef->bodyB = Book::IDtoB2Body(world->ID, body_a_id);
+                b2jointdef->bodyB = Book::IDtoB2Body(world->ID, body_b_id);
             }
 
             b2Joint* b2joint = world->B2AgsWorld->CreateJoint(b2jointdef);
